@@ -35,7 +35,8 @@
 - [x] Yedek: tüm veriyi JSON olarak indir
 - [x] "Ana ekrana ekle" (PWA)
 - [x] Ayarlar tabı: məhsullar/kateqoriyalar keçidi, Instagram mətni şablonu, ehtiyat nüsxə, çıxış
-- [x] Aşağı menyu (bütün ekranlarda): Sifarişlər · Müştərilər · (+) Məhsul əlavə et · Sifariş izləmə · Ayarlar
+- [x] Admin aşağı menyu (v1.2): Mağaza (müştərinin gördüyü ana səhifə) · Müştərilər · (+) Məhsul əlavə et · Sifarişlər (mərhələlər + kargo izləmə) · Ayarlar
+- [x] Müştərilər: sifariş sayı, uğurlu, ləğv, aktiv, alış-veriş məbləği; sıralama
 - [x] Sifariş axını: Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı; istənilən mərhələdə Ləğv et, ləğvdən Bərpa et; status tarixçəsi
 - [x] Sifariş izləmə: kargo şirkəti, izləmə kodu/link, təxmini tarix, müştəriyə qeyd
 - [x] Instagram üçün hazırla: post (1080×1080) və story (1080×1920) şəkli + hazır mətn, telefonda paylaş menyusu

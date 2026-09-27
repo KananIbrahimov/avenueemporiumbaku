@@ -75,3 +75,14 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .foto-yuklenir { display: flex; align-items: center; justify-content: center; }
 .firlanan { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--cizgi); border-top-color: var(--vurgu); animation: firlan .8s linear infinite; }
 @keyframes firlan { to { transform: rotate(360deg); } }
+
+/* Müştəri statistikası */
+.musteri-kart { display: grid; gap: 10px; padding: 14px; }
+.musteri-kart .ust-satir { display: flex; justify-content: space-between; gap: 8px; }
+.stat-satir { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.stat { background: var(--kart-2); border: 1px solid var(--cizgi); border-radius: 12px; padding: 8px 4px; text-align: center; min-width: 0; }
+.stat b { display: block; font-size: 1.15rem; line-height: 1.2; }
+.stat span { display: block; font-size: .66rem; color: var(--soluk); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat.ugurlu b { color: var(--basari); }
+.stat.legv b { color: var(--tehlike); }
+.urun-kart.pasif { opacity: .55; }

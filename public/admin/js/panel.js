@@ -12,26 +12,42 @@ import { kategorilerSekmesi } from "./kategoriler.js";
 import { musterilerSekmesi } from "./musteriler.js";
 import { izlemeSekmesi } from "./izleme.js";
 import { ayarlarSekmesi } from "./ayarlar.js";
+import { magazaSekmesi } from "./magaza.js";
 
 temaUygula();
 versiyaYoxla();
 sayfayiCevir();
 
-// Aşağı menyu
+// Aşağı menyu: Mağaza · Müştərilər · (+) Məhsul · Sifarişlər (izləmə və yönləndirmə) · Ayarlar
 const MENYU = [
-  { id: "siparisler", ikon: IKON.siparis, metin: "admin.sekme.siparisler", href: "#siparisler" },
+  { id: "magaza", ikon: IKON.magaza, metin: "admin.sekme.magaza", href: "#magaza" },
   { id: "musteriler", ikon: IKON.musteri, metin: "admin.sekme.musteriler", href: "#musteriler" },
   { id: "urunler", ikon: IKON.artir, metin: "admin.menyu.urunEkle", href: "#urunler/yeni", orta: true },
-  { id: "izleme", ikon: IKON.izleme, metin: "admin.sekme.izleme", href: "#izleme" },
+  { id: "siparisler", ikon: IKON.siparis, metin: "admin.sekme.siparisler", href: "#siparisler" },
   { id: "ayarlar", ikon: IKON.ayar, metin: "admin.sekme.ayarlar", href: "#ayarlar" },
 ];
 
+// Sifarişlər bölməsi iki hissədən ibarətdir: Mərhələlər | Kargo izləmə
+function sifarisSekmesi(hisse) {
+  return (kok, args) => {
+    kok.innerHTML = `<div class="segment" style="max-width:460px;margin:4px 0 12px">
+      <button type="button" class="${hisse === "siparisler" ? "secili" : ""}" data-git="#siparisler">${kacis(t("admin.sip.hisse.merhele"))}</button>
+      <button type="button" class="${hisse === "izleme" ? "secili" : ""}" data-git="#izleme">🚚 ${kacis(t("admin.sip.hisse.kargo"))}</button>
+    </div>`;
+    kok.querySelectorAll("[data-git]").forEach((b) => b.addEventListener("click", () => { location.hash = b.dataset.git; }));
+    const ic = document.createElement("div");
+    kok.appendChild(ic);
+    (hisse === "izleme" ? izlemeSekmesi : siparislerSekmesi)(ic, args);
+  };
+}
+
 // Marşrutlar: hash → { çəkən funksiya, hansı menyu aktiv olsun }
 const MARSRUT = {
-  siparisler: { fn: siparislerSekmesi, menyu: "siparisler" },
+  magaza: { fn: magazaSekmesi, menyu: "magaza" },
   musteriler: { fn: musterilerSekmesi, menyu: "musteriler" },
   urunler: { fn: urunlerSekmesi, menyu: "urunler" },
-  izleme: { fn: izlemeSekmesi, menyu: "izleme" },
+  siparisler: { fn: sifarisSekmesi("siparisler"), menyu: "siparisler" },
+  izleme: { fn: sifarisSekmesi("izleme"), menyu: "siparisler" },
   ayarlar: { fn: ayarlarSekmesi, menyu: "ayarlar" },
   kategoriler: { fn: kategorilerSekmesi, menyu: "ayarlar" },
   yedek: { fn: ayarlarSekmesi, menyu: "ayarlar" }, // köhnə link
@@ -47,7 +63,7 @@ function menyuCiz() {
 
 function sekmeAc() {
   const parcalar = location.hash.slice(1).split("/");
-  const m = MARSRUT[parcalar[0]] || MARSRUT.siparisler;
+  const m = MARSRUT[parcalar[0]] || MARSRUT.magaza;
   $$("#sekmeler a").forEach((a) => a.classList.toggle("aktif", a.dataset.menyu === m.menyu));
   const kok = $("#icerik");
   kok.innerHTML = "";
