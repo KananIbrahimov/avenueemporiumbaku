@@ -1,11 +1,28 @@
 // Siparişler: canlı liste, durum değiştirme, panel açıkken web bildirimi
-import { db, collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from "../../ortak/firebase.js";
+import { db, collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, arrayUnion, Timestamp } from "../../ortak/firebase.js";
 import { t } from "../../ortak/i18n.js";
 import { para, yuvarla } from "../../ortak/fiyat.js";
 import { $, $$, kacis, tarih, bildir, hataMesaji, durumEtiketi, SIPARIS_DURUMLARI } from "../../ortak/yardim.js";
 import { detayGetir } from "./veri.js";
+import { adimlarHtml, IZLEME_ADIMLARI } from "../../ortak/izleme-ui.js";
 
 export let siparisler = [];
+const dinleyiciler = new Set();
+
+/** Sifariş siyahısı yenilənəndə çağırılır (məs. İzləmə bölməsi). Ləğv etmək üçün qaytarılan funksiyanı çağırın. */
+export function siparisDinle(fn) {
+  dinleyiciler.add(fn);
+  return () => dinleyiciler.delete(fn);
+}
+
+/** Statusu dəyişir və tarixçəyə yazır (müştəri addımların tarixini görür) */
+export function durumDegistir(id, durum, elave = {}) {
+  return updateDoc(doc(db, "siparisler", id), {
+    ...elave,
+    durum,
+    tarixce: arrayUnion({ durum, tarix: Timestamp.now() }),
+  });
+}
 let ilkYukleme = true;
 let kok = null;          // sekme açıksa çizim yapılacak alan
 let filtre = "yeni";
@@ -63,20 +80,25 @@ export function siparisleriBaslat() {
       ilkYukleme = false;
       sayacGuncelle();
       if (kok?.isConnected) ciz();
+      dinleyiciler.forEach((fn) => { try { fn(siparisler); } catch (e) { console.error(e); } });
     },
     (e) => bildir(hataMesaji(e), "hata"),
   );
 }
 
 // ---------- Sekme ----------
-export function siparislerSekmesi(alan) {
-  kok = alan;
+export function siparislerSekmesi(ana) {
+  // Ayrı konteyner: başqa bölməyə keçəndə silinir və canlı yenilənmə onu çəkmir
+  kok = document.createElement("div");
+  ana.appendChild(kok);
   ciz();
 }
 
 async function ciz() {
-  const sayilar = Object.fromEntries(SIPARIS_DURUMLARI.map((d) => [d, siparisler.filter((o) => o.durum === d).length]));
-  const liste = filtre === "hepsi" ? siparisler : siparisler.filter((o) => o.durum === filtre);
+  // Köhnə "Sifariş verildi" statusu "Qəbul edildi" sayılır
+  const esas = (d) => (d === "sifarisVerildi" ? "tesdiq" : d);
+  const sayilar = Object.fromEntries(SIPARIS_DURUMLARI.map((d) => [d, siparisler.filter((o) => esas(o.durum) === d).length]));
+  const liste = filtre === "hepsi" ? siparisler : siparisler.filter((o) => esas(o.durum) === filtre);
   const izin = "Notification" in window ? Notification.permission : "yok";
 
   kok.innerHTML = `
@@ -87,7 +109,7 @@ async function ciz() {
     </div>
     <p class="ipucu" style="margin-top:-8px">${kacis(t("admin.sip.aciklama"))}</p>
     <div class="cipler">
-      ${["yeni", "tesdiq", "sifarisVerildi", "yolda", "catdirildi", "legv", "hepsi"].map((d) => `
+      ${["yeni", "tesdiq", "yolda", "catdirildi", "legv", "hepsi"].map((d) => `
         <button class="cip ${filtre === d ? "secili" : ""}" data-filtre="${d}">
           ${kacis(d === "hepsi" ? t("filtre.tumu") : t("durum." + d))} (${d === "hepsi" ? siparisler.length : sayilar[d]})
         </button>`).join("")}
@@ -101,12 +123,19 @@ async function ciz() {
     ciz();
   });
   $$("[data-filtre]", kok).forEach((b) => b.addEventListener("click", () => { filtre = b.dataset.filtre; ciz(); }));
-  $$("[data-durum-sec]", kok).forEach((s) => s.addEventListener("change", async () => {
+  // Növbəti mərhələ / addıma toxunma / ləğv / bərpa
+  const deyis = async (id, durum, sual) => {
+    if (sual && !confirm(sual)) return;
     try {
-      await updateDoc(doc(db, "siparisler", s.dataset.durumSec), { durum: s.value });
-      bildir(t("admin.kaydedildi"), "basari");
+      await durumDegistir(id, durum);
+      bildir(`${t("admin.kaydedildi")}: ${t("durum." + durum)}`, "basari");
     } catch (e) { bildir(hataMesaji(e), "hata"); }
-  }));
+  };
+  $$("[data-novbeti]", kok).forEach((b) => b.addEventListener("click", () => deyis(b.dataset.id, b.dataset.novbeti)));
+  $$("[data-sip] [data-adim]", kok).forEach((b) => b.addEventListener("click", () =>
+    deyis(b.closest("[data-sip]").dataset.sip, b.dataset.adim)));
+  $$("[data-legv]", kok).forEach((b) => b.addEventListener("click", () => deyis(b.dataset.legv, "legv", t("izleme.legvOnay"))));
+  $$("[data-berpa]", kok).forEach((b) => b.addEventListener("click", () => deyis(b.dataset.berpa, "yeni")));
   $$("[data-sil]", kok).forEach((b) => b.addEventListener("click", async () => {
     if (!confirm(t("admin.sip.silOnay"))) return;
     try { await deleteDoc(doc(db, "siparisler", b.dataset.sil)); } catch (e) { bildir(hataMesaji(e), "hata"); }
@@ -129,7 +158,7 @@ function kartHtml(o) {
   const tel = (o.telefon || "").replace(/[^\d+]/g, "");
   const wa = tel.replace(/^\+/, "");
   return `
-    <div class="kart siparis-kart ${o.durum === "yeni" ? "yeni" : ""}">
+    <div class="kart siparis-kart ${o.durum === "yeni" ? "yeni" : ""} ${o.durum === "legv" ? "pasif" : ""}" data-sip="${kacis(o.id)}">
       <div class="ust-satir">
         <div><b>${kacis(o.musteriAd)}</b> <span class="soluk">· ${kacis(tarih(o.olusturma))}</span></div>
         ${durumEtiketi(o.durum)}
@@ -145,11 +174,23 @@ function kartHtml(o) {
       </div>
       ${o.musteriNotu ? `<div class="kutu-mesaj kutu-bilgi" style="margin:0">${kacis(o.musteriNotu)}</div>` : ""}
       <div class="aksiyonlar" data-kaynak="${kacis(o.id)}"></div>
+      ${adimlarHtml(o, { tiklanan: true })}
       <div class="aksiyonlar">
-        <select data-durum-sec="${kacis(o.id)}">
-          ${SIPARIS_DURUMLARI.map((d) => `<option value="${d}" ${d === o.durum ? "selected" : ""}>${kacis(t("durum." + d))}</option>`).join("")}
-        </select>
-        <button class="btn btn-link btn-kucuk" data-sil="${kacis(o.id)}">${kacis(t("admin.sil"))}</button>
+        ${novbetiHtml(o)}
+        ${o.durum === "legv"
+          ? `<button class="btn btn-ince btn-kucuk" data-berpa="${kacis(o.id)}">↺ ${kacis(t("admin.sip.berpa"))}</button>`
+          : o.durum !== "catdirildi" ? `<button class="btn btn-ince btn-kucuk btn-legv" data-legv="${kacis(o.id)}">✕ ${kacis(t("izleme.legv"))}</button>` : ""}
+        ${["tesdiq", "sifarisVerildi", "yolda"].includes(o.durum) ? `<a class="btn btn-link btn-kucuk" href="#izleme">🚚 ${kacis(t("admin.sip.kargoyaKec"))}</a>` : ""}
+        <button class="btn btn-link btn-kucuk" data-sil="${kacis(o.id)}" style="margin-left:auto">${kacis(t("admin.sil"))}</button>
       </div>
     </div>`;
+}
+
+/** Növbəti mərhələyə keçid düyməsi: Yeni → Qəbul et → Yola sal → Çatdırıldı */
+function novbetiHtml(o) {
+  const cari = o.durum === "sifarisVerildi" ? "tesdiq" : o.durum;
+  const i = IZLEME_ADIMLARI.indexOf(cari);
+  if (i < 0 || i >= IZLEME_ADIMLARI.length - 1) return "";
+  const novbeti = IZLEME_ADIMLARI[i + 1];
+  return `<button class="btn btn-kucuk" data-novbeti="${novbeti}" data-id="${kacis(o.id)}">${kacis(t("admin.sip.kec." + novbeti))} →</button>`;
 }

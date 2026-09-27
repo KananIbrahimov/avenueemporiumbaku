@@ -112,8 +112,8 @@ export default {
   "siparislerim.bos": "Hələ sifarişiniz yoxdur.",
 
   // Sifariş statusları
-  "durum.yeni": "Yeni sorğu",
-  "durum.tesdiq": "Təsdiqləndi",
+  "durum.yeni": "Yeni sifariş",
+  "durum.tesdiq": "Qəbul edildi",
   "durum.sifarisVerildi": "Sifariş verildi",
   "durum.yolda": "Yoldadır",
   "durum.catdirildi": "Çatdırıldı",
@@ -146,6 +146,30 @@ export default {
   "admin.sekme.musteriler": "Müştərilər",
   "admin.sekme.yedek": "Ehtiyat nüsxə",
   "admin.sekme.ayarlar": "Ayarlar",
+  "admin.sekme.izleme": "Sifariş izləmə",
+  "admin.menyu.urunEkle": "Məhsul əlavə et",
+  "admin.urun.siyahi": "Bütün məhsullar",
+  "admin.ayar.magaza": "Mağaza",
+
+  // Sifariş izləmə
+  "izleme.aciklama": "Addıma toxunaraq statusu dəyişin. Kargo məlumatını əlavə edin — müştəri \"Sifarişlərim\"də görür.",
+  "izleme.filtre.aktiv": "Davam edən",
+  "izleme.filtre.catdirildi": "Çatdırılan",
+  "izleme.filtre.hamisi": "Hamısı",
+  "izleme.bosAktiv": "Davam edən sifariş yoxdur. Yeni sifarişi \"Sifarişlər\"də qəbul edin.",
+  "izleme.sirket": "Kargo şirkəti",
+  "izleme.kod": "İzləmə kodu",
+  "izleme.link": "İzləmə linki",
+  "izleme.tahmini": "Təxmini çatdırılma",
+  "izleme.qeyd": "Müştəriyə qeyd",
+  "izleme.izle": "Kargonu izlə",
+  "izleme.yoldaEt": "Statusu \"Yoldadır\" et",
+  "izleme.kargoElaveEt": "Kargo məlumatı əlavə et",
+  "izleme.kargoDuzenle": "Kargo məlumatını dəyiş",
+  "izleme.bagla": "Bağla",
+  "izleme.legv": "Ləğv et",
+  "izleme.legvOnay": "Bu sifariş ləğv edilsin?",
+  "izleme.kodKopyalandi": "İzləmə kodu kopyalandı",
   "admin.magazaAc": "Mağazaya bax",
 
   // Instagram
@@ -170,7 +194,7 @@ export default {
   "admin.ig.sifirla": "Standart şablona qaytar",
 
   // Sifarişlər
-  "admin.sip.aciklama": "Panel açıq olduqda yeni sifariş gələn kimi bildiriş və səs gəlir.",
+  "admin.sip.aciklama": "Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı. İstənilən mərhələdə ləğv etmək olar. Panel açıq olduqda yeni sifariş gələn kimi bildiriş və səs gəlir.",
   "admin.sip.bildirimAc": "Bildirişləri aç",
   "admin.sip.bildirimKapali": "Brauzerdə bildirişlər bağlıdır",
   "admin.sip.bildirimBaslik": "Yeni sifariş — AvenueBaku",
@@ -178,7 +202,12 @@ export default {
   "admin.sip.bos": "Bu statusda sifariş yoxdur.",
   "admin.sip.kaynakAc": "Məhsulun linki",
   "admin.sip.urunSilinmis": "Məhsul silinib",
-  "admin.sip.silOnay": "Bu sifariş silinsin?",
+  "admin.sip.silOnay": "Bu sifariş tamamilə silinsin? (Ləğv etmək daha yaxşıdır — tarixçə qalır)",
+  "admin.sip.kec.tesdiq": "Qəbul et",
+  "admin.sip.kec.yolda": "Yola sal",
+  "admin.sip.kec.catdirildi": "Çatdırıldı",
+  "admin.sip.berpa": "Bərpa et",
+  "admin.sip.kargoyaKec": "Kargo məlumatı",
 
   // Məhsullar
   "admin.urun.yeni": "Yeni məhsul",

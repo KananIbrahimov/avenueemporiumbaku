@@ -124,7 +124,7 @@ async function formAc(kok, id) {
   kok.innerHTML = `
     <div class="bolum-ust">
       <h1>${kacis(t(id ? "admin.urun.duzenle" : "admin.urun.yeni"))}</h1>
-      <a class="btn btn-ince" href="#urunler">← ${kacis(t("genel.geri"))}</a>
+      <a class="btn btn-ince" href="#urunler">${kacis(t("admin.urun.siyahi"))}</a>
     </div>
     <form id="urun-form" class="kart" novalidate>
       ${DILLER.map((d) => `

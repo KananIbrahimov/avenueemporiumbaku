@@ -34,7 +34,10 @@
 - [x] Müşteri listesi (ad, soyad, e-posta, kayıt tarihi, sipariş sayısı/tutarı)
 - [x] Yedek: tüm veriyi JSON olarak indir
 - [x] "Ana ekrana ekle" (PWA)
-- [x] Ayarlar tabı: tema, Instagram mətni şablonu, ehtiyat nüsxə, çıxış
+- [x] Ayarlar tabı: məhsullar/kateqoriyalar keçidi, Instagram mətni şablonu, ehtiyat nüsxə, çıxış
+- [x] Aşağı menyu (bütün ekranlarda): Sifarişlər · Müştərilər · (+) Məhsul əlavə et · Sifariş izləmə · Ayarlar
+- [x] Sifariş axını: Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı; istənilən mərhələdə Ləğv et, ləğvdən Bərpa et; status tarixçəsi
+- [x] Sifariş izləmə: kargo şirkəti, izləmə kodu/link, təxmini tarix, müştəriyə qeyd
 - [x] Instagram üçün hazırla: post (1080×1080) və story (1080×1920) şəkli + hazır mətn, telefonda paylaş menyusu
 - [x] Yeni məhsul əlavə edəndə "Instagram üçün hazırlansın?" təklifi
 - [x] Telefon yönümlü: aşağı menyu, məhsul və müştəri siyahıları kart şəklində, yapışqan "Yadda saxla" paneli
@@ -50,8 +53,9 @@
 - [x] Sipariş (istek) verme — sadece doğrulanmış üyeler, fiyat kuralla korunuyor
 - [x] Siparişlerim: canlı durum takibi
 - [x] "Ana ekrana ekle" (PWA)
-- [x] Ayarlar səhifəsi: hesab (ad/soyad dəyişmə, çıxış), tema, dil
-- [x] Açıq / Qaranlıq / Sistem rejimi + 8 tema rəngi (hər iki saytda)
+- [x] Ayarlar səhifəsi: hesab (ad/soyad dəyişmə, çıxış), dil
+- [x] Sifarişlərim: addım-addım izləmə + kargo məlumatı
+- [x] Dizayn: həmişə qaranlıq, gümüşü rənglər (SafeMoney üslubu), hər iki saytda
 - [x] Telefon yönümlü: aşağı menyu (Mağaza, Sifarişlərim, Ayarlar)
 - [x] Məhsul səhifəsində "Paylaş" düyməsi
 - [ ] Mobil görünüm son kontrolleri

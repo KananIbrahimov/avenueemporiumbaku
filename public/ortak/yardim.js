@@ -67,7 +67,7 @@ export function sifreKontrol(s) {
   return eksik;
 }
 
-export const SIPARIS_DURUMLARI = ["yeni", "tesdiq", "sifarisVerildi", "yolda", "catdirildi", "legv"];
+export const SIPARIS_DURUMLARI = ["yeni", "tesdiq", "yolda", "catdirildi", "legv"];
 
 export function durumEtiketi(d) {
   return `<span class="durum durum-${kacis(d)}">${kacis(t("durum." + d))}</span>`;

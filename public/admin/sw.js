@@ -1,5 +1,5 @@
 // Basit service worker: önce internet, internet yoksa önbellek.
-const ONBELLEK = "avenuebaku-admin-v3";
+const ONBELLEK = "avenuebaku-admin-v4";
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(
   caches.keys().then((k) => Promise.all(k.filter((x) => x !== ONBELLEK).map((x) => caches.delete(x))))

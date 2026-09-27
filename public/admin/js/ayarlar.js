@@ -2,7 +2,6 @@
 import { auth, db, doc, getDoc, setDoc, signOut, profilGetir, serverTimestamp } from "../../ortak/firebase.js";
 import { t } from "../../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
-import { temaAyarlari } from "../../ortak/tema.js";
 import { yedekBolumu } from "./yedek.js";
 import { VARSAYILAN_SABLON, SABLON_ACARLARI } from "./instagram.js";
 
@@ -13,8 +12,11 @@ export async function ayarlarSekmesi(kok) {
       <div class="bolum-baslik">${kacis(t("ayarlar.hesab"))}</div>
       <div class="kart" id="hesab"><p class="soluk">${kacis(t("genel.yukleniyor"))}</p></div>
 
-      <div class="bolum-baslik">${kacis(t("ayarlar.gorunus"))}</div>
-      <div class="kart" id="tema"></div>
+      <div class="bolum-baslik">${kacis(t("admin.ayar.magaza"))}</div>
+      <div class="kart" style="padding:4px 18px">
+        <a class="ayar-satir" href="#urunler" style="text-decoration:none"><span>🏷️ ${kacis(t("admin.urun.siyahi"))}</span><span class="soluk">›</span></a>
+        <a class="ayar-satir" href="#kategoriler" style="text-decoration:none"><span>🗂️ ${kacis(t("admin.sekme.kategoriler"))}</span><span class="soluk">›</span></a>
+      </div>
 
       <div class="bolum-baslik">Instagram</div>
       <form class="kart" id="ig-form">
@@ -32,7 +34,6 @@ export async function ayarlarSekmesi(kok) {
       <div id="yedek"></div>
     </div>`;
 
-  temaAyarlari($("#tema", kok));
   yedekBolumu($("#yedek", kok));
 
   // Hesab

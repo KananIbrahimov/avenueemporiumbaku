@@ -3,10 +3,7 @@ import { auth, db, doc, updateDoc, signOut, sendEmailVerification } from "../ort
 import { MAGAZA_URL } from "../ortak/ayarlar.js";
 import { t, DILLER, dil, dilDegistir } from "../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji } from "../ortak/yardim.js";
-import { temaAyarlari } from "../ortak/tema.js";
 import { girisDinle } from "./ust.js";
-
-temaAyarlari($("#tema-bolum"));
 
 if (DILLER.length > 1) {
   $("#dil-alan").hidden = false;

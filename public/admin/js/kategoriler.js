@@ -13,7 +13,8 @@ export async function kategorilerSekmesi(kok) {
   const dilEtiket = (d) => (DILLER.length > 1 ? ` (${d.kod.toUpperCase()})` : "");
 
   kok.innerHTML = `
-    <div class="bolum-ust"><h1>${kacis(t("admin.sekme.kategoriler"))}</h1></div>
+    <div class="bolum-ust"><h1>${kacis(t("admin.sekme.kategoriler"))}</h1>
+      <a class="btn btn-ince" href="#ayarlar">← ${kacis(t("admin.sekme.ayarlar"))}</a></div>
     <form class="kart" id="yeni-kat" style="margin-bottom:16px">
       <div class="satir">
         ${DILLER.map((d) => `<div class="alan"><label>${kacis(t("admin.kat.ad"))}${dilEtiket(d)}</label>

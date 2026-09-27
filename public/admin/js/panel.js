@@ -1,4 +1,5 @@
-// Admin paneli: giriş yoxlaması + menyu (masaüstündə yuxarıda, telefonda aşağıda)
+// Admin paneli: giriş yoxlaması + aşağı menyu
+// Sıra: Sifarişlər · Müştərilər · (+) Məhsul · İzləmə · Ayarlar
 import { auth, onAuthStateChanged, signOut, profilGetir } from "../../ortak/firebase.js";
 import { t, sayfayiCevir } from "../../ortak/i18n.js";
 import { $, $$, kacis } from "../../ortak/yardim.js";
@@ -8,35 +9,48 @@ import { siparisleriBaslat, siparislerSekmesi } from "./siparisler.js";
 import { urunlerSekmesi } from "./urunler.js";
 import { kategorilerSekmesi } from "./kategoriler.js";
 import { musterilerSekmesi } from "./musteriler.js";
+import { izlemeSekmesi } from "./izleme.js";
 import { ayarlarSekmesi } from "./ayarlar.js";
 
 temaUygula();
 sayfayiCevir();
 
-const SEKMELER = [
-  { id: "siparisler", ikon: IKON.siparis, fn: siparislerSekmesi },
-  { id: "urunler", ikon: IKON.urun, fn: urunlerSekmesi },
-  { id: "kategoriler", ikon: IKON.kategori, fn: kategorilerSekmesi },
-  { id: "musteriler", ikon: IKON.musteri, fn: musterilerSekmesi },
-  { id: "ayarlar", ikon: IKON.ayar, fn: ayarlarSekmesi },
+// Aşağı menyu
+const MENYU = [
+  { id: "siparisler", ikon: IKON.siparis, metin: "admin.sekme.siparisler", href: "#siparisler" },
+  { id: "musteriler", ikon: IKON.musteri, metin: "admin.sekme.musteriler", href: "#musteriler" },
+  { id: "urunler", ikon: IKON.artir, metin: "admin.menyu.urunEkle", href: "#urunler/yeni", orta: true },
+  { id: "izleme", ikon: IKON.izleme, metin: "admin.sekme.izleme", href: "#izleme" },
+  { id: "ayarlar", ikon: IKON.ayar, metin: "admin.sekme.ayarlar", href: "#ayarlar" },
 ];
-const ESKI = { yedek: "ayarlar" }; // köhnə linklər
+
+// Marşrutlar: hash → { çəkən funksiya, hansı menyu aktiv olsun }
+const MARSRUT = {
+  siparisler: { fn: siparislerSekmesi, menyu: "siparisler" },
+  musteriler: { fn: musterilerSekmesi, menyu: "musteriler" },
+  urunler: { fn: urunlerSekmesi, menyu: "urunler" },
+  izleme: { fn: izlemeSekmesi, menyu: "izleme" },
+  ayarlar: { fn: ayarlarSekmesi, menyu: "ayarlar" },
+  kategoriler: { fn: kategorilerSekmesi, menyu: "ayarlar" },
+  yedek: { fn: ayarlarSekmesi, menyu: "ayarlar" }, // köhnə link
+};
 
 function menyuCiz() {
-  $("#sekmeler").innerHTML = SEKMELER.map((s) => `
-    <a href="#${s.id}" data-sekme="${s.id}">${s.ikon}<span>${kacis(t("admin.sekme." + s.id))}</span>
-      ${s.id === "siparisler" ? `<b class="sayac" id="yeni-sayac" hidden></b>` : ""}</a>`).join("");
+  $("#sekmeler").innerHTML = MENYU.map((m) => `
+    <a href="${m.href}" data-menyu="${m.id}" class="${m.orta ? "orta" : ""}">
+      <span class="ikon-kap">${m.ikon}</span><span>${kacis(t(m.metin))}</span>
+      ${m.id === "siparisler" ? `<b class="sayac" id="yeni-sayac" hidden></b>` : ""}
+    </a>`).join("");
 }
 
 function sekmeAc() {
   const parcalar = location.hash.slice(1).split("/");
-  let ad = ESKI[parcalar[0]] || parcalar[0] || "siparisler";
-  const sekme = SEKMELER.find((s) => s.id === ad) || SEKMELER[0];
-  $$("#sekmeler a").forEach((a) => a.classList.toggle("aktif", a.dataset.sekme === sekme.id));
+  const m = MARSRUT[parcalar[0]] || MARSRUT.siparisler;
+  $$("#sekmeler a").forEach((a) => a.classList.toggle("aktif", a.dataset.menyu === m.menyu));
   const kok = $("#icerik");
   kok.innerHTML = "";
   window.scrollTo(0, 0);
-  sekme.fn(kok, parcalar.slice(1));
+  m.fn(kok, parcalar.slice(1));
 }
 
 const kapat = onAuthStateChanged(auth, async (u) => {
@@ -48,7 +62,7 @@ const kapat = onAuthStateChanged(auth, async (u) => {
     return location.replace("./?yetki=yok");
   }
   menyuCiz();
-  siparisleriBaslat(); // canlı dinləmə + bildirişlər (bütün tablarda işləyir)
+  siparisleriBaslat(); // canlı dinləmə + bildirişlər (bütün bölmələrdə işləyir)
   window.addEventListener("hashchange", sekmeAc);
   sekmeAc();
 });

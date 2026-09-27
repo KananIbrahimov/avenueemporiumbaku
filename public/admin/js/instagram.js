@@ -61,6 +61,13 @@ function acikRenk(hex, oran) {
   return `rgb(${k(n >> 16)}, ${k((n >> 8) & 255)}, ${k(n & 255)})`;
 }
 
+// Metal gümüşü keçid (düymələrdəki kimi)
+function gumusuFirca(c, y, h) {
+  const g = c.createLinearGradient(0, y, 0, y + h);
+  g.addColorStop(0, "#eef0f3"); g.addColorStop(0.55, "#c3c8ce"); g.addColorStop(1, "#a4aab1");
+  return g;
+}
+
 function yuvarlakKutu(c, x, y, w, h, r) {
   c.beginPath();
   c.moveTo(x + r, y);
@@ -113,7 +120,7 @@ async function sekilCiz(canvas, { img, urun, format, renk }) {
   } catch {}
 
   // Fon + şəkil (cover)
-  c.fillStyle = "#1c1a17";
+  c.fillStyle = "#0b0c0e";
   c.fillRect(0, 0, W, H);
   if (img) {
     const o = Math.max(W / img.width, H / img.height);
@@ -146,9 +153,9 @@ async function sekilCiz(canvas, { img, urun, format, renk }) {
   c.font = '700 28px "Inter", sans-serif';
   const yeni = t("admin.ig.yeni");
   const yw = c.measureText(yeni).width + 44;
-  c.fillStyle = renk;
+  c.fillStyle = gumusuFirca(c, ustY - 44, 56);
   yuvarlakKutu(c, W - pad - yw, ustY - 44, yw, 56, 28); c.fill();
-  c.fillStyle = "#fff";
+  c.fillStyle = "#0b0c0e";
   c.fillText(yeni, W - pad - yw + 22, ustY - 6);
 
   // Aşağı blok (aşağıdan yuxarı)
@@ -159,9 +166,9 @@ async function sekilCiz(canvas, { img, urun, format, renk }) {
   c.font = '700 54px "Inter", sans-serif';
   const q = para(urun.satisFiyati);
   const qw = c.measureText(q).width + 64;
-  c.fillStyle = renk;
+  c.fillStyle = gumusuFirca(c, y - 92, 92);
   yuvarlakKutu(c, pad, y - 92, qw, 92, 46); c.fill();
-  c.fillStyle = "#fff";
+  c.fillStyle = "#0b0c0e";
   c.fillText(q, pad + 32, y - 27);
   if (indirim) {
     c.font = '600 32px "Inter", sans-serif';

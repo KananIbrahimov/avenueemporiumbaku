@@ -2,7 +2,8 @@
 import { db, collection, query, where, onSnapshot } from "../ortak/firebase.js";
 import { t } from "../ortak/i18n.js";
 import { para } from "../ortak/fiyat.js";
-import { $, kacis, tarih, durumEtiketi } from "../ortak/yardim.js";
+import { $, kacis, tarih, durumEtiketi, bildir } from "../ortak/yardim.js";
+import { adimlarHtml, kargoHtml } from "../ortak/izleme-ui.js";
 import { girisHazir } from "./ust.js";
 
 const liste = $("#liste");
@@ -27,6 +28,8 @@ if (!kullanici) {
               <div class="soluk">${kacis([o.marka, o.olcu, o.renk].filter(Boolean).join(" · "))}</div>
               <div class="soluk">${kacis(t("urun.adet"))}: ${o.adet} × ${para(o.birimFiyat)} = <b>${para(o.adet * o.birimFiyat)}</b></div>
               <div class="soluk">${kacis(tarih(o.olusturma))}</div>
+              <div style="margin-top:12px">${adimlarHtml(o)}</div>
+              ${kargoHtml(o) ? `<div style="margin-top:10px">${kargoHtml(o)}</div>` : ""}
             </div>
           </div>`).join("")
         : `<div class="bos"><p>${kacis(t("siparislerim.bos"))}</p><a class="btn" href="./">${kacis(t("genel.vitrineDon"))}</a></div>`;
@@ -34,3 +37,10 @@ if (!kullanici) {
     (e) => { console.error(e); liste.innerHTML = `<p class="bos">${kacis(t("hata.yukleme"))}</p>`; },
   );
 }
+
+// İzləmə koduna toxunanda kopyala
+liste.addEventListener("click", async (e) => {
+  const k = e.target.closest("[data-kopyala]");
+  if (!k) return;
+  try { await navigator.clipboard.writeText(k.dataset.kopyala); bildir(t("izleme.kodKopyalandi"), "basari"); } catch {}
+});

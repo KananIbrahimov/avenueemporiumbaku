@@ -8,7 +8,7 @@ import {
 import {
   getFirestore, connectFirestoreEmulator,
   collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
-  query, where, orderBy, limit, onSnapshot, serverTimestamp, writeBatch, Timestamp,
+  query, where, orderBy, limit, onSnapshot, serverTimestamp, writeBatch, Timestamp, arrayUnion,
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 import { firebaseConfig } from "./ayarlar.js";
 
@@ -30,7 +30,7 @@ export {
   onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
   sendEmailVerification, sendPasswordResetEmail, updateProfile, reload,
   collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
-  query, where, orderBy, limit, onSnapshot, serverTimestamp, writeBatch, Timestamp,
+  query, where, orderBy, limit, onSnapshot, serverTimestamp, writeBatch, Timestamp, arrayUnion,
 };
 
 /** Giriş durumu ilk kez belli olunca çözülür. */

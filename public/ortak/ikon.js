@@ -14,5 +14,6 @@ export const IKON = {
   yukle: s('<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>'),
   kopyala: s('<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>'),
   bagla: s('<path d="M6 6l12 12M18 6 6 18"/>'),
+  izleme: s('<path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'),
   artir: s('<path d="M12 5v14M5 12h14"/>'),
 };
