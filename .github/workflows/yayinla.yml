@@ -38,6 +38,8 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
         run: |
           set -o pipefail
+          # versiya.json hər iki sayt paketlənməmişdən əvvəl hazır olsun (gitignore-dadır)
+          node skript/versiya.js
           if ! npx --yes firebase-tools@latest deploy --only hosting,firestore:rules --project default --non-interactive 2>&1 | tee "$RUNNER_TEMP/deploy.log"; then
             # Xətanın səbəbi GitHub-da qısa qeyd kimi görünsün
             grep -iE "error|permission|denied|403|401|not have|failed" "$RUNNER_TEMP/deploy.log" | tail -n 8 | while IFS= read -r l; do echo "::error::$l"; done
