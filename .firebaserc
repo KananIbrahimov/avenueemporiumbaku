@@ -1,0 +1,20 @@
+{
+  "projects": {
+    "default": "avenueemporiumbaku",
+    "demo": "demo-avenuebaku"
+  },
+  "targets": {
+    "avenueemporiumbaku": {
+      "hosting": {
+        "magaza": ["avenueemporiumbaku"],
+        "admin": ["avenueemporiumbaku-admin"]
+      }
+    },
+    "demo-avenuebaku": {
+      "hosting": {
+        "magaza": ["demo-avenuebaku"],
+        "admin": ["demo-avenuebaku-admin"]
+      }
+    }
+  }
+}

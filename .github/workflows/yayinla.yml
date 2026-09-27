@@ -1,0 +1,39 @@
+# main dalına her yüklemede iki siteyi ve Firestore kurallarını Firebase'e yayınlar.
+# Gerekli: GitHub > Settings > Secrets and variables > Actions > FIREBASE_SERVICE_ACCOUNT
+# (Firebase servis hesabı JSON anahtarı — README'de nasıl alınacağı yazıyor)
+name: Firebase'e yayınla
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  yayinla:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Anahtar var mı?
+        id: anahtar
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$SA" ]; then
+            echo "FIREBASE_SERVICE_ACCOUNT tanımlı değil, yayın atlandı."
+            echo "var=hayir" >> "$GITHUB_OUTPUT"
+          else
+            echo "$SA" > "$RUNNER_TEMP/sa.json"
+            echo "var=evet" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.anahtar.outputs.var == 'evet'
+        with:
+          node-version: 22
+
+      - name: Yayınla (mağaza + admin + kurallar)
+        if: steps.anahtar.outputs.var == 'evet'
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: npx --yes firebase-tools@latest deploy --only hosting,firestore:rules --project default --non-interactive

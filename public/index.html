@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AvenueBaku</title>
+<meta name="theme-color" content="#faf8f5">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="ikon/ikon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="ikon/ikon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AvenueBaku">
+<link rel="stylesheet" href="ortak/stil.css">
+</head>
+<body>
+<header class="ust"><div class="kap">
+  <a class="logo" href="./">AVENUE<small>BAKU</small></a>
+  <nav id="ust-nav"></nav>
+</div></header>
+<main class="kap">
+  <section class="vitrin-ust">
+    <h1 data-t="vitrin.baslik"></h1>
+    <p data-t="vitrin.alt"></p>
+  </section>
+  <div id="uye-kutusu"></div>
+  <div class="cipler" id="kategoriler"></div>
+  <div class="filtreler">
+    <input id="f-ara" type="search" data-t-ph="filtre.ara">
+    <select id="f-marka"></select>
+    <select id="f-olcu"></select>
+    <select id="f-renk"></select>
+    <select id="f-sirala">
+      <option value="yeni" data-t="sirala.yeni"></option>
+      <option value="ucuz" data-t="sirala.ucuz"></option>
+      <option value="baha" data-t="sirala.baha"></option>
+    </select>
+  </div>
+  <div class="izgara" id="urunler"><p class="bos" data-t="genel.yukleniyor"></p></div>
+</main>
+<footer class="alt">© AvenueBaku</footer>
+<script type="module" src="js/vitrin.js"></script>
+</body>
+</html>

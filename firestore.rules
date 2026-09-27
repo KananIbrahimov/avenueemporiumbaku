@@ -1,0 +1,113 @@
+rules_version = '2';
+
+// AvenueBaku — Firestore güvenlik kuralları
+//
+// Koleksiyonlar:
+//   kullanicilar/{uid}   müşteri ve admin profilleri (rol: "musteri" | "admin")
+//   kategoriler/{id}     Geyim, Ayaqqabı ... (admin yönetir)
+//   urunler/{id}         vitrinde görünen ürün bilgileri (herkese açık)
+//   urunDetay/{id}       GİZLİ: alış fiyatı, kargo, vergi, kâr %, kaynak link (sadece admin)
+//   urunFoto/{id}        ürün fotoğrafları (sıkıştırılmış, herkese açık)
+//   siparisler/{id}      müşteri siparişleri / istekleri
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function girisli() {
+      return request.auth != null;
+    }
+
+    function dogrulanmis() {
+      return girisli() && request.auth.token.email_verified == true;
+    }
+
+    function admin() {
+      return girisli()
+        && exists(/databases/$(database)/documents/kullanicilar/$(request.auth.uid))
+        && get(/databases/$(database)/documents/kullanicilar/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    function metin(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
+    // ---------- Kullanıcılar ----------
+    match /kullanicilar/{uid} {
+      allow read: if (girisli() && request.auth.uid == uid) || admin();
+
+      // Müşteri kayıt olurken kendi profilini açar. Rolü "musteri" dışında bir şey olamaz.
+      // Admin rolü sadece Firebase Console'dan elle verilir.
+      allow create: if girisli()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['ad', 'soyad', 'email', 'rol', 'dil', 'olusturma'])
+        && metin(request.resource.data.ad, 1, 50)
+        && metin(request.resource.data.soyad, 1, 50)
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.rol == 'musteri'
+        && request.resource.data.olusturma == request.time;
+
+      // Müşteri adını/soyadını/dilini değiştirebilir; rolünü ve e-postasını değiştiremez.
+      allow update: if (girisli()
+          && request.auth.uid == uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ad', 'soyad', 'dil'])
+          && metin(request.resource.data.ad, 1, 50)
+          && metin(request.resource.data.soyad, 1, 50))
+        || admin();
+
+      allow delete: if admin();
+    }
+
+    // ---------- Kategoriler ----------
+    match /kategoriler/{id} {
+      allow read: if true;
+      allow write: if admin();
+    }
+
+    // ---------- Ürünler (vitrin) ----------
+    match /urunler/{id} {
+      // Pasif ürünleri sadece admin görür. Vitrin sorgusu where("aktif","==",true) ile yapılmalı.
+      allow read: if resource.data.aktif == true || admin();
+      allow write: if admin();
+    }
+
+    // ---------- Ürün gizli detayları ----------
+    match /urunDetay/{id} {
+      allow read, write: if admin();
+    }
+
+    // ---------- Ürün fotoğrafları ----------
+    match /urunFoto/{id} {
+      allow read: if true;
+      allow write: if admin();
+    }
+
+    // ---------- Siparişler ----------
+    match /siparisler/{id} {
+      allow read: if admin()
+        || (girisli() && resource.data.kullaniciId == request.auth.uid);
+
+      // Sadece e-postası doğrulanmış üyeler sipariş verebilir.
+      // Fiyat, ürünün o anki üye fiyatıyla aynı olmak zorunda (fiyat elle değiştirilemez).
+      allow create: if dogrulanmis()
+        && request.resource.data.keys().hasOnly([
+             'kullaniciId', 'musteriAd', 'musteriEmail', 'telefon', 'musteriNotu',
+             'urunId', 'urunAd', 'marka', 'olcu', 'renk', 'adet', 'birimFiyat',
+             'durum', 'olusturma'])
+        && request.resource.data.kullaniciId == request.auth.uid
+        && request.resource.data.musteriEmail == request.auth.token.email
+        && metin(request.resource.data.musteriAd, 1, 120)
+        && metin(request.resource.data.telefon, 7, 25)
+        && metin(request.resource.data.musteriNotu, 0, 500)
+        && metin(request.resource.data.olcu, 0, 30)
+        && metin(request.resource.data.renk, 0, 40)
+        && request.resource.data.adet is int
+        && request.resource.data.adet >= 1 && request.resource.data.adet <= 20
+        && request.resource.data.durum == 'yeni'
+        && request.resource.data.olusturma == request.time
+        && get(/databases/$(database)/documents/urunler/$(request.resource.data.urunId)).data.aktif == true
+        && request.resource.data.birimFiyat == get(/databases/$(database)/documents/urunler/$(request.resource.data.urunId)).data.uyeFiyati;
+
+      allow update, delete: if admin();
+    }
+  }
+}

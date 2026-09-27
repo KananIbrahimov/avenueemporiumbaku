@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>AvenueBaku Admin</title>
+<meta name="theme-color" content="#1c1a17">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="../ikon/ikon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../ikon/admin-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AB Admin">
+<link rel="stylesheet" href="../ortak/stil.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-giris">
+<main class="dar">
+  <div style="text-align:center;margin-bottom:20px">
+    <div class="logo">AVENUE<small>ADMIN</small></div>
+  </div>
+  <div class="kart">
+    <h1 data-t="admin.girisBaslik"></h1>
+    <div id="mesaj"></div>
+    <form id="form" novalidate>
+      <div class="alan"><label for="email" data-t="alan.email"></label><input id="email" type="email" autocomplete="username" required></div>
+      <div class="alan"><label for="sifre" data-t="alan.sifre"></label><input id="sifre" type="password" autocomplete="current-password" required></div>
+      <button class="btn btn-tam" type="submit" data-t="giris.buton"></button>
+    </form>
+  </div>
+</main>
+<script type="module" src="js/giris.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AvenueBaku</title>
+<meta name="theme-color" content="#faf8f5">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="ikon/ikon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="ikon/ikon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AvenueBaku">
+<link rel="stylesheet" href="ortak/stil.css">
+</head>
+<body>
+<header class="ust"><div class="kap">
+  <a class="logo" href="./">AVENUE<small>BAKU</small></a>
+  <nav id="ust-nav"></nav>
+</div></header>
+<main class="dar">
+  <div class="kart">
+    <h1 data-t="giris.baslik"></h1>
+    <div id="mesaj"></div>
+    <form id="form" novalidate>
+      <div class="alan"><label for="email" data-t="alan.email"></label><input id="email" type="email" autocomplete="email" required></div>
+      <div class="alan"><label for="sifre" data-t="alan.sifre"></label><input id="sifre" type="password" autocomplete="current-password" required></div>
+      <button class="btn btn-tam" type="submit" data-t="giris.buton"></button>
+    </form>
+    <p style="margin:16px 0 0;text-align:center"><a href="sifre.html" data-t="giris.unuttum"></a></p>
+    <p class="soluk" style="text-align:center"><span data-t="giris.hesapYok"></span> <a href="kayit.html" data-t="nav.kayit"></a></p>
+  </div>
+</main>
+<script type="module" src="js/hesab.js"></script>
+</body>
+</html>
