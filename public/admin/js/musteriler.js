@@ -78,7 +78,8 @@ export async function musterilerSekmesi(ana) {
   };
 
   kok.innerHTML = `
-    <div class="bolum-ust"><h1>${kacis(t("admin.sekme.musteriler"))}</h1></div>
+    <div class="bolum-ust"><h1>👥 ${kacis(t("admin.sekme.musteriler"))}</h1>
+      <a class="btn btn-ince btn-kucuk" href="#ayarlar">← ${kacis(t("admin.sekme.ayarlar"))}</a></div>
     <input type="search" id="ara" placeholder="${kacis(t("filtre.ara"))}" style="margin-bottom:10px">
     <div class="cipler" style="padding-top:0">
       ${["sifaris", "yeni", "ad"].map((s) => `<button class="cip ${s === sirala ? "secili" : ""}" data-sirala="${s}">${kacis(t("admin.mus.sirala." + s))}</button>`).join("")}

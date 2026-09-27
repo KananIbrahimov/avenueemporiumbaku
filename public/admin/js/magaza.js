@@ -4,6 +4,8 @@ import { t, yerel } from "../../ortak/i18n.js";
 import { $, $$, kacis, hataMesaji } from "../../ortak/yardim.js";
 import { fiyatHtml } from "../../js/fiyat-goster.js";
 import { kategorileriGetir } from "./veri.js";
+import { instagramAc } from "./instagram.js";
+import { IKON } from "../../ortak/ikon.js";
 
 let secim = { kategori: "", ara: "", pasif: false };
 
@@ -44,20 +46,29 @@ export async function magazaSekmesi(kok) {
       (!secim.kategori || u.kategoriId === secim.kategori) &&
       (!q || `${yerel(u.ad)} ${u.marka || ""}`.toLocaleLowerCase("az").includes(q)));
     $("#m-urunler", kok).innerHTML = liste.length ? liste.map((u) => `
-      <a class="urun-kart ${u.aktif ? "" : "pasif"}" href="#urunler/${encodeURIComponent(u.id)}">
-        <div class="foto">
-          ${u.kapak ? `<img src="${kacis(u.kapak)}" alt="" loading="lazy">` : ""}
-          ${Number(u.indirimYuzde) > 0 ? `<span class="rozet">−${kacis(u.indirimYuzde)}%</span>` : ""}
-          ${u.aktif ? "" : `<span class="rozet" style="left:auto;right:8px">${kacis(t("admin.magaza.gizli"))}</span>`}
-        </div>
-        <div class="marka">${kacis(u.marka || "")}</div>
-        <div class="ad">${kacis(yerel(u.ad))}</div>
-        ${fiyatHtml(u, false)}
-      </a>`).join("")
+      <div class="urun-kart-kap">
+        <a class="urun-kart ${u.aktif ? "" : "pasif"}" href="#urunler/${encodeURIComponent(u.id)}">
+          <div class="foto">
+            ${u.kapak ? `<img src="${kacis(u.kapak)}" alt="" loading="lazy">` : ""}
+            ${Number(u.indirimYuzde) > 0 ? `<span class="rozet">−${kacis(u.indirimYuzde)}%</span>` : ""}
+            ${u.aktif ? "" : `<span class="rozet" style="left:auto;right:8px">${kacis(t("admin.magaza.gizli"))}</span>`}
+          </div>
+          <div class="marka">${kacis(u.marka || "")}</div>
+          <div class="ad">${kacis(yerel(u.ad))}</div>
+          ${fiyatHtml(u, false)}
+        </a>
+        <button type="button" class="ig-mini" data-ig="${kacis(u.id)}" aria-label="${kacis(t("admin.magaza.igPaylas"))}" title="${kacis(t("admin.magaza.igPaylas"))}">${IKON.instagram}</button>
+      </div>`).join("")
       : `<div class="bos" style="grid-column:1/-1"><p>${kacis(t(urunler.length ? "vitrin.bos" : "admin.urun.bos"))}</p>
           <a class="btn" href="#urunler/yeni">+ ${kacis(t("admin.urun.yeni"))}</a></div>`;
   };
   katCiz(); ciz();
+  $("#m-urunler", kok).addEventListener("click", (e) => {
+    const b = e.target.closest("[data-ig]");
+    if (!b) return;
+    e.preventDefault();
+    instagramAc(b.dataset.ig);
+  });
   $("#m-kat", kok).addEventListener("click", (e) => {
     const b = e.target.closest("[data-k]"); if (!b) return;
     secim.kategori = b.dataset.k; katCiz(); ciz();

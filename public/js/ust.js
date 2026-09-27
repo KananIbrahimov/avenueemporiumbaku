@@ -1,6 +1,7 @@
 // Mağaza səhifələrinin ortaq üst hissəsi, aşağı menyu (5 ikon), giriş vəziyyəti və PWA
 // Aşağı menyu: Bəyəndiklərim · Kataloq · (ortada) Ana səhifə · Səbətim · Ayarlar
-import { auth, onAuthStateChanged, profilGetir } from "../ortak/firebase.js";
+import { auth, onAuthStateChanged, profilGetir, signOut } from "../ortak/firebase.js";
+import { kilitBaslat } from "../ortak/kilit.js";
 import { t, sayfayiCevir } from "../ortak/i18n.js";
 import { kacis } from "../ortak/yardim.js";
 import { temaUygula } from "../ortak/tema.js";
@@ -91,6 +92,12 @@ onAuthStateChanged(auth, async (kullanici) => {
   favorileriBagla(kullanici, profil);
   dinleyiciler.forEach((fn) => fn(durum));
   hazirCoz(durum);
+});
+
+// Face ID kilidi (aktivdirsə və istifadəçi daxil olubsa)
+kilitBaslat({
+  girisli: () => girisHazir.then((d) => !!d.kullanici),
+  cixis: async () => { await signOut(auth); location.href = "giris.html"; },
 });
 
 // "Ana ekrana əlavə et" (PWA)

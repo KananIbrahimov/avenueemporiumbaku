@@ -10,6 +10,7 @@ rules_version = '2';
 //   urunFoto/{id}        ürün fotoğrafları (sıkıştırılmış, herkese açık)
 //   siparisler/{id}      müşteri siparişleri / istekleri
 //   ayarlar/{id}         admin ayarları (instagram şablonu) — sadece admin
+//   siparisMaliyye/{id}  sifarişin xərcləri və bəh — sadece admin (Finans hesabatı)
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -89,6 +90,11 @@ service cloud.firestore {
 
     // ---------- Admin ayarları (Instagram şablonu vb.) ----------
     match /ayarlar/{id} {
+      allow read, write: if admin();
+    }
+
+    // ---------- Sifariş maliyyəsi (alış, kargo, vergi, bəh) — YALNIZ admin ----------
+    match /siparisMaliyye/{id} {
       allow read, write: if admin();
     }
 

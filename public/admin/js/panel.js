@@ -5,22 +5,24 @@ import { t, sayfayiCevir } from "../../ortak/i18n.js";
 import { $, $$, kacis } from "../../ortak/yardim.js";
 import { temaUygula } from "../../ortak/tema.js";
 import { versiyaYoxla } from "../../ortak/versiya.js";
+import { kilitBaslat } from "../../ortak/kilit.js";
 import { IKON } from "../../ortak/ikon.js";
 import { siparisleriBaslat, siparislerSekmesi } from "./siparisler.js";
 import { urunlerSekmesi } from "./urunler.js";
 import { musterilerSekmesi } from "./musteriler.js";
-import { ayarlarSekmesi } from "./ayarlar.js";
+import { ayarlarSekmesi, kurslarSekmesi, instagramSablonSekmesi, yedekSekmesi } from "./ayarlar.js";
 import { magazaSekmesi } from "./magaza.js";
+import { finansSekmesi } from "./finans.js";
 import { siyahiSekmesi } from "./siyahi-sehife.js";
 
 temaUygula();
 versiyaYoxla();
 sayfayiCevir();
 
-// Aşağı menyu: Mağaza · Müştərilər · (+) Məhsul · Sifarişlər (mərhələlər + kargo) · Ayarlar
+// Aşağı menyu: Mağaza · Finans · (+) Məhsul · Sifarişlər (mərhələlər + kargo) · Ayarlar (Müştərilər Ayarlar-da)
 const MENYU = [
   { id: "magaza", ikon: IKON.magaza, metin: "admin.sekme.magaza", href: "#magaza" },
-  { id: "musteriler", ikon: IKON.musteri, metin: "admin.sekme.musteriler", href: "#musteriler" },
+  { id: "finans", ikon: IKON.finans, metin: "admin.sekme.finans", href: "#finans" },
   { id: "urunler", ikon: IKON.artir, metin: "admin.menyu.urunEkle", href: "#urunler/yeni", orta: true },
   { id: "siparisler", ikon: IKON.siparis, metin: "admin.sekme.siparisler", href: "#siparisler" },
   { id: "ayarlar", ikon: IKON.ayar, metin: "admin.sekme.ayarlar", href: "#ayarlar" },
@@ -29,7 +31,8 @@ const MENYU = [
 // Marşrutlar: hash → { çəkən funksiya, hansı menyu aktiv olsun }
 const MARSRUT = {
   magaza: { fn: magazaSekmesi, menyu: "magaza" },
-  musteriler: { fn: musterilerSekmesi, menyu: "musteriler" },
+  finans: { fn: finansSekmesi, menyu: "finans" },
+  musteriler: { fn: musterilerSekmesi, menyu: "ayarlar" },
   urunler: { fn: urunlerSekmesi, menyu: "urunler" },
   siparisler: { fn: siparislerSekmesi, menyu: "siparisler" },
   izleme: { fn: siparislerSekmesi, menyu: "siparisler" }, // köhnə link
@@ -38,7 +41,9 @@ const MARSRUT = {
   markalar: { fn: siyahiSekmesi("markalar"), menyu: "ayarlar" },
   olculer: { fn: siyahiSekmesi("olculer"), menyu: "ayarlar" },
   renkler: { fn: siyahiSekmesi("renkler"), menyu: "ayarlar" },
-  yedek: { fn: ayarlarSekmesi, menyu: "ayarlar" }, // köhnə link
+  kurslar: { fn: kurslarSekmesi, menyu: "ayarlar" },
+  instagram: { fn: instagramSablonSekmesi, menyu: "ayarlar" },
+  yedek: { fn: yedekSekmesi, menyu: "ayarlar" },
 };
 
 function menyuCiz() {
@@ -67,6 +72,7 @@ const kapat = onAuthStateChanged(auth, async (u) => {
     await signOut(auth);
     return location.replace("./?yetki=yok");
   }
+  kilitBaslat({ girisli: async () => true, cixis: async () => { await signOut(auth); location.replace("./"); } });
   menyuCiz();
   siparisleriBaslat(); // canlı dinləmə + bildirişlər (bütün bölmələrdə işləyir)
   window.addEventListener("hashchange", sekmeAc);

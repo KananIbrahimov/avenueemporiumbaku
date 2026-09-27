@@ -6,6 +6,7 @@ import { $, $$, kacis, tarih, bildir, hataMesaji, durumEtiketi, SIPARIS_DURUMLAR
 import { detayGetir } from "./veri.js";
 import { adimlarHtml, IZLEME_ADIMLARI } from "../../ortak/izleme-ui.js";
 import { kargoHtml, kargoBagla, kargoDatalist } from "./kargo.js";
+import { maliyyePenceresi } from "./maliyye.js";
 
 export let siparisler = [];
 const dinleyiciler = new Set();
@@ -135,6 +136,9 @@ async function ciz() {
   // Növbəti mərhələ / addıma toxunma / ləğv / bərpa
   const deyis = async (id, durum, sual) => {
     if (sual && !confirm(sual)) return;
+    // Yeni sifariş qəbul edilərkən maliyyə pəncərəsi açılır (alış, kargo, vergi, bəh)
+    const o = siparisler.find((x) => x.id === id);
+    if (durum === "tesdiq" && o?.durum === "yeni") { await maliyyePenceresi(o, { rejim: "qebul", durumDegistir }); return; }
     try {
       await durumDegistir(id, durum);
       bildir(`${t("admin.kaydedildi")}: ${t("durum." + durum)}`, "basari");
@@ -146,6 +150,10 @@ async function ciz() {
   $$("[data-legv]", kok).forEach((b) => b.addEventListener("click", () => deyis(b.dataset.legv, "legv", t("izleme.legvOnay"))));
   $$("[data-berpa]", kok).forEach((b) => b.addEventListener("click", () => deyis(b.dataset.berpa, "yeni")));
   kargoBagla(kok, { siparisler: () => siparisler, durumDegistir, yenidenCiz: ciz });
+  $$("[data-mal]", kok).forEach((b) => b.addEventListener("click", () => {
+    const o = siparisler.find((x) => x.id === b.dataset.mal);
+    if (o) maliyyePenceresi(o, { rejim: "duzelt", durumDegistir });
+  }));
   $$("[data-sil]", kok).forEach((b) => b.addEventListener("click", async () => {
     if (!confirm(t("admin.sip.silOnay"))) return;
     try { await deleteDoc(doc(db, "siparisler", b.dataset.sil)); } catch (e) { bildir(hataMesaji(e), "hata"); }
@@ -179,6 +187,8 @@ function kartHtml(o) {
         <span class="soluk">${kacis([o.marka, o.olcu && `${t("urun.olcu")}: ${o.olcu}`, o.renk && `${t("urun.renk")}: ${o.renk}`].filter(Boolean).join(" · "))}</span>
       </div>
       <div>${o.adet} × ${para(o.birimFiyat)} = <b>${para(o.adet * o.birimFiyat)}</b></div>
+      ${o.beh != null && o.odenecek != null ? `<div class="odeme-satir"><span>🤝 ${kacis(t("admin.mal.beh"))}: <b>${para(o.beh)}</b></span>
+        <span>⏳ ${kacis(t("admin.mal.qaliq"))}: <b>${para(o.odenecek - o.beh)}</b></span></div>` : ""}
       <div class="soluk">
         ✉️ <a href="mailto:${kacis(o.musteriEmail)}">${kacis(o.musteriEmail)}</a>
         ${tel ? ` · 📞 <a href="tel:${kacis(tel)}">${kacis(o.telefon)}</a> · <a href="https://wa.me/${kacis(wa)}" target="_blank" rel="noopener">WhatsApp</a>` : ""}
@@ -192,6 +202,7 @@ function kartHtml(o) {
         ${o.durum === "legv"
           ? `<button class="btn btn-ince btn-kucuk" data-berpa="${kacis(o.id)}">↺ ${kacis(t("admin.sip.berpa"))}</button>`
           : o.durum !== "catdirildi" ? `<button class="btn btn-ince btn-kucuk btn-legv" data-legv="${kacis(o.id)}">✕ ${kacis(t("izleme.legv"))}</button>` : ""}
+        ${o.durum !== "yeni" ? `<button class="btn btn-ince btn-kucuk" data-mal="${kacis(o.id)}">💰 ${kacis(t("admin.mal.duzelt"))}</button>` : ""}
         <button class="btn btn-link btn-kucuk" data-sil="${kacis(o.id)}" style="margin-left:auto">${kacis(t("admin.sil"))}</button>
       </div>
     </div>`;

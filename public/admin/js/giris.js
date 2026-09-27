@@ -6,6 +6,7 @@ import { versiyaYoxla } from "../../ortak/versiya.js";
 import { $, kacis, hataMesaji } from "../../ortak/yardim.js";
 
 temaUygula();
+document.documentElement.classList.remove("kilitli"); // giriş səhifəsində kilid ekranı yoxdur
 versiyaYoxla();
 sayfayiCevir();
 const mesaj = (m, tur = "hata") => ($("#mesaj").innerHTML = `<div class="kutu-mesaj kutu-${tur}">${kacis(m)}</div>`);

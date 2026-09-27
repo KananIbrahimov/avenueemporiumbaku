@@ -7,6 +7,7 @@ import { MAGAZA_URL } from "../ortak/ayarlar.js";
 import { t, DILLER, dil, dilDegistir } from "../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji, sifreKontrol } from "../ortak/yardim.js";
 import { temaAyarlari } from "../ortak/tema.js";
+import { kilitAyari } from "../ortak/kilit.js";
 import { girisDinle } from "./ust.js";
 import { imzaHtml } from "../ortak/surum.js";
 
@@ -27,6 +28,11 @@ girisDinle(({ kullanici, profil, uye }) => {
   $("#sifre-alan").hidden = !girisli;
   $("#diger-alan").hidden = !girisli;
   $("#cixis").hidden = !girisli;
+  $("#kilit-alan").hidden = !girisli;
+  if (girisli && !$("#kilit-bolum").dataset.hazir) {
+    $("#kilit-bolum").dataset.hazir = "1";
+    kilitAyari($("#kilit-bolum"), () => kullanici.email || "AvenueBaku");
+  }
 
   if (!girisli) {
     kok.innerHTML = `

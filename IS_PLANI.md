@@ -76,7 +76,14 @@
 - [x] Dizayn: həmişə qaranlıq, gümüşü rənglər (SafeMoney üslubu), hər iki saytda
 - [x] Telefon yönümlü: aşağı menyu (Mağaza, Sifarişlərim, Ayarlar)
 - [x] Məhsul səhifəsində "Paylaş" düyməsi
-- [ ] Mobil görünüm son kontrolleri
+- [x] Mobil görünüm son kontrolleri (v1.8 tam tarama: 144 səhifə/vəziyyət, 0 problem)
+- [x] v1.8 Face ID / Touch ID kilidi — hər iki saytda Ayarlar → 🔐 (cihaza/sayta görə; 1 dəq arxa fondan sonra yenidən kilid)
+- [x] v1.8 Zoom bağlı: 2 dəfə toxunma və barmaqla böyütmə yoxdur (Safari + ana ekran tətbiqi)
+- [x] v1.8 Admin Mağaza: hər məhsul kartında kiçik Instagram ikonu (yenidən paylaşmaq)
+- [x] v1.8 Admin Ayarlar standart sətirlər: Müştərilər, Məhsullar, Kateqoriya/Brend/Ölçü/Rəng, Valyuta kursları, Instagram şablonu, Ehtiyat nüsxə — hər biri ayrı səhifə; "Mağazaya bax" götürüldü
+- [x] v1.8 Aşağı menyu: Müştərilər yerinə 📊 Finans
+- [x] v1.8 "Qəbul et" pəncərəsi: alış, kargo, vergi, satış qiyməti, alınan bəh → maya, qazanc, qalıq ödəniş; müştəri bəh/qalığı görür
+- [x] v1.8 Finans: ay seçimi, alınan mal, xərc, satış, qazanc (reallaşan + yolda), bəh, qalıq alacaq; 6 aylıq qrafiklər + cədvəl; "💰 Maliyyə" ilə sonradan düzəliş
 
 ## Faz 3 — Yayın ve sonrası
 - [ ] avenuebaku.az alan adını al ve bağla (+ admin.avenuebaku.az)

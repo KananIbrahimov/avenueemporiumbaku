@@ -28,6 +28,9 @@ if (!kullanici) {
               <div class="soluk">${kacis([o.marka, o.olcu, o.renk].filter(Boolean).join(" · "))}</div>
               <div class="soluk">${kacis(t("urun.adet"))}: ${o.adet} × ${para(o.birimFiyat)} = <b>${para(o.adet * o.birimFiyat)}</b></div>
               <div class="soluk">${kacis(tarih(o.olusturma))}</div>
+              ${o.beh != null && o.odenecek != null && o.durum !== "legv" ? `<div class="odeme-satir">
+                <span>${kacis(t("siparislerim.odenib"))}: <b>${para(o.beh)}</b></span>
+                <span>${kacis(t("siparislerim.qaliq"))}: <b>${para(Math.max(0, o.odenecek - o.beh))}</b></span></div>` : ""}
               <div style="margin-top:12px">${adimlarHtml(o)}</div>
               ${kargoHtml(o) ? `<div style="margin-top:10px">${kargoHtml(o)}</div>` : ""}
             </div>
