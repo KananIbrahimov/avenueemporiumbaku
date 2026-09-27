@@ -60,6 +60,8 @@ export async function musterilerSekmesi(ana) {
               <b>${kacis(k.ad)} ${kacis(k.soyad)}</b>
               ${k.rol === "admin" ? `<span class="durum durum-sifarisVerildi" style="margin-left:6px">Admin</span>` : ""}
               <div class="soluk" style="overflow:hidden;text-overflow:ellipsis"><a href="mailto:${kacis(k.email)}">${kacis(k.email)}</a></div>
+              ${k.telefon ? `<div class="soluk">📞 <a href="tel:${kacis(k.telefon.replace(/[^\d+]/g, ""))}">${kacis(k.telefon)}</a>
+                · <a href="https://wa.me/${kacis(((k.whatsappEyni === false && k.whatsapp) || k.telefon).replace(/\D/g, ""))}" target="_blank" rel="noopener">WhatsApp${k.whatsappEyni === false && k.whatsapp ? `: ${kacis(k.whatsapp)}` : ""}</a></div>` : ""}
             </div>
           </div>
           <div class="stat-satir">

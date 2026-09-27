@@ -47,12 +47,15 @@ service cloud.firestore {
         && request.resource.data.rol == 'musteri'
         && request.resource.data.olusturma == request.time;
 
-      // Müşteri adını/soyadını/dilini ve bəyəndiklərini değiştirebilir; rolünü ve e-postasını değiştiremez.
+      // Müşteri adını, soyadını, telefonunu, WhatsApp nömrəsini, dilini və bəyəndiklərini dəyişə bilər; rolunu və e-poçtunu dəyişə bilməz.
       allow update: if (girisli()
           && request.auth.uid == uid
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ad', 'soyad', 'dil', 'favoriler'])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ad', 'soyad', 'dil', 'favoriler', 'telefon', 'whatsapp', 'whatsappEyni'])
           && metin(request.resource.data.ad, 1, 50)
           && metin(request.resource.data.soyad, 1, 50)
+          && (!('telefon' in request.resource.data) || metin(request.resource.data.telefon, 0, 25))
+          && (!('whatsapp' in request.resource.data) || metin(request.resource.data.whatsapp, 0, 25))
+          && (!('whatsappEyni' in request.resource.data) || request.resource.data.whatsappEyni is bool)
           && (!('favoriler' in request.resource.data)
               || (request.resource.data.favoriler is list && request.resource.data.favoriler.size() <= 200)))
         || admin();

@@ -4,6 +4,7 @@ import { t } from "../../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { yedekBolumu } from "./yedek.js";
 import { imzaHtml } from "../../ortak/surum.js";
+import { temaAyarlari } from "../../ortak/tema.js";
 import { siyahiSaylari } from "./siyahi-sehife.js";
 import { VARSAYILAN_SABLON, SABLON_ACARLARI } from "./instagram.js";
 import { VALYUTALAR, SIMGE, teyinliKurslar, kurslariYaz, bazarKurslari } from "./kurs.js";
@@ -14,6 +15,9 @@ export async function ayarlarSekmesi(kok) {
     <div style="max-width:640px">
       <div class="bolum-baslik">${kacis(t("ayarlar.hesab"))}</div>
       <div class="kart" id="hesab"><p class="soluk">${kacis(t("genel.yukleniyor"))}</p></div>
+
+      <div class="bolum-baslik">🎨 ${kacis(t("ayarlar.gorunus"))}</div>
+      <div class="kart" id="tema"></div>
 
       <div class="bolum-baslik">${kacis(t("admin.ayar.magaza"))}</div>
       <div class="kart menyu-kart">
@@ -51,6 +55,7 @@ export async function ayarlarSekmesi(kok) {
     </div>`;
 
   yedekBolumu($("#yedek", kok));
+  temaAyarlari($("#tema", kok));
   $("#cixis", kok).addEventListener("click", async () => {
     if (!confirm(t("admin.cixisOnay"))) return;
     await signOut(auth);

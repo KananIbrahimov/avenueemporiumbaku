@@ -1,7 +1,7 @@
 /* AvenueBaku — ortaq stil (mağaza + admin) · telefon yönümlü · açıq/qaranlıq tema */
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap");
 
-/* ---------- Rənglər: qaranlıq + gümüşü (SafeMoney üslubu) ---------- */
+/* ---------- Rənglər: qaranlıq + gümüşü (SafeMoney üslubu) — standart ---------- */
 :root {
   --zemin: #0b0c0e;
   --kart: #15171a;
@@ -25,6 +25,28 @@
   --logo: "Cormorant Garamond", Georgia, serif;
   color-scheme: dark;
 }
+
+/* Açıq rejim (Ayarlar → Görünüş) — gümüşü üslub açıq fonda */
+:root[data-tema="aciq"] {
+  --zemin: #f3f4f6;
+  --kart: #ffffff;
+  --kart-2: #eef0f3;
+  --yazi: #16181b;
+  --soluk: #636a73;
+  --cizgi: #dde1e6;
+  --golge: 0 1px 2px rgba(20, 24, 28, .06), 0 8px 24px rgba(20, 24, 28, .07);
+  --vurgu: #8d949c;
+  --vurgu-parlaq: linear-gradient(180deg, #f7f8fa 0%, #d4d8dd 55%, #b6bcc3 100%);
+  --vurgu-yazi: #16181b;
+  --vurgu-acik: #e6e9ed;
+  --vurgu-metin: #3b4047;
+  --basari: #1f8a4c;
+  --uyari: #b7791f;
+  --tehlike: #c8392f;
+  --ust-zemin: rgba(243, 244, 246, .9);
+  color-scheme: light;
+}
+:root[data-tema="aciq"] .btn { border-color: #b6bcc3; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; }
@@ -293,3 +315,9 @@ th { font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; color:
 .imza { text-align: center; margin: 36px 0 12px; color: var(--soluk); font-size: .82rem; line-height: 1.6; }
 .imza b { color: var(--vurgu-metin); font-weight: 600; }
 .imza-surum { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .76rem; opacity: .8; }
+
+/* Ayarlar (mağaza) */
+.menyu-kart { padding: 2px 16px; }
+.menyu-kart .ayar-satir { text-decoration: none; padding: 15px 0; }
+.cixis-btn { margin-top: 28px; color: var(--tehlike); border-color: color-mix(in srgb, var(--tehlike) 45%, var(--cizgi)); }
+input.kilidli { opacity: .7; cursor: not-allowed; background: var(--kart-2); }

@@ -111,8 +111,8 @@ function sifarisBolumu(varMi) {
     };
     return;
   }
-  let tel = "";
-  try { tel = localStorage.getItem("telefon") || ""; } catch {}
+  let tel = durum.profil?.telefon || "";
+  try { tel ||= localStorage.getItem("telefon") || ""; } catch {}
   alan.innerHTML = `
     <form id="sifaris-form" class="kart" novalidate>
       <div class="alan"><label for="telefon">${kacis(t("urun.telefon"))}</label>
