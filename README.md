@@ -48,6 +48,7 @@ firebase.json           iki site tanımı
 | `urunDetay` | **sadece admin** | alış fiyatı, kargo, vergi, kâr %, **kaynak link**, not |
 | `urunFoto` | herkes | ürün fotoğrafları (sıkıştırılmış) |
 | `siparisler` | müşteri kendi siparişini + admin | ürün, ölçü, renk, adet, telefon, durum |
+| `ayarlar` | sadece admin | Instagram metin şablonu |
 
 **Fiyat formülü:** maya = alış + kargo + vergi → satış = maya × (1 + kâr %) (istenirse elle yazılır) → üye fiyatı = satış × (1 − indirim %).
 Müşteri sipariş verirken fiyatı değiştiremez; güvenlik kuralı fiyatın ürünün üye fiyatıyla aynı olduğunu kontrol eder.
@@ -58,7 +59,9 @@ Müşteri sipariş verirken fiyatı değiştiremez; güvenlik kuralı fiyatın �
 - **Abla (admin):** `admin/` adresinden girer. Ürün ekler, fiyatı hesaplar, siparişleri görür ve kaynak linke tıklayıp ürünü bulur, durum değiştirir.
 - **Bildirim:** admin paneli açıkken yeni sipariş gelince bildirim + ses.
 - **Yedek:** Admin → Ehtiyat nüsxə → tüm veriler tek JSON dosyası.
-- **Telefonda uygulama:** her iki site "Ana ekrana ekle" ile uygulama gibi açılır.
+- **Telefonda uygulama:** her iki site "Ana ekrana ekle" ile uygulama gibi açılır; telefonda aşağıda menü çıkar.
+- **Tema:** Ayarlar → Açıq / Qaranlıq / Sistem + 8 tema rengi (her cihazda ayrı saklanır).
+- **Instagram:** Admin → Məhsullar → "Instagram" → post veya story görseli + hazır metin. Telefonda "Paylaş" ile Instagram'a gönderilir. Metin şablonu Admin → Ayarlar'dan değiştirilir.
 
 ---
 

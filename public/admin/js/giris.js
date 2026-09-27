@@ -1,8 +1,10 @@
 // Admin girişi — kayıt yok, sadece rolü "admin" olan hesaplar girebilir
 import { auth, signInWithEmailAndPassword, signOut, onAuthStateChanged, profilGetir } from "../../ortak/firebase.js";
 import { t, sayfayiCevir } from "../../ortak/i18n.js";
+import { temaUygula } from "../../ortak/tema.js";
 import { $, kacis, hataMesaji } from "../../ortak/yardim.js";
 
+temaUygula();
 sayfayiCevir();
 const mesaj = (m, tur = "hata") => ($("#mesaj").innerHTML = `<div class="kutu-mesaj kutu-${tur}">${kacis(m)}</div>`);
 if (new URLSearchParams(location.search).get("yetki") === "yok") mesaj(t("admin.yetkiYok"));

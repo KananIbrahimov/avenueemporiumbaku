@@ -9,6 +9,7 @@ import { para } from "../ortak/fiyat.js";
 import { $, $$, kacis, bildir, hataMesaji } from "../ortak/yardim.js";
 import { girisDinle, girisHazir } from "./ust.js";
 import { fiyatHtml } from "./fiyat-goster.js";
+import { IKON } from "../ortak/ikon.js";
 
 const id = new URLSearchParams(location.search).get("id");
 const kok = $("#urun");
@@ -135,7 +136,10 @@ function ciz(fotolar) {
       </div>
       <div>
         <div class="marka soluk" style="letter-spacing:.12em;text-transform:uppercase;font-size:.78rem">${kacis(urun.marka || "")}</div>
-        <h1>${kacis(ad)}</h1>
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+          <h1>${kacis(ad)}</h1>
+          <button type="button" class="btn btn-ince btn-kucuk" id="paylas" aria-label="${kacis(t("urun.paylas"))}">${IKON.paylas}</button>
+        </div>
         <div id="fiyat" style="margin-bottom:20px"></div>
         ${secenekHtml("olcu", urun.olculer)}
         ${secenekHtml("renk", urun.renkler)}
@@ -143,6 +147,14 @@ function ciz(fotolar) {
         ${yerel(urun.aciklama) ? `<div style="margin-top:24px;white-space:pre-line">${kacis(yerel(urun.aciklama))}</div>` : ""}
       </div>
     </div>`;
+
+  $("#paylas").addEventListener("click", async () => {
+    const url = `${MAGAZA_URL || location.origin}/urun.html?id=${encodeURIComponent(urun.id)}`;
+    try {
+      if (navigator.share) await navigator.share({ title: ad, text: `${ad} — AvenueBaku`, url });
+      else { await navigator.clipboard.writeText(url); bildir(t("urun.linkKopyalandi"), "basari"); }
+    } catch (e) { if (e?.name !== "AbortError") bildir(t("hata.genel"), "hata"); }
+  });
 
   $$(".galeri-kucuk img").forEach((img) => img.addEventListener("click", () => {
     $("#ana-foto").src = img.src;

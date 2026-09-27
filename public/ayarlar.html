@@ -18,10 +18,18 @@
   <a class="logo" href="./">AVENUE<small>BAKU</small></a>
   <nav id="ust-nav"></nav>
 </div></header>
-<main class="kap" style="padding-top:24px;padding-bottom:60px">
-  <h1 data-t="siparislerim.baslik"></h1>
-  <div id="liste" class="liste"><p class="bos" data-t="genel.yukleniyor"></p></div>
+<main class="dar" style="max-width:560px">
+  <h1 data-t="ayarlar.baslik"></h1>
+  <div class="bolum-baslik" data-t="ayarlar.hesab"></div>
+  <div class="kart" id="hesab-bolum"><p class="soluk" data-t="genel.yukleniyor"></p></div>
+  <div class="bolum-baslik" data-t="ayarlar.gorunus"></div>
+  <div class="kart" id="tema-bolum"></div>
+  <div id="dil-alan" hidden>
+    <div class="bolum-baslik" data-t="ayarlar.dil"></div>
+    <div class="kart"><select id="dil-sec"></select></div>
+  </div>
+  <p class="soluk" style="text-align:center;margin-top:28px">AvenueBaku</p>
 </main>
-<script type="module" src="js/siparislerim.js"></script>
+<script type="module" src="js/ayarlar.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@ import { db, collection, getDocs } from "../../ortak/firebase.js";
 import { t } from "../../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 
-const KOLEKSIYONLAR = ["kategoriler", "urunler", "urunDetay", "urunFoto", "kullanicilar", "siparisler"];
+const KOLEKSIYONLAR = ["kategoriler", "urunler", "urunDetay", "urunFoto", "kullanicilar", "siparisler", "ayarlar"];
 
 // Firestore Timestamp → ISO tarih metni
 const temizle = (v) => {
@@ -13,9 +13,9 @@ const temizle = (v) => {
   return v;
 };
 
-export function yedekSekmesi(kok) {
+/** Ayarlar tabında "Ehtiyat nüsxə" bölməsi */
+export function yedekBolumu(kok) {
   kok.innerHTML = `
-    <div class="bolum-ust"><h1>${kacis(t("admin.sekme.yedek"))}</h1></div>
     <div class="kart">
       <p>${kacis(t("admin.yedek.aciklama"))}</p>
       <label class="onay" style="margin-bottom:12px"><input type="checkbox" id="fotolu" checked> ${kacis(t("admin.yedek.fotolarDahil"))}</label>

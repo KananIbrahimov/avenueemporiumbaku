@@ -7,6 +7,8 @@ import { hesapla, para } from "../../ortak/fiyat.js";
 import { fotoHazirla, kapakHazirla, FOTO_MAX_ADET } from "../../ortak/foto.js";
 import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { tumDetaylar, detayGuncelle, kategorileriGetir } from "./veri.js";
+import { instagramAc } from "./instagram.js";
+import { IKON } from "../../ortak/ikon.js";
 
 const HAZIR_OLCULER = {
   geyim: ["XS", "S", "M", "L", "XL", "XXL"],
@@ -34,38 +36,37 @@ async function listeAc(kok) {
       const q = ara.toLocaleLowerCase("az");
       const liste = urunler.filter((u) => !q || `${yerel(u.ad)} ${u.marka || ""}`.toLocaleLowerCase("az").includes(q));
       $("#tablo", kok).innerHTML = liste.length ? `
-        <div class="tablo-kap"><table>
-          <thead><tr>
-            <th></th><th>${kacis(t("admin.urun.ad"))}</th><th>${kacis(t("admin.urun.kategori"))}</th>
-            <th>${kacis(t("admin.hesap.maya"))}</th><th>${kacis(t("admin.hesap.satis"))}</th>
-            <th>${kacis(t("admin.hesap.uyeFiyati"))}</th><th>${kacis(t("admin.hesap.qazanc"))}</th>
-            <th>${kacis(t("admin.urun.aktif"))}</th><th></th>
-          </tr></thead>
-          <tbody>${liste.map((u) => {
-            const d = detaylar.get(u.id) || {};
-            const h = hesapla({ ...d, satisFiyati: u.satisFiyati, indirimYuzde: u.indirimYuzde, elle: true });
-            return `<tr class="${u.aktif ? "" : "pasif"}">
-              <td>${u.kapak ? `<img class="kucuk-foto" src="${kacis(u.kapak)}" alt="">` : `<div class="kucuk-foto"></div>`}</td>
-              <td><b>${kacis(yerel(u.ad))}</b><div class="soluk">${kacis(u.marka || "")}</div>
-                ${d.kaynakLink ? `<a class="soluk" href="${kacis(d.kaynakLink)}" target="_blank" rel="noopener noreferrer">🔗 ${kacis(t("admin.sip.kaynakAc"))}</a>` : ""}</td>
-              <td>${kacis(katAd[u.kategoriId] || "—")}</td>
-              <td>${para(h.maliyet)}</td>
-              <td>${para(u.satisFiyati)}</td>
-              <td>${para(u.uyeFiyati)}${Number(u.indirimYuzde) > 0 ? `<div class="soluk">−${kacis(u.indirimYuzde)}%</div>` : ""}</td>
-              <td><b>${para(h.kar)}</b><div class="soluk">${kacis(t("admin.hesap.uyeyeSatista"))}: ${para(h.uyeKar)}</div></td>
-              <td><input type="checkbox" data-aktif="${kacis(u.id)}" ${u.aktif ? "checked" : ""} style="width:auto"></td>
-              <td style="white-space:nowrap">
+        <div class="urun-liste">${liste.map((u) => {
+          const d = detaylar.get(u.id) || {};
+          const h = hesapla({ ...d, satisFiyati: u.satisFiyati, indirimYuzde: u.indirimYuzde, elle: true });
+          return `<div class="kart urun-satir ${u.aktif ? "" : "pasif"}">
+            ${u.kapak ? `<img class="kucuk-foto" src="${kacis(u.kapak)}" alt="">` : `<div class="kucuk-foto"></div>`}
+            <div class="bilgi">
+              <div class="ad">${kacis(yerel(u.ad))}</div>
+              <div class="soluk">${kacis([u.marka, katAd[u.kategoriId]].filter(Boolean).join(" · "))}</div>
+              <div class="rakamlar">
+                <span>${kacis(t("admin.hesap.maya"))}: <b>${para(h.maliyet)}</b></span>
+                <span>${kacis(t("admin.hesap.satis"))}: <b>${para(u.satisFiyati)}</b></span>
+                ${Number(u.indirimYuzde) > 0 ? `<span>${kacis(t("admin.hesap.uyeFiyati"))}: <b>${para(u.uyeFiyati)}</b> (−${kacis(u.indirimYuzde)}%)</span>` : ""}
+                <span>${kacis(t("admin.hesap.qazanc"))}: <b style="color:${h.kar < 0 ? "var(--tehlike)" : "var(--basari)"}">${para(h.kar)}</b></span>
+              </div>
+              <div class="aksiyonlar">
                 <a class="btn btn-ince btn-kucuk" href="#urunler/${encodeURIComponent(u.id)}">${kacis(t("admin.duzenle"))}</a>
-              </td></tr>`;
-          }).join("")}</tbody></table></div>`
+                <button class="btn btn-ince btn-kucuk" data-ig="${kacis(u.id)}">${IKON.instagram} Instagram</button>
+                ${d.kaynakLink ? `<a class="btn btn-link btn-kucuk" href="${kacis(d.kaynakLink)}" target="_blank" rel="noopener noreferrer">🔗 ${kacis(t("admin.sip.kaynakAc"))}</a>` : ""}
+                <label class="onay" style="margin-left:auto"><input type="checkbox" data-aktif="${kacis(u.id)}" ${u.aktif ? "checked" : ""}> ${kacis(t("admin.urun.aktif"))}</label>
+              </div>
+            </div></div>`;
+        }).join("")}</div>`
         : `<p class="bos">${kacis(t(urunler.length ? "vitrin.bos" : "admin.urun.bos"))}</p>`;
 
+      $$("[data-ig]", kok).forEach((b) => b.addEventListener("click", () => instagramAc(b.dataset.ig)));
       $$("[data-aktif]", kok).forEach((c) => c.addEventListener("change", async () => {
         try {
           await updateDoc(doc(db, "urunler", c.dataset.aktif), { aktif: c.checked, guncelleme: serverTimestamp() });
           const u = urunler.find((x) => x.id === c.dataset.aktif);
           u.aktif = c.checked;
-          c.closest("tr").classList.toggle("pasif", !c.checked);
+          c.closest(".urun-satir").classList.toggle("pasif", !c.checked);
           bildir(t(c.checked ? "admin.urun.aktifEdildi" : "admin.urun.pasifEdildi"), "basari");
         } catch (e) { c.checked = !c.checked; bildir(hataMesaji(e), "hata"); }
       }));
@@ -77,8 +78,8 @@ async function listeAc(kok) {
         <a class="btn" href="#urunler/yeni">+ ${kacis(t("admin.urun.yeni"))}</a>
       </div>
       ${kategoriler.length ? "" : `<div class="kutu-mesaj kutu-bilgi">${kacis(t("admin.urun.onceKategori"))} <a href="#kategoriler">${kacis(t("admin.sekme.kategoriler"))}</a></div>`}
-      <input type="search" id="urun-ara" placeholder="${kacis(t("filtre.ara"))}" style="margin-bottom:12px;max-width:320px">
-      <div class="kart" style="padding:8px" id="tablo"></div>`;
+      <input type="search" id="urun-ara" placeholder="${kacis(t("filtre.ara"))}" style="margin-bottom:12px;max-width:420px">
+      <div id="tablo"></div>`;
     $("#urun-ara", kok).addEventListener("input", (e) => { ara = e.target.value; ciz(); });
     ciz();
   } catch (e) {
@@ -186,7 +187,7 @@ async function formAc(kok, id) {
         <div class="foto-izgara" id="fotolar"></div>
       </div>
 
-      <div class="form-bolum aksiyonlar" style="justify-content:space-between">
+      <div class="form-bolum form-alt yapiskan">
         <label class="onay"><input type="checkbox" name="aktif" ${urun.aktif !== false ? "checked" : ""}> ${kacis(t("admin.urun.vitrindeGoster"))}</label>
         <div class="aksiyonlar">
           ${id ? `<button type="button" class="btn btn-tehlike" id="sil">${kacis(t("admin.sil"))}</button>` : ""}
@@ -328,6 +329,8 @@ async function formAc(kok, id) {
 
       bildir(t("admin.kaydedildi"), "basari");
       location.hash = "urunler";
+      // Yeni məhsul əlavə olunubsa, dərhal Instagram üçün hazırlamağı təklif et
+      if (!id && f("aktif").checked && confirm(t("admin.ig.yeniMehsulSual"))) instagramAc(uid);
     } catch (err) {
       bildir(hataMesaji(err), "hata");
       buton.disabled = false;

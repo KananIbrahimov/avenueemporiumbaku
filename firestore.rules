@@ -9,6 +9,7 @@ rules_version = '2';
 //   urunDetay/{id}       GİZLİ: alış fiyatı, kargo, vergi, kâr %, kaynak link (sadece admin)
 //   urunFoto/{id}        ürün fotoğrafları (sıkıştırılmış, herkese açık)
 //   siparisler/{id}      müşteri siparişleri / istekleri
+//   ayarlar/{id}         admin ayarları (instagram şablonu) — sadece admin
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -79,6 +80,11 @@ service cloud.firestore {
     match /urunFoto/{id} {
       allow read: if true;
       allow write: if admin();
+    }
+
+    // ---------- Admin ayarları (Instagram şablonu vb.) ----------
+    match /ayarlar/{id} {
+      allow read, write: if admin();
     }
 
     // ---------- Siparişler ----------

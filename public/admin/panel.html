@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>AvenueBaku Admin</title>
-<meta name="theme-color" content="#1c1a17">
+<meta name="theme-color" content="#faf8f5">
+<script src="../ortak/tema-erken.js"></script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="../ikon/ikon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../ikon/admin-180.png">
@@ -14,22 +15,13 @@
 <link rel="stylesheet" href="../ortak/stil.css">
 <link rel="stylesheet" href="admin.css">
 </head>
-<body>
-<header class="ust admin-ust"><div class="kap">
+<body class="menyulu">
+<header class="ust"><div class="kap">
   <a class="logo" href="panel.html">AVENUE<small>ADMIN</small></a>
-  <nav>
-    <span class="soluk" id="admin-ad"></span>
-    <button class="btn btn-ince btn-kucuk" id="cikis" data-t="nav.cikis"></button>
-  </nav>
+  <nav><a class="btn btn-ince btn-kucuk" href="../" target="_blank" rel="noopener" data-t="admin.magazaAc"></a></nav>
 </div></header>
-<nav class="sekmeler kap" id="sekmeler">
-  <a href="#siparisler" data-sekme="siparisler"><span data-t="admin.sekme.siparisler"></span> <b class="sayac" id="yeni-sayac" hidden></b></a>
-  <a href="#urunler" data-sekme="urunler" data-t="admin.sekme.urunler"></a>
-  <a href="#kategoriler" data-sekme="kategoriler" data-t="admin.sekme.kategoriler"></a>
-  <a href="#musteriler" data-sekme="musteriler" data-t="admin.sekme.musteriler"></a>
-  <a href="#yedek" data-sekme="yedek" data-t="admin.sekme.yedek"></a>
-</nav>
-<main class="kap" id="icerik" style="padding-bottom:60px"><p class="bos" data-t="genel.yukleniyor"></p></main>
+<nav class="admin-menyu" id="sekmeler"></nav>
+<main class="kap" id="icerik" style="padding-top:12px;padding-bottom:40px"><p class="bos" data-t="genel.yukleniyor"></p></main>
 <script type="module" src="js/panel.js"></script>
 </body>
 </html>

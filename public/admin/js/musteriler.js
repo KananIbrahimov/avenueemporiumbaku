@@ -21,11 +21,8 @@ export async function musterilerSekmesi(kok) {
 
   kok.innerHTML = `
     <div class="bolum-ust"><h1>${kacis(t("admin.sekme.musteriler"))} <span class="soluk">(${kullanicilar.length})</span></h1></div>
-    <input type="search" id="ara" placeholder="${kacis(t("filtre.ara"))}" style="margin-bottom:12px;max-width:320px">
-    <div class="kart" style="padding:8px"><div class="tablo-kap"><table>
-      <thead><tr><th>${kacis(t("alan.ad"))}</th><th>${kacis(t("alan.email"))}</th><th>${kacis(t("admin.mus.kayit"))}</th>
-        <th>${kacis(t("admin.sekme.siparisler"))}</th><th>${kacis(t("admin.mus.rol"))}</th></tr></thead>
-      <tbody id="govde"></tbody></table></div></div>`;
+    <input type="search" id="ara" placeholder="${kacis(t("filtre.ara"))}" style="margin-bottom:12px;max-width:420px">
+    <div class="liste" id="govde"></div>`;
 
   const ciz = (q = "") => {
     q = q.toLocaleLowerCase("az");
@@ -33,12 +30,16 @@ export async function musterilerSekmesi(kok) {
       .filter((k) => !q || `${k.ad} ${k.soyad} ${k.email}`.toLocaleLowerCase("az").includes(q))
       .map((k) => {
         const s = istatistik(k.id);
-        return `<tr>
-          <td><b>${kacis(k.ad)} ${kacis(k.soyad)}</b></td>
-          <td><a href="mailto:${kacis(k.email)}">${kacis(k.email)}</a></td>
-          <td>${kacis(tarih(k.olusturma))}</td>
-          <td>${s.adet}${s.adet ? ` <span class="soluk">· ${para(s.tutar)}</span>` : ""}</td>
-          <td>${kacis(t("admin.mus.rol." + (k.rol || "musteri")))}</td></tr>`;
+        return `<div class="kart liste-oge" style="padding:14px">
+          <div class="bilgi">
+            <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
+              <b>${kacis(k.ad)} ${kacis(k.soyad)}</b>
+              <span class="durum ${k.rol === "admin" ? "durum-sifarisVerildi" : "durum-legv"}">${kacis(t("admin.mus.rol." + (k.rol || "musteri")))}</span>
+            </div>
+            <div class="soluk"><a href="mailto:${kacis(k.email)}">${kacis(k.email)}</a></div>
+            <div class="soluk">${kacis(t("admin.mus.kayit"))}: ${kacis(tarih(k.olusturma))}</div>
+            <div class="soluk">${kacis(t("admin.sekme.siparisler"))}: <b>${s.adet}</b>${s.adet ? ` · ${para(s.tutar)}` : ""}</div>
+          </div></div>`;
       }).join("");
   };
   $("#ara", kok).addEventListener("input", (e) => ciz(e.target.value));

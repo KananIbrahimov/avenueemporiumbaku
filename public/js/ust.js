@@ -1,44 +1,59 @@
-// Mağaza sayfalarının ortak üst barı + giriş durumu + PWA kaydı
-import { auth, onAuthStateChanged, signOut, profilGetir } from "../ortak/firebase.js";
-import { t, sayfayiCevir, DILLER, dil, dilDegistir } from "../ortak/i18n.js";
+// Mağaza səhifələrinin ortaq üst menyusu, telefonda aşağı menyu, giriş vəziyyəti və PWA
+import { auth, onAuthStateChanged, profilGetir } from "../ortak/firebase.js";
+import { t, sayfayiCevir } from "../ortak/i18n.js";
 import { kacis } from "../ortak/yardim.js";
+import { temaUygula } from "../ortak/tema.js";
+import { IKON } from "../ortak/ikon.js";
+
+temaUygula();
 
 let durum = { kullanici: null, profil: null, uye: false };
+let hazir = false;
 const dinleyiciler = [];
+let hazirCoz;
+export const girisHazir = new Promise((r) => (hazirCoz = r));
 
-/** Giriş durumu değişince çağrılır: fn({ kullanici, profil, uye }) — uye = e-postası doğrulanmış */
+/** Giriş vəziyyəti dəyişəndə çağırılır: fn({ kullanici, profil, uye }) — uye = e-poçtu təsdiqlənib */
 export function girisDinle(fn) {
   dinleyiciler.push(fn);
   if (hazir) fn(durum);
 }
-let hazir = false;
-let hazirCoz;
-export const girisHazir = new Promise((r) => (hazirCoz = r));
+
+// Hansı səhifədəyik? (cleanUrls: /urun, /siparislerim ...)
+const yol = location.pathname.replace(/\.html$/, "").replace(/\/$/, "") || "/";
+const aktifSehife = yol === "" || yol === "/" || yol.endsWith("/index") ? "magaza"
+  : yol.endsWith("/urun") ? "magaza"
+  : yol.endsWith("/siparislerim") ? "siparis"
+  : ["/ayarlar", "/giris", "/kayit", "/sifre"].some((s) => yol.endsWith(s)) ? "ayar" : "";
+
+const MENYU = [
+  { id: "magaza", href: "./", ikon: IKON.magaza, metin: "nav.magaza" },
+  { id: "siparis", href: "siparislerim.html", ikon: IKON.siparis, metin: "nav.siparislerim" },
+  { id: "ayar", href: "ayarlar.html", ikon: IKON.ayar, metin: "nav.ayarlar" },
+];
 
 function ustCiz() {
   const nav = document.getElementById("ust-nav");
   if (!nav) return;
-  const { kullanici, profil } = durum;
-  const dilSecici = DILLER.length > 1
-    ? `<select id="dil-sec" aria-label="Dil" style="width:auto;padding:6px 8px">${DILLER.map((d) =>
-        `<option value="${d.kod}" ${d.kod === dil() ? "selected" : ""}>${d.kod.toUpperCase()}</option>`).join("")}</select>`
-    : "";
-  nav.innerHTML = kullanici
-    ? `${dilSecici}
-       <a class="btn-link" href="siparislerim.html">${kacis(t("nav.siparislerim"))}</a>
-       <span class="soluk" style="padding:0 4px">${kacis(profil?.ad || kullanici.email)}</span>
-       <button class="btn btn-ince btn-kucuk" id="cikis">${kacis(t("nav.cikis"))}</button>`
-    : `${dilSecici}
-       <a class="btn-link" href="giris.html">${kacis(t("nav.giris"))}</a>
-       <a class="btn btn-kucuk" href="kayit.html">${kacis(t("nav.kayit"))}</a>`;
-  nav.querySelector("#cikis")?.addEventListener("click", async () => {
-    await signOut(auth);
-    location.href = "./";
-  });
-  nav.querySelector("#dil-sec")?.addEventListener("change", (e) => dilDegistir(e.target.value));
+  const { kullanici } = durum;
+  nav.innerHTML =
+    MENYU.map((m) => `<a class="ust-link masaustu ${m.id === aktifSehife ? "aktif" : ""}" href="${m.href}">${m.ikon}<span>${kacis(t(m.metin))}</span></a>`).join("") +
+    (kullanici ? "" : `<a class="btn btn-kucuk" href="giris.html" style="margin-left:6px">${kacis(t("nav.giris"))}</a>`);
+}
+
+function altMenyuCiz() {
+  if (document.querySelector(".alt-menyu")) return;
+  const el = document.createElement("nav");
+  el.className = "alt-menyu";
+  el.innerHTML = MENYU.map((m) =>
+    `<a href="${m.href}" class="${m.id === aktifSehife ? "aktif" : ""}">${m.ikon}<span>${kacis(t(m.metin))}</span></a>`).join("");
+  document.body.appendChild(el);
+  document.body.classList.add("menyulu");
 }
 
 sayfayiCevir();
+altMenyuCiz();
+ustCiz();
 
 onAuthStateChanged(auth, async (kullanici) => {
   let profil = null;
@@ -52,7 +67,7 @@ onAuthStateChanged(auth, async (kullanici) => {
   hazirCoz(durum);
 });
 
-// "Ana ekrana ekle" (PWA)
+// "Ana ekrana əlavə et" (PWA)
 if ("serviceWorker" in navigator && !["localhost", "127.0.0.1"].includes(location.hostname)) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }

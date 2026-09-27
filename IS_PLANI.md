@@ -33,6 +33,10 @@
 - [x] Müşteri listesi (ad, soyad, e-posta, kayıt tarihi, sipariş sayısı/tutarı)
 - [x] Yedek: tüm veriyi JSON olarak indir
 - [x] "Ana ekrana ekle" (PWA)
+- [x] Ayarlar tabı: tema, Instagram mətni şablonu, ehtiyat nüsxə, çıxış
+- [x] Instagram üçün hazırla: post (1080×1080) və story (1080×1920) şəkli + hazır mətn, telefonda paylaş menyusu
+- [x] Yeni məhsul əlavə edəndə "Instagram üçün hazırlansın?" təklifi
+- [x] Telefon yönümlü: aşağı menyu, məhsul və müştəri siyahıları kart şəklində, yapışqan "Yadda saxla" paneli
 - [ ] Yedekten geri yükleme
 - [ ] Gerçek cihazda test (abla ile)
 
@@ -45,13 +49,16 @@
 - [x] Sipariş (istek) verme — sadece doğrulanmış üyeler, fiyat kuralla korunuyor
 - [x] Siparişlerim: canlı durum takibi
 - [x] "Ana ekrana ekle" (PWA)
-- [ ] Profil sayfası (ad/soyad değiştirme)
+- [x] Ayarlar səhifəsi: hesab (ad/soyad dəyişmə, çıxış), tema, dil
+- [x] Açıq / Qaranlıq / Sistem rejimi + 8 tema rəngi (hər iki saytda)
+- [x] Telefon yönümlü: aşağı menyu (Mağaza, Sifarişlərim, Ayarlar)
+- [x] Məhsul səhifəsində "Paylaş" düyməsi
 - [ ] Mobil görünüm son kontrolleri
 
 ## Faz 3 — Yayın ve sonrası
 - [ ] avenuebaku.az alan adını al ve bağla (+ admin.avenuebaku.az)
 - [ ] Doğrulama / şifre sıfırlama mail şablonlarını Azerbaycanca yap
 - [ ] 2. ve 3. dil (örn. rusça, ingilizce)
-- [ ] Blaze'e geçiş kararı: fotoğraflar Storage'a, kapalıyken push bildirim, otomatik yedek
+- [ ] Blaze'e geçiş kararı: fotoğraflar Storage'a, kapalıyken push bildirim, otomatik yedek, Instagram'a tam avtomatik paylaşım
 - [ ] Sepet (birden fazla ürün tek siparişte)
 - [ ] Online ödeme
