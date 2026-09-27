@@ -28,6 +28,7 @@
 - [x] Satış fiyatını elle yazma seçeneği, zarar uyarısı
 - [x] Ürün bazında üye indirimi %
 - [x] Fotoğraflar: çoklu yükleme, otomatik küçültme, sıralama, silme (ilk fotoğraf = vitrin)
+- [x] iPhone-dan şəkil: Qalereya + Kamera düymələri, HEIC → JPEG çevirmə, şaquli şəkillər düz, hazırlanarkən "Yadda saxla" bağlı
 - [x] Siparişler: canlı liste, durum filtresi, durum değiştirme, kaynak linki, kazanç, telefon/WhatsApp/mail
 - [x] Panel açıkken yeni siparişte web bildirimi + ses + sayaç
 - [x] Müşteri listesi (ad, soyad, e-posta, kayıt tarihi, sipariş sayısı/tutarı)

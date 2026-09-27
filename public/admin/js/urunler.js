@@ -182,7 +182,12 @@ async function formAc(kok, id) {
 
       <div class="form-bolum">
         <h2>📷 ${kacis(t("admin.urun.fotolar"))}</h2>
-        <input type="file" id="foto-sec" accept="image/*" multiple>
+        <div class="foto-butonlar">
+          <label class="btn btn-ince" for="foto-sec">🖼️ ${kacis(t("admin.urun.qalereya"))}</label>
+          <label class="btn btn-ince" for="foto-kamera">📷 ${kacis(t("admin.urun.kamera"))}</label>
+        </div>
+        <input class="gizli-input" type="file" id="foto-sec" accept="image/*" multiple>
+        <input class="gizli-input" type="file" id="foto-kamera" accept="image/*" capture="environment">
         <div class="ipucu">${kacis(t("admin.urun.fotoIpucu", { adet: FOTO_MAX_ADET }))}</div>
         <div class="foto-izgara" id="fotolar"></div>
       </div>
@@ -229,17 +234,25 @@ async function formAc(kok, id) {
   }));
 
   // ---- Fotoğraflar ----
+  let hazirlanan = 0; // hazırlanmaqda olan şəkil sayı
+  const saxlaDuyme = () => form.querySelector("button[type=submit]");
   const fotoCiz = () => {
     $("#fotolar", kok).innerHTML = fotolar.map((src, i) => `
       <div class="foto-oge">
         <img src="${kacis(src)}" alt="">
         ${i === 0 ? `<span class="kapak-etiket">${kacis(t("admin.urun.kapak"))}</span>` : ""}
         <div class="araclar">
-          <button type="button" data-foto="sol" data-i="${i}" ${i === 0 ? "disabled" : ""}>←</button>
-          <button type="button" data-foto="sil" data-i="${i}">✕</button>
-          <button type="button" data-foto="sag" data-i="${i}" ${i === fotolar.length - 1 ? "disabled" : ""}>→</button>
+          <button type="button" data-foto="sol" data-i="${i}" ${i === 0 ? "disabled" : ""} aria-label="←">←</button>
+          <button type="button" data-foto="sil" data-i="${i}" aria-label="${kacis(t("admin.sil"))}">✕</button>
+          <button type="button" data-foto="sag" data-i="${i}" ${i === fotolar.length - 1 ? "disabled" : ""} aria-label="→">→</button>
         </div>
-      </div>`).join("");
+      </div>`).join("") +
+      Array.from({ length: hazirlanan }, () => `<div class="foto-oge foto-yuklenir"><span class="firlanan"></span></div>`).join("");
+    const b = saxlaDuyme();
+    if (b) {
+      b.disabled = hazirlanan > 0;
+      b.textContent = hazirlanan > 0 ? t("admin.urun.fotoHazirlanir") : t("admin.kaydet");
+    }
   };
   $("#fotolar", kok).addEventListener("click", (e) => {
     const b = e.target.closest("[data-foto]");
@@ -252,20 +265,34 @@ async function formAc(kok, id) {
     }
     fotoCiz();
   });
-  $("#foto-sec", kok).addEventListener("change", async (e) => {
-    const dosyalar = [...e.target.files].slice(0, FOTO_MAX_ADET - fotolar.length);
-    if (e.target.files.length > dosyalar.length) bildir(t("admin.urun.fotoLimit", { adet: FOTO_MAX_ADET }), "hata");
-    for (const d of dosyalar) {
-      try { fotolar.push(await fotoHazirla(d)); fotoCiz(); }
-      catch { bildir(t("admin.urun.fotoHata", { ad: d.name }), "hata"); }
-    }
+  const fotoXeta = (err, ad) => t({
+    "foto-tur": "admin.urun.fotoTur",
+    "foto-heic": "admin.urun.fotoHeic",
+  }[err?.message] || "admin.urun.fotoHata", { ad });
+
+  async function fotolariEkle(e) {
+    const secilen = [...e.target.files];
     e.target.value = "";
-  });
+    const bos = FOTO_MAX_ADET - fotolar.length - hazirlanan;
+    const dosyalar = secilen.slice(0, Math.max(0, bos));
+    if (secilen.length > dosyalar.length) bildir(t("admin.urun.fotoLimit", { adet: FOTO_MAX_ADET }), "hata");
+    hazirlanan += dosyalar.length;
+    fotoCiz();
+    for (const d of dosyalar) { // bir-bir (iPhone-da yaddaş dolmasın)
+      try { fotolar.push(await fotoHazirla(d)); }
+      catch (err) { bildir(fotoXeta(err, d.name || ""), "hata"); }
+      hazirlanan--;
+      fotoCiz();
+    }
+  }
+  $("#foto-sec", kok).addEventListener("change", fotolariEkle);
+  $("#foto-kamera", kok).addEventListener("change", fotolariEkle);
   fotoCiz();
 
   // ---- Kaydet ----
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (hazirlanan > 0) return bildir(t("admin.urun.fotoHazirlanir"), "hata");
     const h = hesapGuncelle();
     const ilkDil = DILLER[0].kod;
     const ad = Object.fromEntries(DILLER.map((d) => [d.kod, f(`ad_${d.kod}`).value.trim()]).filter(([, x]) => x));

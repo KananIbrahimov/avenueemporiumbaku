@@ -60,3 +60,11 @@
 .ig-onizleme { background: var(--zemin); border-radius: 12px; padding: 10px; display: flex; justify-content: center; }
 .ig-onizleme canvas { max-width: 100%; max-height: 52vh; height: auto; border-radius: 8px; box-shadow: var(--golge); }
 .hesap-kutusu .satir-h > :last-child { white-space: nowrap; text-align: right; }
+
+/* Şəkil yükləmə */
+.foto-butonlar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+.foto-butonlar .btn { margin: 0; color: var(--yazi); }
+.gizli-input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; pointer-events: none; }
+.foto-yuklenir { display: flex; align-items: center; justify-content: center; }
+.firlanan { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--cizgi); border-top-color: var(--vurgu); animation: firlan .8s linear infinite; }
+@keyframes firlan { to { transform: rotate(360deg); } }
