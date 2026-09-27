@@ -8,12 +8,11 @@ import { fotoHazirla, kapakHazirla, FOTO_MAX_ADET } from "../../ortak/foto.js";
 import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { tumDetaylar, detayGuncelle, kategorileriGetir } from "./veri.js";
 import { instagramAc } from "./instagram.js";
+import { secici } from "./secici.js";
+import { siyahilariGetir, siyahiyaElave } from "./siyahilar.js";
+import { VALYUTALAR, kurslariAl } from "./kurs.js";
 import { IKON } from "../../ortak/ikon.js";
 
-const HAZIR_OLCULER = {
-  geyim: ["XS", "S", "M", "L", "XL", "XXL"],
-  ayaqqabi: ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"],
-};
 
 export function urunlerSekmesi(kok, args) {
   if (args[0]) formAc(kok, args[0] === "yeni" ? null : args[0]);
@@ -88,14 +87,15 @@ async function listeAc(kok) {
 }
 
 // ================= FORM =================
-const listeyeCevir = (s) => [...new Set(s.split(",").map((x) => x.trim()).filter(Boolean))];
+const sayi = (x) => { const n = parseFloat(String(x ?? "").replace(",", ".")); return Number.isFinite(n) ? n : 0; };
+const iki = (x) => Math.round((x + Number.EPSILON) * 100) / 100;
 
 async function formAc(kok, id) {
   kok.innerHTML = `<p class="bos">${kacis(t("genel.yukleniyor"))}</p>`;
   let urun = {}, detay = {}, eskiFotolar = [];
-  let kategoriler = [], markalar = [];
+  let kategoriler = [], siyahilar, tumUrunler = [];
   try {
-    const istekler = [kategorileriGetir(), getDocs(collection(db, "urunler"))];
+    const istekler = [kategorileriGetir(), getDocs(collection(db, "urunler")), siyahilariGetir()];
     if (id) {
       istekler.push(
         getDoc(doc(db, "urunler", id)),
@@ -103,11 +103,12 @@ async function formAc(kok, id) {
         getDocs(query(collection(db, "urunFoto"), where("urunId", "==", id))),
       );
     }
-    const [k, tum, us, ds, fs] = await Promise.all(istekler);
+    const [k, tum, sy, us, ds, fs] = await Promise.all(istekler);
     kategoriler = k;
-    markalar = [...new Set(tum.docs.map((d) => d.data().marka).filter(Boolean))].sort();
+    siyahilar = sy;
+    tumUrunler = tum.docs.map((d) => d.data());
     if (id) {
-      if (!us.exists()) { bildir(t("urun.yok"), "hata"); location.hash = "urunler"; return; }
+      if (!us.exists()) { bildir(t("urun.yok"), "hata"); location.hash = "magaza"; return; }
       urun = us.data();
       detay = ds.exists() ? ds.data() : {};
       eskiFotolar = fs.docs.map((d) => ({ docId: d.id, ...d.data() })).sort((a, b) => a.sira - b.sira);
@@ -117,71 +118,79 @@ async function formAc(kok, id) {
     return;
   }
 
-  let fotolar = eskiFotolar.map((f) => f.veri); // dataURL listesi (ilk = kapak)
-  const elle = id ? Math.abs(hesapla({ ...detay }).onerilen - urun.satisFiyati) > 0.009 : false;
+  // Siyahılar: mövcud məhsullardakı dəyərlər də daxil olsun
+  const birlesdir = (a, b) => [...new Set([...a, ...b].filter(Boolean))];
+  const markalar = birlesdir(siyahilar.markalar, tumUrunler.map((u) => u.marka)).sort((a, b) => a.localeCompare(b, "az"));
+  const olculer = birlesdir(siyahilar.olculer, tumUrunler.flatMap((u) => u.olculer || []));
+  const renkler = birlesdir(siyahilar.renkler, tumUrunler.flatMap((u) => u.renkler || []));
+
+  let fotolar = eskiFotolar.map((f) => f.veri); // dataURL siyahısı (ilk = vitrin)
   const v = (x) => kacis(x ?? "");
+  // Köhnə məhsullar: alış qiyməti AZN idi
+  const alisValyuta = detay.alisValyuta || "AZN";
+  const alisMebleg = detay.alisMebleg ?? detay.alisFiyati ?? "";
 
   kok.innerHTML = `
     <div class="bolum-ust">
       <h1>${kacis(t(id ? "admin.urun.duzenle" : "admin.urun.yeni"))}</h1>
-      <a class="btn btn-ince" href="#urunler">${kacis(t("admin.urun.siyahi"))}</a>
+      <a class="btn btn-ince btn-kucuk" href="#urunler">${kacis(t("admin.urun.siyahi"))}</a>
     </div>
-    <form id="urun-form" class="kart" novalidate>
-      ${DILLER.map((d) => `
-        <div class="alan"><label>${kacis(t("admin.urun.ad"))}${DILLER.length > 1 ? ` (${d.kod.toUpperCase()})` : ""}</label>
-          <input name="ad_${d.kod}" maxlength="200" value="${v(urun.ad?.[d.kod])}" ${d.kod === DILLER[0].kod ? "required" : ""}></div>
-        <div class="alan"><label>${kacis(t("admin.urun.aciklama"))}${DILLER.length > 1 ? ` (${d.kod.toUpperCase()})` : ""}</label>
-          <textarea name="aciklama_${d.kod}" maxlength="3000">${v(urun.aciklama?.[d.kod])}</textarea></div>`).join("")}
-
-      <div class="satir">
-        <div class="alan"><label>${kacis(t("admin.urun.marka"))}</label>
-          <input name="marka" list="markalar" maxlength="60" value="${v(urun.marka)}">
-          <datalist id="markalar">${markalar.map((m) => `<option value="${v(m)}">`).join("")}</datalist></div>
-        <div class="alan"><label>${kacis(t("admin.urun.kategori"))}</label>
-          <select name="kategoriId" required>
-            <option value="">—</option>
-            ${kategoriler.map((k) => `<option value="${v(k.id)}" ${k.id === urun.kategoriId ? "selected" : ""}>${kacis(yerel(k.ad))}</option>`).join("")}
-          </select></div>
+    <form id="urun-form" novalidate>
+      <div class="kart">
+        ${DILLER.map((d) => `
+          <div class="alan"><label>${kacis(t("admin.urun.ad"))}${DILLER.length > 1 ? ` (${d.kod.toUpperCase()})` : ""}</label>
+            <input name="ad_${d.kod}" maxlength="200" value="${v(urun.ad?.[d.kod])}" placeholder="${kacis(t("admin.urun.adOrnek"))}"></div>`).join("")}
+        <div class="secici-yigin">
+          <div class="alan" id="s-marka"></div>
+          <div class="alan" id="s-kategori"></div>
+          <div class="alan" id="s-olcu"></div>
+          <div class="alan" id="s-renk"></div>
+        </div>
+        ${DILLER.map((d) => `
+          <div class="alan" style="margin-bottom:0"><label>${kacis(t("admin.urun.aciklama"))}${DILLER.length > 1 ? ` (${d.kod.toUpperCase()})` : ""}</label>
+            <textarea name="aciklama_${d.kod}" maxlength="3000" style="min-height:70px">${v(urun.aciklama?.[d.kod])}</textarea></div>`).join("")}
       </div>
 
-      <div class="alan"><label>${kacis(t("admin.urun.olculer"))}</label>
-        <input name="olculer" value="${v((urun.olculer || []).join(", "))}" placeholder="S, M, L">
-        <div class="hazir-butonlar">
-          <button type="button" class="cip" data-hazir="geyim">${kacis(t("admin.urun.hazirGeyim"))}</button>
-          <button type="button" class="cip" data-hazir="ayaqqabi">${kacis(t("admin.urun.hazirAyaqqabi"))}</button>
-        </div>
-        <div class="ipucu">${kacis(t("admin.urun.virgulIle"))}</div></div>
-      <div class="alan"><label>${kacis(t("admin.urun.renkler"))}</label>
-        <input name="renkler" value="${v((urun.renkler || []).join(", "))}" placeholder="Qara, Ağ, Bej">
-        <div class="ipucu">${kacis(t("admin.urun.virgulIle"))}</div></div>
-
-      <div class="form-bolum">
-        <h2>🔒 ${kacis(t("admin.urun.gizliBaslik"))}</h2>
-        <p class="ipucu" style="margin-top:-6px">${kacis(t("admin.urun.gizliAciklama"))}</p>
+      <div class="bolum-baslik">💰 ${kacis(t("admin.urun.qiymetBaslik"))} <span style="text-transform:none;letter-spacing:0;font-weight:500">· ${kacis(t("admin.urun.gizliQisa"))}</span></div>
+      <div class="kart">
         <div class="alan"><label>${kacis(t("admin.urun.kaynakLink"))}</label>
           <input name="kaynakLink" type="url" maxlength="2000" value="${v(detay.kaynakLink)}" placeholder="https://www.trendyol.com/..."></div>
-        <div class="satir">
-          <div class="alan"><label>${kacis(t("admin.hesap.alis"))} (₼)</label><input name="alisFiyati" type="number" step="0.01" min="0" inputmode="decimal" value="${v(detay.alisFiyati)}"></div>
-          <div class="alan"><label>${kacis(t("admin.hesap.kargo"))} (₼)</label><input name="kargo" type="number" step="0.01" min="0" inputmode="decimal" value="${v(detay.kargo)}"></div>
-          <div class="alan"><label>${kacis(t("admin.hesap.vergi"))} (₼)</label><input name="vergi" type="number" step="0.01" min="0" inputmode="decimal" value="${v(detay.vergi)}"></div>
-          <div class="alan"><label>${kacis(t("admin.hesap.karYuzde"))} (%)</label><input name="karYuzde" type="number" step="0.1" min="0" inputmode="decimal" value="${v(detay.karYuzde)}"></div>
+
+        <label>${kacis(t("admin.hesap.alis"))}</label>
+        <div class="alis-satir">
+          <input name="alisMebleg" inputmode="decimal" placeholder="0.00" value="${v(alisMebleg)}">
+          <select name="alisValyuta">${VALYUTALAR.map((x) => `<option ${x === alisValyuta ? "selected" : ""}>${x}</option>`).join("")}</select>
         </div>
-        <div class="alan"><label>${kacis(t("admin.urun.adminNotu"))}</label>
-          <textarea name="adminNotu" maxlength="1000" style="min-height:60px">${v(detay.adminNotu)}</textarea></div>
+        <div class="kurs-satir" id="kurs-satir" ${alisValyuta === "AZN" ? "hidden" : ""}>
+          <span>1 <b id="kurs-val">${v(alisValyuta)}</b> =</span>
+          <input name="kurs" inputmode="decimal" value="${v(detay.kurs || "")}" aria-label="${kacis(t("admin.hesap.kurs"))}">
+          <span>₼</span>
+          <span class="soluk" id="kurs-menbe"></span>
+        </div>
+        <div class="azn-qarsiliq" id="azn-qarsiliq"></div>
+
+        <div class="satir" style="margin-top:12px">
+          <div class="alan"><label>${kacis(t("admin.hesap.kargo"))} (₼)</label><input name="kargo" inputmode="decimal" placeholder="0.00" value="${v(detay.kargo || "")}"></div>
+          <div class="alan"><label>${kacis(t("admin.hesap.vergi"))} (₼)</label><input name="vergi" inputmode="decimal" placeholder="0.00" value="${v(detay.vergi || "")}"></div>
+        </div>
+        <div class="maya-kutu"><span>${kacis(t("admin.hesap.maya"))}</span><b id="maya">0.00 ₼</b></div>
+
+        <div class="satir" style="margin-top:14px">
+          <div class="alan"><label>${kacis(t("admin.hesap.karYuzde"))} (%)</label><input name="karYuzde" inputmode="decimal" placeholder="20" value="${v(detay.karYuzde ?? "")}"></div>
+          <div class="alan"><label>${kacis(t("admin.hesap.satis"))} (₼)</label><input name="satisFiyati" inputmode="decimal" placeholder="0.00" value="${v(urun.satisFiyati ?? "")}"></div>
+        </div>
+        <p class="ipucu" style="margin-top:-6px">${kacis(t("admin.hesap.ikiTerefli"))}</p>
+        <div class="alan" style="max-width:50%"><label>${kacis(t("admin.hesap.indirim"))} (%)</label>
+          <input name="indirimYuzde" inputmode="decimal" placeholder="0" value="${v(urun.indirimYuzde || "")}"></div>
+        <div class="alan" style="margin-bottom:0"><label>${kacis(t("admin.urun.adminNotu"))}</label>
+          <textarea name="adminNotu" maxlength="1000" style="min-height:56px">${v(detay.adminNotu)}</textarea></div>
       </div>
 
-      <div class="form-bolum">
-        <h2>💰 ${kacis(t("admin.urun.satisBaslik"))}</h2>
-        <label class="onay"><input type="checkbox" name="elle" ${elle ? "checked" : ""}> ${kacis(t("admin.hesap.elle"))}</label>
-        <div class="satir" style="margin-top:10px">
-          <div class="alan"><label>${kacis(t("admin.hesap.satis"))} (₼)</label><input name="satisFiyati" type="number" step="0.01" min="0" inputmode="decimal" value="${v(urun.satisFiyati)}"></div>
-          <div class="alan"><label>${kacis(t("admin.hesap.indirim"))} (%)</label><input name="indirimYuzde" type="number" step="1" min="0" max="90" inputmode="numeric" value="${v(urun.indirimYuzde ?? 0)}"></div>
-        </div>
-        <div class="hesap-kutusu" id="hesap"></div>
-      </div>
+      <div class="bolum-baslik">🧾 ${kacis(t("admin.hesap.xulase"))}</div>
+      <div class="kart xulase" id="xulase"></div>
 
-      <div class="form-bolum">
-        <h2>📷 ${kacis(t("admin.urun.fotolar"))}</h2>
+      <div class="bolum-baslik">📷 ${kacis(t("admin.urun.fotolar"))}</div>
+      <div class="kart">
         <div class="foto-butonlar">
           <label class="btn btn-ince" for="foto-sec">🖼️ ${kacis(t("admin.urun.qalereya"))}</label>
           <label class="btn btn-ince" for="foto-kamera">📷 ${kacis(t("admin.urun.kamera"))}</label>
@@ -192,10 +201,10 @@ async function formAc(kok, id) {
         <div class="foto-izgara" id="fotolar"></div>
       </div>
 
-      <div class="form-bolum form-alt yapiskan">
+      <div class="form-alt yapiskan">
         <label class="onay"><input type="checkbox" name="aktif" ${urun.aktif !== false ? "checked" : ""}> ${kacis(t("admin.urun.vitrindeGoster"))}</label>
         <div class="aksiyonlar">
-          ${id ? `<button type="button" class="btn btn-tehlike" id="sil">${kacis(t("admin.sil"))}</button>` : ""}
+          ${id ? `<button type="button" class="btn btn-tehlike btn-kucuk" id="sil">${kacis(t("admin.sil"))}</button>` : ""}
           <button type="submit" class="btn">${kacis(t("admin.kaydet"))}</button>
         </div>
       </div>
@@ -204,34 +213,107 @@ async function formAc(kok, id) {
   const form = $("#urun-form", kok);
   const f = (ad) => form.elements[ad];
 
-  // ---- Canlı fiyat hesabı ----
-  const hesapGuncelle = () => {
-    const eleMi = f("elle").checked;
-    f("satisFiyati").readOnly = !eleMi;
-    const h = hesapla({
-      alisFiyati: f("alisFiyati").value, kargo: f("kargo").value, vergi: f("vergi").value,
-      karYuzde: f("karYuzde").value, satisFiyati: f("satisFiyati").value,
-      indirimYuzde: f("indirimYuzde").value, elle: eleMi,
-    });
-    if (!eleMi) f("satisFiyati").value = h.onerilen ? h.onerilen.toFixed(2) : "";
-    $("#hesap", kok).innerHTML = `
-      <div class="satir-h"><span>${kacis(t("admin.hesap.maya"))} <span class="soluk">(${kacis(t("admin.hesap.mayaFormul"))})</span></span><b>${para(h.maliyet)}</b></div>
-      <div class="satir-h"><span>${kacis(t("admin.hesap.onerilen"))}</span><span>${para(h.onerilen)}</span></div>
-      <div class="satir-h buyuk"><span>${kacis(t("admin.hesap.musteriGorur"))}</span><span>${para(h.satis)}</span></div>
-      <div class="satir-h"><span>${kacis(t("admin.hesap.uyeFiyati"))}</span><b>${para(h.uyeFiyati)}</b></div>
-      <div class="satir-h"><span>${kacis(t("admin.hesap.qazanc"))}</span><b style="color:${h.kar < 0 ? "var(--tehlike)" : "var(--basari)"}">${para(h.kar)} (${h.karYuzdeGercek}%)</b></div>
-      <div class="satir-h"><span>${kacis(t("admin.hesap.uyeyeSatista"))}</span><span style="color:${h.uyeKar < 0 ? "var(--tehlike)" : "inherit"}">${para(h.uyeKar)}</span></div>`;
-    return h;
-  };
-  ["alisFiyati", "kargo", "vergi", "karYuzde", "satisFiyati", "indirimYuzde", "elle"]
-    .forEach((ad) => f(ad).addEventListener("input", hesapGuncelle));
-  hesapGuncelle();
+  // ---- Axtarışlı siyahılar ----
+  const sMarka = secici($("#s-marka", kok), {
+    etiket: t("admin.urun.marka"), yerTutucu: t("secici.markaSec"), yeniBasliq: t("secici.yeniMarka"),
+    secenekler: markalar.map((m) => ({ id: m, ad: m })), secili: urun.marka || "",
+    yeniElave: async (ad) => { await siyahiyaElave("markalar", ad); return { id: ad, ad }; },
+  });
+  const sKategori = secici($("#s-kategori", kok), {
+    etiket: t("admin.urun.kategori"), yerTutucu: t("secici.kategoriSec"), yeniBasliq: t("secici.yeniKategori"),
+    secenekler: kategoriler.map((k) => ({ id: k.id, ad: yerel(k.ad) })), secili: urun.kategoriId || "",
+    yeniElave: async (ad) => {
+      const ref = doc(collection(db, "kategoriler"));
+      const sira = kategoriler.length ? Math.max(...kategoriler.map((k) => k.sira ?? 0)) + 1 : 0;
+      await setDoc(ref, { ad: { [DILLER[0].kod]: ad }, sira, olusturma: serverTimestamp() });
+      kategoriler.push({ id: ref.id, ad: { [DILLER[0].kod]: ad }, sira });
+      return { id: ref.id, ad };
+    },
+  });
+  const sOlcu = secici($("#s-olcu", kok), {
+    etiket: t("admin.urun.olculer"), yerTutucu: t("secici.olcuSec"), yeniBasliq: t("secici.yeniOlcu"), coxlu: true,
+    secenekler: olculer.map((x) => ({ id: x, ad: x })), secili: urun.olculer || [],
+    yeniElave: async (ad) => { await siyahiyaElave("olculer", ad); return { id: ad, ad }; },
+  });
+  const sRenk = secici($("#s-renk", kok), {
+    etiket: t("admin.urun.renkler"), yerTutucu: t("secici.renkSec"), yeniBasliq: t("secici.yeniRenk"), coxlu: true,
+    secenekler: renkler.map((x) => ({ id: x, ad: x })), secili: urun.renkler || [],
+    yeniElave: async (ad) => { await siyahiyaElave("renkler", ad); return { id: ad, ad }; },
+  });
 
-  // ---- Hazır ölçüler ----
-  $$("[data-hazir]", kok).forEach((b) => b.addEventListener("click", () => {
-    const mevcut = listeyeCevir(f("olculer").value);
-    f("olculer").value = [...new Set([...mevcut, ...HAZIR_OLCULER[b.dataset.hazir]])].join(", ");
-  }));
+  // ---- Qiymət hesabı ----
+  let kurslar = null;
+  const valyuta = () => f("alisValyuta").value;
+  const kursDeger = () => (valyuta() === "AZN" ? 1 : sayi(f("kurs").value));
+  const alisAzn = () => iki(sayi(f("alisMebleg").value) * kursDeger());
+  const maya = () => iki(alisAzn() + sayi(f("kargo").value) + sayi(f("vergi").value));
+
+  function xulaseCiz() {
+    const m = maya();
+    const satis = sayi(f("satisFiyati").value);
+    const endirim = Math.min(90, Math.max(0, sayi(f("indirimYuzde").value)));
+    const uye = iki(satis * (1 - endirim / 100));
+    const q1 = iki(satis - m), q2 = iki(uye - m);
+    const faiz = (q) => (m > 0 ? `${iki((q / m) * 100)}%` : "—");
+    const reng = (q) => (q < 0 ? "var(--tehlike)" : "var(--basari)");
+    const val = valyuta();
+
+    $("#maya", kok).textContent = para(m);
+    $("#azn-qarsiliq", kok).innerHTML = sayi(f("alisMebleg").value) > 0
+      ? `≈ <b>${para(alisAzn())}</b>${val !== "AZN" ? ` <span class="soluk">(${kacis(sayi(f("alisMebleg").value))} ${kacis(val)} × ${kacis(kursDeger())})</span>` : ""}` : "";
+
+    $("#xulase", kok).innerHTML = `
+      <div class="x-satir"><span>${kacis(t("admin.hesap.alis"))}</span><span>${para(alisAzn())}</span></div>
+      <div class="x-satir"><span>${kacis(t("admin.hesap.kargo"))}</span><span>${para(sayi(f("kargo").value))}</span></div>
+      <div class="x-satir"><span>${kacis(t("admin.hesap.vergi"))}</span><span>${para(sayi(f("vergi").value))}</span></div>
+      <div class="x-satir cem"><span>${kacis(t("admin.hesap.maya"))}</span><b>${para(m)}</b></div>
+      <div class="x-satir buyuk"><span>${kacis(t("admin.hesap.satis"))}</span><b>${para(satis)}</b></div>
+      <div class="x-satir"><span>${kacis(t("admin.hesap.uyeFiyati"))}${endirim ? ` <span class="soluk">(−${iki(endirim)}%)</span>` : ""}</span><b>${para(uye)}</b></div>
+      <div class="qazanc-qutular">
+        <div class="qazanc-qutu"><span>${kacis(t("admin.hesap.qazancUzvOlmayan"))}</span>
+          <b style="color:${reng(q1)}">${para(q1)}</b><small>${faiz(q1)}</small></div>
+        <div class="qazanc-qutu"><span>${kacis(t("admin.hesap.qazancUzv"))}</span>
+          <b style="color:${reng(q2)}">${para(q2)}</b><small>${faiz(q2)}</small></div>
+      </div>`;
+    return { m, satis, uye, q1, endirim };
+  }
+
+  // Qazanc % → satış qiyməti
+  const satisdanFaiz = () => {
+    const m = maya(), s = sayi(f("satisFiyati").value);
+    f("karYuzde").value = m > 0 && s > 0 ? iki((s / m - 1) * 100) : "";
+  };
+  const faizdenSatis = () => {
+    const m = maya();
+    if (f("karYuzde").value === "" || !(m > 0)) return;
+    f("satisFiyati").value = iki(m * (1 + sayi(f("karYuzde").value) / 100)).toFixed(2);
+  };
+  ["alisMebleg", "kargo", "vergi", "kurs"].forEach((ad) => f(ad).addEventListener("input", () => { faizdenSatis(); xulaseCiz(); }));
+  f("karYuzde").addEventListener("input", () => { faizdenSatis(); xulaseCiz(); });
+  f("satisFiyati").addEventListener("input", () => { satisdanFaiz(); xulaseCiz(); }); // əl ilə yuvarlaqlaşdırma → faiz özü
+  f("indirimYuzde").addEventListener("input", xulaseCiz);
+
+  async function kursYaz(yeniVal) {
+    const val = valyuta();
+    $("#kurs-satir", kok).hidden = val === "AZN";
+    $("#kurs-val", kok).textContent = val;
+    if (val === "AZN") { faizdenSatis(); xulaseCiz(); return; }
+    $("#kurs-menbe", kok).textContent = t("genel.yukleniyor");
+    kurslar ||= await kurslariAl();
+    if (kurslar?.[val]) {
+      if (yeniVal || !f("kurs").value) f("kurs").value = kurslar[val];
+      $("#kurs-menbe", kok).textContent = t("admin.hesap.kursMenbe", { tarix: kurslar.tarix || "" });
+    } else {
+      $("#kurs-menbe", kok).textContent = t("admin.hesap.kursYoxdur");
+    }
+    faizdenSatis();
+    xulaseCiz();
+  }
+  f("alisValyuta").addEventListener("change", () => kursYaz(true));
+  if (valyuta() !== "AZN") kursYaz(false);
+  if (!id && f("karYuzde").value === "") f("karYuzde").value = 20; // standart: 20%
+  if (!f("satisFiyati").value) faizdenSatis();
+  xulaseCiz();
 
   // ---- Fotoğraflar ----
   let hazirlanan = 0; // hazırlanmaqda olan şəkil sayı
@@ -293,17 +375,18 @@ async function formAc(kok, id) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (hazirlanan > 0) return bildir(t("admin.urun.fotoHazirlanir"), "hata");
-    const h = hesapGuncelle();
+    const x = xulaseCiz();
     const ilkDil = DILLER[0].kod;
-    const ad = Object.fromEntries(DILLER.map((d) => [d.kod, f(`ad_${d.kod}`).value.trim()]).filter(([, x]) => x));
-    const aciklama = Object.fromEntries(DILLER.map((d) => [d.kod, f(`aciklama_${d.kod}`).value.trim()]).filter(([, x]) => x));
+    const ad = Object.fromEntries(DILLER.map((d) => [d.kod, f(`ad_${d.kod}`).value.trim()]).filter(([, y]) => y));
+    const aciklama = Object.fromEntries(DILLER.map((d) => [d.kod, f(`aciklama_${d.kod}`).value.trim()]).filter(([, y]) => y));
     const kaynakLink = f("kaynakLink").value.trim();
 
     if (!ad[ilkDil]) return bildir(t("admin.urun.adGerekli"), "hata");
-    if (!f("kategoriId").value) return bildir(t("admin.urun.kategoriGerekli"), "hata");
-    if (!(h.satis > 0)) return bildir(t("admin.urun.fiyatGerekli"), "hata");
+    if (!sKategori.deger()) return bildir(t("admin.urun.kategoriGerekli"), "hata");
+    if (!(x.satis > 0)) return bildir(t("admin.urun.fiyatGerekli"), "hata");
+    if (valyuta() !== "AZN" && !(kursDeger() > 0)) return bildir(t("admin.hesap.kursGerekli"), "hata");
     if (kaynakLink && !/^https?:\/\//i.test(kaynakLink)) return bildir(t("admin.urun.linkHata"), "hata");
-    if (h.kar < 0 && !confirm(t("admin.urun.zararOnay"))) return;
+    if (x.q1 < 0 && !confirm(t("admin.urun.zararOnay"))) return;
 
     const buton = form.querySelector("button[type=submit]");
     buton.disabled = true;
@@ -315,13 +398,13 @@ async function formAc(kok, id) {
 
       await setDoc(ref, {
         ad, aciklama,
-        marka: f("marka").value.trim(),
-        kategoriId: f("kategoriId").value,
-        olculer: listeyeCevir(f("olculer").value),
-        renkler: listeyeCevir(f("renkler").value),
-        satisFiyati: h.satis,
-        indirimYuzde: Math.min(90, Math.max(0, Number(f("indirimYuzde").value) || 0)),
-        uyeFiyati: h.uyeFiyati,
+        marka: sMarka.deger(),
+        kategoriId: sKategori.deger(),
+        olculer: sOlcu.deger(),
+        renkler: sRenk.deger(),
+        satisFiyati: iki(x.satis),
+        indirimYuzde: iki(x.endirim),
+        uyeFiyati: iki(x.uye),
         aktif: f("aktif").checked,
         kapak,
         fotoSayisi: fotolar.length,
@@ -330,10 +413,13 @@ async function formAc(kok, id) {
       });
 
       const yeniDetay = {
-        alisFiyati: Number(f("alisFiyati").value) || 0,
-        kargo: Number(f("kargo").value) || 0,
-        vergi: Number(f("vergi").value) || 0,
-        karYuzde: Number(f("karYuzde").value) || 0,
+        alisMebleg: sayi(f("alisMebleg").value),
+        alisValyuta: valyuta(),
+        kurs: kursDeger(),
+        alisFiyati: alisAzn(), // AZN qarşılığı (siyahılar və hesablamalar üçün)
+        kargo: sayi(f("kargo").value),
+        vergi: sayi(f("vergi").value),
+        karYuzde: x.m > 0 ? iki((x.satis / x.m - 1) * 100) : 0,
         kaynakLink,
         adminNotu: f("adminNotu").value.trim(),
         guncelleme: serverTimestamp(),

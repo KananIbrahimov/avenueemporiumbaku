@@ -247,7 +247,7 @@ export default {
   "admin.ig.sifirla": "Standart şablona qaytar",
 
   // Sifarişlər
-  "admin.sip.aciklama": "Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı. İstənilən mərhələdə ləğv etmək olar. Panel açıq olduqda yeni sifariş gələn kimi bildiriş və səs gəlir.",
+  "admin.sip.aciklama": "Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı. Qəbul ediləndən sonra kargo məlumatını elə buradan əlavə edin — müştəri \"Sifarişlərim\"də görür. İstənilən mərhələdə ləğv etmək olar.",
   "admin.sip.bildirimAc": "Bildirişləri aç",
   "admin.sip.bildirimKapali": "Brauzerdə bildirişlər bağlıdır",
   "admin.sip.bildirimBaslik": "Yeni sifariş — AvenueBaku",
@@ -269,6 +269,9 @@ export default {
   "admin.urun.bos": "Hələ məhsul yoxdur. \"Yeni məhsul\" ilə əlavə edin.",
   "admin.urun.onceKategori": "Əvvəlcə kateqoriya əlavə edin:",
   "admin.urun.ad": "Məhsulun adı",
+  "admin.urun.adOrnek": "məs. Kətan köynək, oversize",
+  "admin.urun.qiymetBaslik": "Qiymət",
+  "admin.urun.gizliQisa": "müştəri yalnız satış və üzv qiymətini görür",
   "admin.urun.aciklama": "Təsvir",
   "admin.urun.marka": "Brend",
   "admin.urun.kategori": "Kateqoriya",
@@ -305,6 +308,14 @@ export default {
 
   // Qiymət hesabı
   "admin.hesap.alis": "Alış qiyməti",
+  "admin.hesap.kurs": "Kurs",
+  "admin.hesap.kursMenbe": "avtomatik kurs · {tarix} (dəyişmək olar)",
+  "admin.hesap.kursYoxdur": "kurs alınmadı — əl ilə yazın",
+  "admin.hesap.kursGerekli": "Valyuta kursunu yazın.",
+  "admin.hesap.ikiTerefli": "Faizi yazsanız satış qiyməti, satış qiymətini əl ilə dəyişsəniz (məs. yuvarlaqlaşdırma) faiz özü hesablanır.",
+  "admin.hesap.xulase": "Xülasə",
+  "admin.hesap.qazancUzvOlmayan": "Qazanc · üzv olmayan sifarişi",
+  "admin.hesap.qazancUzv": "Qazanc · üzv sifarişi",
   "admin.hesap.kargo": "Karqo",
   "admin.hesap.vergi": "Vergi / gömrük",
   "admin.hesap.karYuzde": "Qazanc faizi",
@@ -318,6 +329,28 @@ export default {
   "admin.hesap.uyeFiyati": "Üzv qiyməti",
   "admin.hesap.qazanc": "Qazanc",
   "admin.hesap.uyeyeSatista": "Üzvə satışda qazanc",
+
+  // Axtarışlı siyahı
+  "secici.sec": "Seçin",
+  "secici.secildi": "{say} seçilib",
+  "secici.axtar": "Axtar…",
+  "secici.bos": "Siyahı boşdur",
+  "secici.yenisi": "Yenisini əlavə et",
+  "secici.elaveEtAd": "\"{ad}\" əlavə et",
+  "secici.elaveOlundu": "\"{ad}\" əlavə olundu",
+  "secici.ad": "Ad",
+  "secici.legv": "Ləğv",
+  "secici.elaveEt": "Əlavə et",
+  "secici.hazir": "Hazır",
+  "secici.bagla": "Bağla",
+  "secici.markaSec": "Brend seçin",
+  "secici.kategoriSec": "Kateqoriya seçin",
+  "secici.olcuSec": "Ölçüləri seçin",
+  "secici.renkSec": "Rəngləri seçin",
+  "secici.yeniMarka": "Yeni brend",
+  "secici.yeniKategori": "Yeni kateqoriya",
+  "secici.yeniOlcu": "Yeni ölçü",
+  "secici.yeniRenk": "Yeni rəng",
 
   // Kateqoriyalar
   "admin.kat.ad": "Kateqoriya adı",

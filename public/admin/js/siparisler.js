@@ -5,6 +5,7 @@ import { para, yuvarla } from "../../ortak/fiyat.js";
 import { $, $$, kacis, tarih, bildir, hataMesaji, durumEtiketi, SIPARIS_DURUMLARI } from "../../ortak/yardim.js";
 import { detayGetir } from "./veri.js";
 import { adimlarHtml, IZLEME_ADIMLARI } from "../../ortak/izleme-ui.js";
+import { kargoHtml, kargoBagla, kargoDatalist } from "./kargo.js";
 
 export let siparisler = [];
 const dinleyiciler = new Set();
@@ -94,7 +95,14 @@ export function siparislerSekmesi(ana) {
   ciz();
 }
 
+let gozleyen = false;
 async function ciz() {
+  // Yazı yazılarkən (kargo formu) canlı yenilənmə səhifəni üstündən yazmasın
+  const ae = document.activeElement;
+  if (kok.contains(ae) && /INPUT|TEXTAREA|SELECT/.test(ae.tagName)) {
+    if (!gozleyen) { gozleyen = true; ae.addEventListener("blur", () => setTimeout(() => { gozleyen = false; ciz(); }, 50), { once: true }); }
+    return;
+  }
   // Köhnə "Sifariş verildi" statusu "Qəbul edildi" sayılır
   const esas = (d) => (d === "sifarisVerildi" ? "tesdiq" : d);
   const sayilar = Object.fromEntries(SIPARIS_DURUMLARI.map((d) => [d, siparisler.filter((o) => esas(o.durum) === d).length]));
@@ -114,6 +122,7 @@ async function ciz() {
           ${kacis(d === "hepsi" ? t("filtre.tumu") : t("durum." + d))} (${d === "hepsi" ? siparisler.length : sayilar[d]})
         </button>`).join("")}
     </div>
+    ${kargoDatalist()}
     <div class="liste" id="sip-liste">
       ${liste.length ? liste.map(kartHtml).join("") : `<p class="bos">${kacis(t("admin.sip.bos"))}</p>`}
     </div>`;
@@ -136,6 +145,7 @@ async function ciz() {
     deyis(b.closest("[data-sip]").dataset.sip, b.dataset.adim)));
   $$("[data-legv]", kok).forEach((b) => b.addEventListener("click", () => deyis(b.dataset.legv, "legv", t("izleme.legvOnay"))));
   $$("[data-berpa]", kok).forEach((b) => b.addEventListener("click", () => deyis(b.dataset.berpa, "yeni")));
+  kargoBagla(kok, { siparisler: () => siparisler, durumDegistir, yenidenCiz: ciz });
   $$("[data-sil]", kok).forEach((b) => b.addEventListener("click", async () => {
     if (!confirm(t("admin.sip.silOnay"))) return;
     try { await deleteDoc(doc(db, "siparisler", b.dataset.sil)); } catch (e) { bildir(hataMesaji(e), "hata"); }
@@ -176,12 +186,12 @@ function kartHtml(o) {
       ${o.musteriNotu ? `<div class="kutu-mesaj kutu-bilgi" style="margin:0">${kacis(o.musteriNotu)}</div>` : ""}
       <div class="aksiyonlar" data-kaynak="${kacis(o.id)}"></div>
       ${adimlarHtml(o, { tiklanan: true })}
+      ${kargoHtml(o)}
       <div class="aksiyonlar">
         ${novbetiHtml(o)}
         ${o.durum === "legv"
           ? `<button class="btn btn-ince btn-kucuk" data-berpa="${kacis(o.id)}">↺ ${kacis(t("admin.sip.berpa"))}</button>`
           : o.durum !== "catdirildi" ? `<button class="btn btn-ince btn-kucuk btn-legv" data-legv="${kacis(o.id)}">✕ ${kacis(t("izleme.legv"))}</button>` : ""}
-        ${["tesdiq", "sifarisVerildi", "yolda"].includes(o.durum) ? `<a class="btn btn-link btn-kucuk" href="#izleme">🚚 ${kacis(t("admin.sip.kargoyaKec"))}</a>` : ""}
         <button class="btn btn-link btn-kucuk" data-sil="${kacis(o.id)}" style="margin-left:auto">${kacis(t("admin.sil"))}</button>
       </div>
     </div>`;

@@ -10,7 +10,6 @@ import { siparisleriBaslat, siparislerSekmesi } from "./siparisler.js";
 import { urunlerSekmesi } from "./urunler.js";
 import { kategorilerSekmesi } from "./kategoriler.js";
 import { musterilerSekmesi } from "./musteriler.js";
-import { izlemeSekmesi } from "./izleme.js";
 import { ayarlarSekmesi } from "./ayarlar.js";
 import { magazaSekmesi } from "./magaza.js";
 
@@ -18,7 +17,7 @@ temaUygula();
 versiyaYoxla();
 sayfayiCevir();
 
-// Aşağı menyu: Mağaza · Müştərilər · (+) Məhsul · Sifarişlər (izləmə və yönləndirmə) · Ayarlar
+// Aşağı menyu: Mağaza · Müştərilər · (+) Məhsul · Sifarişlər (mərhələlər + kargo) · Ayarlar
 const MENYU = [
   { id: "magaza", ikon: IKON.magaza, metin: "admin.sekme.magaza", href: "#magaza" },
   { id: "musteriler", ikon: IKON.musteri, metin: "admin.sekme.musteriler", href: "#musteriler" },
@@ -27,27 +26,13 @@ const MENYU = [
   { id: "ayarlar", ikon: IKON.ayar, metin: "admin.sekme.ayarlar", href: "#ayarlar" },
 ];
 
-// Sifarişlər bölməsi iki hissədən ibarətdir: Mərhələlər | Kargo izləmə
-function sifarisSekmesi(hisse) {
-  return (kok, args) => {
-    kok.innerHTML = `<div class="segment" style="max-width:460px;margin:4px 0 12px">
-      <button type="button" class="${hisse === "siparisler" ? "secili" : ""}" data-git="#siparisler">${kacis(t("admin.sip.hisse.merhele"))}</button>
-      <button type="button" class="${hisse === "izleme" ? "secili" : ""}" data-git="#izleme">🚚 ${kacis(t("admin.sip.hisse.kargo"))}</button>
-    </div>`;
-    kok.querySelectorAll("[data-git]").forEach((b) => b.addEventListener("click", () => { location.hash = b.dataset.git; }));
-    const ic = document.createElement("div");
-    kok.appendChild(ic);
-    (hisse === "izleme" ? izlemeSekmesi : siparislerSekmesi)(ic, args);
-  };
-}
-
 // Marşrutlar: hash → { çəkən funksiya, hansı menyu aktiv olsun }
 const MARSRUT = {
   magaza: { fn: magazaSekmesi, menyu: "magaza" },
   musteriler: { fn: musterilerSekmesi, menyu: "musteriler" },
   urunler: { fn: urunlerSekmesi, menyu: "urunler" },
-  siparisler: { fn: sifarisSekmesi("siparisler"), menyu: "siparisler" },
-  izleme: { fn: sifarisSekmesi("izleme"), menyu: "siparisler" },
+  siparisler: { fn: siparislerSekmesi, menyu: "siparisler" },
+  izleme: { fn: siparislerSekmesi, menyu: "siparisler" }, // köhnə link
   ayarlar: { fn: ayarlarSekmesi, menyu: "ayarlar" },
   kategoriler: { fn: kategorilerSekmesi, menyu: "ayarlar" },
   yedek: { fn: ayarlarSekmesi, menyu: "ayarlar" }, // köhnə link
