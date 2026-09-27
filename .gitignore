@@ -3,3 +3,6 @@ node_modules/
 *-debug.log
 firebase-export-*/
 .DS_Store
+
+# Deploy zamanı avtomatik yaranır (skript/versiya.js) — GitHub-a düşməsin
+public/versiya.json
