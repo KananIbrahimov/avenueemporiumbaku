@@ -1,4 +1,18 @@
 /* Admin paneli */
+
+/* Məhsul formu: vacib sahələr və vitrinə hazırlıq yoxlaması */
+.vacib { color: var(--tehlike); font-weight: 700; }
+.sahe-eksik .secici-qutu, .sahe-eksik > input, .sahe-eksik .alis-satir input { border-color: var(--tehlike); }
+.kart.sahe-eksik { border-color: color-mix(in srgb, var(--tehlike) 60%, var(--cizgi)); }
+.sahe-eksik label { color: var(--tehlike); }
+.yoxlama { display: grid; gap: 10px; }
+.yoxlama-ust { font-weight: 700; color: var(--uyari); }
+.yoxlama-ust.hazir { color: var(--basari); }
+.yoxlama-izgara { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.yoxlama-izgara span { font-size: .76rem; font-weight: 600; padding: 6px 8px; border-radius: 10px; background: var(--kart-2); border: 1px solid var(--cizgi); line-height: 1.25; display: flex; align-items: center; gap: 4px; }
+.yoxlama-izgara .var { color: var(--basari); }
+.yoxlama-izgara .yox { color: var(--soluk); }
+
 /* Aşağı menyu — bütün ekranlarda */
 body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inset-bottom)); }
 .admin-menyu {

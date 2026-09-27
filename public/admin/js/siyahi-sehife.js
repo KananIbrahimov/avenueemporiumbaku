@@ -1,5 +1,5 @@
 // Ayarlar → Kateqoriyalar / Brendlər / Ölçülər / Rənglər
-// Hər birində: axtarış, əlavə et, adını dəyiş, sil, sıranı dəyiş. Neçə məhsulda istifadə olunduğu görünür.
+// Hər birində: axtarış, əlavə et, adını dəyiş, sil. Neçə məhsulda istifadə olunduğu görünür.
 import {
   db, collection, doc, getDocs, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp,
 } from "../../ortak/firebase.js";
@@ -86,12 +86,9 @@ export function siyahiSekmesi(novu) {
       const q = norm(ara);
       const gorunen = siyahi.filter((x) => !q || norm(x.ad).includes(q));
       $("#s-liste", kok).innerHTML = gorunen.length ? gorunen.map((x) => {
-        const i = siyahi.indexOf(x);
         return `<div class="siyahi-satir" data-id="${kacis(x.id)}">
           <div class="siyahi-ad"><b>${kacis(x.ad)}</b><span class="soluk">${kacis(t("admin.siyahi.mehsulSay", { say: x.say }))}</span></div>
           <div class="siyahi-aksiyon">
-            ${q ? "" : `<button type="button" class="ikon-btn" data-is="yukari" ${i === 0 ? "disabled" : ""} aria-label="↑">↑</button>
-            <button type="button" class="ikon-btn" data-is="asagi" ${i === siyahi.length - 1 ? "disabled" : ""} aria-label="↓">↓</button>`}
             <button type="button" class="ikon-btn" data-is="deyis" aria-label="${kacis(t("admin.siyahi.deyis"))}">✎</button>
             <button type="button" class="ikon-btn tehlike" data-is="sil" aria-label="${kacis(t("admin.sil"))}">✕</button>
           </div></div>`;
@@ -117,12 +114,6 @@ export function siyahiSekmesi(novu) {
           if (!confirm(sual)) return;
           await c.adapter.sil(id, siyahi);
           bildir(t("admin.silindi"), "basari");
-        } else {
-          const i = siyahi.indexOf(x), j = is === "yukari" ? i - 1 : i + 1;
-          [siyahi[i], siyahi[j]] = [siyahi[j], siyahi[i]];
-          ciz();
-          await c.adapter.sirala(siyahi);
-          return;
         }
         await yenile();
       } catch (e) { bildir(hataMesaji(e), "hata"); }

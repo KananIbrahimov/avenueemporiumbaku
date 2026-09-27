@@ -50,7 +50,7 @@ export function secici(kok, o) {
   function qutuCiz() {
     const bos = !secili.length;
     kok.innerHTML = `
-      <label>${kacis(o.etiket)}</label>
+      <label>${o.ikon ? `${o.ikon} ` : ""}${kacis(o.etiket)}${o.vacib ? ` <span class="vacib">*</span>` : ""}</label>
       <button type="button" class="secici-qutu ${bos ? "bos" : ""}">
         <span>${bos ? kacis(o.yerTutucu || t("secici.sec")) : o.coxlu ? kacis(t("secici.secildi", { say: secili.length })) : kacis(adOf(secili[0]))}</span>
         <span class="ox">▾</span>

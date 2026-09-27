@@ -27,6 +27,24 @@ export function detayGuncelle(urunId, veri) {
   else detaylar.delete(urunId);
 }
 
+/**
+ * Məhsulun vitrinə (müştəri ekranına) çıxması üçün çatışmayanlar.
+ * Qaytarır: çatışmayan sahələrin tərcümə açarları (boşdursa hazırdır)
+ */
+export function vitrinEksikleri(u, d = {}) {
+  const x = [];
+  if (!Object.values(u.ad || {}).some((s) => String(s).trim())) x.push("ad");
+  if (!u.marka) x.push("marka");
+  if (!u.kategoriId) x.push("kategori");
+  if (!(u.olculer || []).length) x.push("olcu");
+  if (!(u.renkler || []).length) x.push("renk");
+  if (!String(d.kaynakLink || "").trim()) x.push("link");
+  if (!(Number(d.alisMebleg ?? d.alisFiyati) > 0)) x.push("alis");
+  if (!(Number(u.satisFiyati) > 0)) x.push("satis");
+  if (!(u.fotoSayisi > 0 || u.kapak)) x.push("foto");
+  return x;
+}
+
 export async function kategorileriGetir() {
   const s = await getDocs(collection(db, "kategoriler"));
   return s.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.sira ?? 0) - (b.sira ?? 0));
