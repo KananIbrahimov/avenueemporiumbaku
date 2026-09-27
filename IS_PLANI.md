@@ -11,7 +11,7 @@
 - [x] Firebase projesi açıldı: `avenueemporiumbaku`
 - [ ] Firebase: Email/Password girişini aç
 - [ ] Firebase: Firestore veritabanını oluştur (europe-west3)
-- [ ] Firebase: Web app ekle, `firebaseConfig`'i `public/ortak/ayarlar.js`'e yaz
+- [x] Firebase: Web app eklendi, `firebaseConfig` `public/ortak/ayarlar.js`'e yazıldı
 - [ ] Firebase: `avenueemporiumbaku-admin` hosting sitesini oluştur
 - [ ] İlk yayın (`firebase deploy`)
 - [ ] Admin hesabı: kananibrahimov999@gmail.com → rol `admin`
