@@ -14,9 +14,9 @@
 - [x] Firebase: Web app eklendi, `firebaseConfig` `public/ortak/ayarlar.js`'e yazıldı
 - [x] Firebase: `avenueemporiumbaku-admin` hosting sitesi oluşturuldu
 - [x] İlk yayın yapıldı (27.09.2026) — avenueemporiumbaku.web.app + avenueemporiumbaku-admin.web.app
-- [ ] Admin hesabı: kananibrahimov999@gmail.com → rol `admin`
+- [x] Admin hesabı: kananibrahimov999@gmail.com → rol `admin`
 - [ ] Test müşteri hesabı: kananibrahimov999+musteri@gmail.com
-- [ ] Otomatik yayın için GitHub'a `FIREBASE_SERVICE_ACCOUNT` anahtarı
+- [x] Otomatik yayın: GitHub `FIREBASE_SERVICE_ACCOUNT` anahtarı eklendi — main-ə hər yükləmədə sayt özü yayınlanır
 
 ## Faz 1 — Admin paneli
 - [x] Admin girişi (e-posta + şifre, kayıt yok, sadece `admin` rolü)
