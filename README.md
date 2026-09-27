@@ -99,6 +99,11 @@ firebase emulators:start --project demo
 6. İstersen **Authentication → Templates**'ten doğrulama ve şifre sıfırlama maillerinin metnini Azerbaycanca yap.
 
 ### 4. Yayınlama
+
+**Otomatik (aktif):** `main` dalına her yüklemede GitHub Actions siteyi (mağaza + admin) ve Firestore kurallarını kendisi yayınlar — terminal gerekmez. Durum: GitHub → repo → **Actions** (yeşil ✓ = yayında).
+Service account (`firebase-adminsdk-...`) rolleri: Service Usage Consumer, Firebase Hosting Admin, Firebase Rules Admin.
+
+Elle yayınlamak gerekirse:
 ```bash
 firebase deploy --only hosting,firestore:rules
 ```
