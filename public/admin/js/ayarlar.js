@@ -1,9 +1,10 @@
-// Admin → Ayarlar: hesab, görünüş (tema), Instagram mətni şablonu, ehtiyat nüsxə
+// Admin → Ayarlar: hesab, mağaza siyahıları (ayrı səhifələr), kurslar, Instagram, ehtiyat nüsxə, ən aşağıda Çıxış
 import { auth, db, doc, getDoc, setDoc, signOut, profilGetir, serverTimestamp } from "../../ortak/firebase.js";
 import { t } from "../../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { yedekBolumu } from "./yedek.js";
 import { imzaHtml } from "../../ortak/surum.js";
+import { siyahiSaylari } from "./siyahi-sehife.js";
 import { VARSAYILAN_SABLON, SABLON_ACARLARI } from "./instagram.js";
 import { VALYUTALAR, SIMGE, teyinliKurslar, kurslariYaz, bazarKurslari } from "./kurs.js";
 
@@ -15,9 +16,12 @@ export async function ayarlarSekmesi(kok) {
       <div class="kart" id="hesab"><p class="soluk">${kacis(t("genel.yukleniyor"))}</p></div>
 
       <div class="bolum-baslik">${kacis(t("admin.ayar.magaza"))}</div>
-      <div class="kart" style="padding:4px 18px">
-        <a class="ayar-satir" href="#urunler" style="text-decoration:none"><span>🏷️ ${kacis(t("admin.urun.siyahi"))}</span><span class="soluk">›</span></a>
-        <a class="ayar-satir" href="#kategoriler" style="text-decoration:none"><span>🗂️ ${kacis(t("admin.sekme.kategoriler"))}</span><span class="soluk">›</span></a>
+      <div class="kart menyu-kart">
+        <a class="ayar-satir" href="#urunler"><span>🛍️ ${kacis(t("admin.urun.siyahi"))}</span><span class="soluk">›</span></a>
+        <a class="ayar-satir" href="#kategoriler"><span>🗂️ ${kacis(t("admin.sekme.kategoriler"))}</span><span class="soluk"><span data-say="kategoriler"></span> ›</span></a>
+        <a class="ayar-satir" href="#markalar"><span>🏷️ ${kacis(t("admin.siyahi.markalar"))}</span><span class="soluk"><span data-say="markalar"></span> ›</span></a>
+        <a class="ayar-satir" href="#olculer"><span>📏 ${kacis(t("admin.siyahi.olculer"))}</span><span class="soluk"><span data-say="olculer"></span> ›</span></a>
+        <a class="ayar-satir" href="#renkler"><span>🎨 ${kacis(t("admin.siyahi.renkler"))}</span><span class="soluk"><span data-say="renkler"></span> ›</span></a>
       </div>
 
       <div class="bolum-baslik">💱 ${kacis(t("admin.kurs.baslik"))}</div>
@@ -41,10 +45,20 @@ export async function ayarlarSekmesi(kok) {
 
       <div class="bolum-baslik">${kacis(t("admin.sekme.yedek"))}</div>
       <div id="yedek"></div>
+
+      <button type="button" class="btn btn-ince btn-tam cixis-btn" id="cixis">⎋ ${kacis(t("nav.cikis"))}</button>
       ${imzaHtml()}
     </div>`;
 
   yedekBolumu($("#yedek", kok));
+  $("#cixis", kok).addEventListener("click", async () => {
+    if (!confirm(t("admin.cixisOnay"))) return;
+    await signOut(auth);
+    location.replace("./");
+  });
+  siyahiSaylari().then((say) => {
+    for (const [k, n] of Object.entries(say)) { const el = kok.querySelector(`[data-say="${k}"]`); if (el) el.textContent = n; }
+  }).catch(() => {});
   kursBolumu($("#kurs-form", kok));
 
   // Hesab
@@ -56,10 +70,8 @@ export async function ayarlarSekmesi(kok) {
       <span class="durum durum-sifarisVerildi">Admin</span>
     </div>
     <div class="ayar-satir" style="padding-bottom:0">
-      <a href="../" target="_blank" rel="noopener">${kacis(t("admin.magazaAc"))}</a>
-      <button class="btn btn-ince btn-kucuk" id="cikis">${kacis(t("nav.cikis"))}</button>
+      <a href="../" target="_blank" rel="noopener">${kacis(t("admin.magazaAc"))} ↗</a>
     </div>`;
-  $("#cikis", kok).addEventListener("click", async () => { await signOut(auth); location.replace("./"); });
 
   // Instagram şablonu (Firestore: ayarlar/instagram — bütün cihazlarda eyni)
   const form = $("#ig-form", kok);

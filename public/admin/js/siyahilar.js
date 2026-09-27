@@ -23,9 +23,9 @@ export async function siyahilariGetir() {
     v = s.exists() ? s.data() : {};
   } catch (e) { console.warn(e); }
   onbellek = {
-    olculer: v.olculer?.length ? v.olculer : [...HAZIR.olculer],
-    renkler: v.renkler?.length ? v.renkler : [...HAZIR.renkler],
-    markalar: v.markalar || [],
+    olculer: Array.isArray(v.olculer) ? v.olculer : [...HAZIR.olculer],
+    renkler: Array.isArray(v.renkler) ? v.renkler : [...HAZIR.renkler],
+    markalar: Array.isArray(v.markalar) ? v.markalar : null, // null: hələ yaradılmayıb
   };
   return onbellek;
 }
@@ -33,7 +33,24 @@ export async function siyahilariGetir() {
 /** Siyahıya yeni dəyər əlavə edir (məs. siyahiyaElave("markalar", "Zara")) */
 export async function siyahiyaElave(ad, deger) {
   const s = await siyahilariGetir();
+  s[ad] ||= [];
   if (!s[ad].includes(deger)) s[ad].push(deger);
   // İlk dəfə yazılanda hazır siyahılar da saxlanılsın
   await setDoc(doc(db, "ayarlar", "siyahilar"), { ...s, [ad]: arrayUnion(deger) }, { merge: true });
+}
+
+/** Brend siyahısı hələ yoxdursa, mövcud məhsulların brendlərindən yaradılır */
+export async function markalariTohumla(urunler) {
+  const s = await siyahilariGetir();
+  if (s.markalar) return s.markalar;
+  s.markalar = [...new Set(urunler.map((u) => u.marka).filter(Boolean))].sort((a, b) => a.localeCompare(b, "az"));
+  try { await setDoc(doc(db, "ayarlar", "siyahilar"), { ...s }, { merge: true }); } catch (e) { console.warn(e); }
+  return s.markalar;
+}
+
+/** Siyahını tam yazır (sıra, ad dəyişmə, silmə üçün) */
+export async function siyahiYaz(ad, liste) {
+  const s = await siyahilariGetir();
+  s[ad] = [...liste];
+  await setDoc(doc(db, "ayarlar", "siyahilar"), { ...s, [ad]: [...liste] }, { merge: true });
 }

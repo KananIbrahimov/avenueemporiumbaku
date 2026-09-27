@@ -41,6 +41,7 @@
 - [x] v1.3 Alış qiyməti + valyuta (USD, EUR, TRY, GBP, RUB, CNY, AED) → avtomatik kurs, AZN qarşılığı; kurs əl ilə dəyişilə bilir
 - [x] v1.3 Qazanc faizi ↔ satış qiyməti iki tərəfli (əl ilə yuvarlaqlaşdıranda faiz özü hesablanır); xülasədə 2 qutu: üzv olmayan / üzv sifarişindən qazanc
 - [x] v1.3 Sifarişlər və kargo izləmə bir səhifədə (hər kartda kargo məlumatı)
+- [x] v1.5 Ayarlar: Kateqoriyalar, Brendlər, Ölçülər, Rənglər ayrı səhifələrdə (əlavə et, adını dəyiş — məhsullarda da yenilənir, sil, sırala); Çıxış ən aşağıda
 - [x] v1.4 Valyuta kursları Ayarlar-dan təyin olunur (standart: 1 USD = 1.70 ₼, 1 EUR = 1.95 ₼); məhsul formu bu kurslarla hesablayır, boş qalan valyuta üçün bazar kursu
 - [x] Sifariş axını: Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı; istənilən mərhələdə Ləğv et, ləğvdən Bərpa et; status tarixçəsi
 - [x] Sifariş izləmə: kargo şirkəti, izləmə kodu/link, təxmini tarix, müştəriyə qeyd

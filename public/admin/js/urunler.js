@@ -9,7 +9,7 @@ import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { tumDetaylar, detayGuncelle, kategorileriGetir } from "./veri.js";
 import { instagramAc } from "./instagram.js";
 import { secici } from "./secici.js";
-import { siyahilariGetir, siyahiyaElave } from "./siyahilar.js";
+import { siyahilariGetir, siyahiyaElave, markalariTohumla } from "./siyahilar.js";
 import { VALYUTALAR, hesabKursu } from "./kurs.js";
 import { IKON } from "../../ortak/ikon.js";
 
@@ -118,11 +118,11 @@ async function formAc(kok, id) {
     return;
   }
 
-  // Siyahılar: mövcud məhsullardakı dəyərlər də daxil olsun
+  // Siyahılar Ayarlar-dakı siyahılardır (+ bu məhsulun öz dəyərləri, silinmiş olsa belə)
   const birlesdir = (a, b) => [...new Set([...a, ...b].filter(Boolean))];
-  const markalar = birlesdir(siyahilar.markalar, tumUrunler.map((u) => u.marka)).sort((a, b) => a.localeCompare(b, "az"));
-  const olculer = birlesdir(siyahilar.olculer, tumUrunler.flatMap((u) => u.olculer || []));
-  const renkler = birlesdir(siyahilar.renkler, tumUrunler.flatMap((u) => u.renkler || []));
+  const markalar = birlesdir(await markalariTohumla(tumUrunler), [urun.marka]);
+  const olculer = birlesdir(siyahilar.olculer, urun.olculer || []);
+  const renkler = birlesdir(siyahilar.renkler, urun.renkler || []);
 
   let fotolar = eskiFotolar.map((f) => f.veri); // dataURL siyahısı (ilk = vitrin)
   const v = (x) => kacis(x ?? "");

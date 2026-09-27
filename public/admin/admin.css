@@ -139,3 +139,19 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .kurs-giris { display: flex; align-items: center; gap: 6px; }
 .kurs-giris input { padding: 8px 10px; }
 .kurs-oge .ipucu { margin: 0; min-height: 1em; }
+
+/* Ayarlar menyusu və siyahı səhifələri */
+.menyu-kart { padding: 2px 16px; }
+.menyu-kart .ayar-satir { text-decoration: none; padding: 15px 0; }
+.cixis-btn { margin-top: 28px; color: var(--tehlike); border-color: color-mix(in srgb, var(--tehlike) 45%, var(--cizgi)); }
+.siyahi-ust { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 12px; }
+.siyahi-kart { padding: 2px 14px; }
+.siyahi-satir { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--cizgi); }
+.siyahi-satir:last-child { border-bottom: 0; }
+.siyahi-ad { display: grid; min-width: 0; }
+.siyahi-ad b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.siyahi-ad .soluk { font-size: .76rem; }
+.siyahi-aksiyon { display: flex; gap: 6px; flex: none; }
+.ikon-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--cizgi); background: var(--kart-2); color: var(--yazi); font-size: .95rem; cursor: pointer; }
+.ikon-btn:disabled { opacity: .3; cursor: default; }
+.ikon-btn.tehlike { color: var(--tehlike); }

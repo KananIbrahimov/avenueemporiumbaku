@@ -203,6 +203,17 @@ export default {
   "admin.menyu.urunEkle": "Məhsul əlavə et",
   "admin.urun.siyahi": "Bütün məhsullar",
   "admin.ayar.magaza": "Mağaza",
+  "admin.cixisOnay": "Hesabdan çıxılsın?",
+  "admin.siyahi.markalar": "Brendlər",
+  "admin.siyahi.olculer": "Ölçülər",
+  "admin.siyahi.renkler": "Rənglər",
+  "admin.siyahi.mehsulSay": "{say} məhsulda",
+  "admin.siyahi.deyis": "Adını dəyiş",
+  "admin.siyahi.deyisBaslik": "Adını dəyiş",
+  "admin.siyahi.varDir": "Bu ad artıq siyahıda var.",
+  "admin.siyahi.deyisdiMehsul": "Yadda saxlanıldı · {say} məhsul yeniləndi",
+  "admin.siyahi.silOnay": "\"{ad}\" siyahıdan silinsin?",
+  "admin.siyahi.silIstifade": "\"{ad}\" {say} məhsulda istifadə olunur. Siyahıdan silinsin? (Həmin məhsullarda qalacaq.)",
 
   // Sifariş izləmə
   "izleme.aciklama": "Addıma toxunaraq statusu dəyişin. Kargo məlumatını əlavə edin — müştəri \"Sifarişlərim\"də görür.",

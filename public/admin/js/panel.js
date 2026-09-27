@@ -8,10 +8,10 @@ import { versiyaYoxla } from "../../ortak/versiya.js";
 import { IKON } from "../../ortak/ikon.js";
 import { siparisleriBaslat, siparislerSekmesi } from "./siparisler.js";
 import { urunlerSekmesi } from "./urunler.js";
-import { kategorilerSekmesi } from "./kategoriler.js";
 import { musterilerSekmesi } from "./musteriler.js";
 import { ayarlarSekmesi } from "./ayarlar.js";
 import { magazaSekmesi } from "./magaza.js";
+import { siyahiSekmesi } from "./siyahi-sehife.js";
 
 temaUygula();
 versiyaYoxla();
@@ -34,7 +34,10 @@ const MARSRUT = {
   siparisler: { fn: siparislerSekmesi, menyu: "siparisler" },
   izleme: { fn: siparislerSekmesi, menyu: "siparisler" }, // köhnə link
   ayarlar: { fn: ayarlarSekmesi, menyu: "ayarlar" },
-  kategoriler: { fn: kategorilerSekmesi, menyu: "ayarlar" },
+  kategoriler: { fn: siyahiSekmesi("kategoriler"), menyu: "ayarlar" },
+  markalar: { fn: siyahiSekmesi("markalar"), menyu: "ayarlar" },
+  olculer: { fn: siyahiSekmesi("olculer"), menyu: "ayarlar" },
+  renkler: { fn: siyahiSekmesi("renkler"), menyu: "ayarlar" },
   yedek: { fn: ayarlarSekmesi, menyu: "ayarlar" }, // köhnə link
 };
 
