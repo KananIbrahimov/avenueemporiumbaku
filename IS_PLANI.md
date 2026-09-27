@@ -12,8 +12,8 @@
 - [x] Firebase: Email/Password girişi açıldı + admin adresi yetkili alan adlarına eklendi
 - [x] Firebase: Firestore veritabanı oluşturuldu (Standard, production mode)
 - [x] Firebase: Web app eklendi, `firebaseConfig` `public/ortak/ayarlar.js`'e yazıldı
-- [ ] Firebase: `avenueemporiumbaku-admin` hosting sitesini oluştur
-- [ ] İlk yayın (`firebase deploy`)
+- [x] Firebase: `avenueemporiumbaku-admin` hosting sitesi oluşturuldu
+- [x] İlk yayın yapıldı (27.09.2026) — avenueemporiumbaku.web.app + avenueemporiumbaku-admin.web.app
 - [ ] Admin hesabı: kananibrahimov999@gmail.com → rol `admin`
 - [ ] Test müşteri hesabı: kananibrahimov999+musteri@gmail.com
 - [ ] Otomatik yayın için GitHub'a `FIREBASE_SERVICE_ACCOUNT` anahtarı
