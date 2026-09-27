@@ -1,11 +1,15 @@
-// Mağaza səhifələrinin ortaq üst menyusu, telefonda aşağı menyu, giriş vəziyyəti və PWA
+// Mağaza səhifələrinin ortaq üst hissəsi, aşağı menyu (5 ikon), giriş vəziyyəti və PWA
+// Aşağı menyu: Bəyəndiklərim · Kataloq · (ortada) Ana səhifə · Səbətim · Ayarlar
 import { auth, onAuthStateChanged, profilGetir } from "../ortak/firebase.js";
 import { t, sayfayiCevir } from "../ortak/i18n.js";
 import { kacis } from "../ortak/yardim.js";
 import { temaUygula } from "../ortak/tema.js";
 import { IKON } from "../ortak/ikon.js";
+import { versiyaYoxla } from "../ortak/versiya.js";
+import { favorileriBagla, favoriListesi, sebetSayi, depoDinle } from "./depo.js";
 
 temaUygula();
+versiyaYoxla();
 
 let durum = { kullanici: null, profil: null, uye: false };
 let hazir = false;
@@ -19,41 +23,62 @@ export function girisDinle(fn) {
   if (hazir) fn(durum);
 }
 
-// Hansı səhifədəyik? (cleanUrls: /urun, /siparislerim ...)
-const yol = location.pathname.replace(/\.html$/, "").replace(/\/$/, "") || "/";
-const aktifSehife = yol === "" || yol === "/" || yol.endsWith("/index") ? "magaza"
-  : yol.endsWith("/urun") ? "magaza"
-  : yol.endsWith("/siparislerim") ? "siparis"
-  : ["/ayarlar", "/giris", "/kayit", "/sifre"].some((s) => yol.endsWith(s)) ? "ayar" : "";
+// Hansı səhifədəyik? (cleanUrls: /urun, /sebet ...)
+const yol = location.pathname.replace(/\.html$/, "").replace(/\/$/, "");
+const son = yol.split("/").pop() || "index";
+const aktifSehife = {
+  index: "ana", urun: "ana",
+  katalog: "katalog",
+  begendiklerim: "begen",
+  sebet: "sebet",
+  ayarlar: "ayar", siparislerim: "ayar", giris: "ayar", kayit: "ayar", sifre: "ayar",
+}[son] || "ana";
 
 const MENYU = [
-  { id: "magaza", href: "./", ikon: IKON.magaza, metin: "nav.magaza" },
-  { id: "siparis", href: "siparislerim.html", ikon: IKON.siparis, metin: "nav.siparislerim" },
+  { id: "begen", href: "begendiklerim.html", ikon: IKON.urek, metin: "nav.begendiklerim", say: "fav" },
+  { id: "katalog", href: "katalog.html", ikon: IKON.katalog, metin: "nav.katalog" },
+  { id: "ana", href: "./", ikon: IKON.ev, metin: "nav.ana", orta: true },
+  { id: "sebet", href: "sebet.html", ikon: IKON.sebet, metin: "nav.sebet", say: "sebet" },
   { id: "ayar", href: "ayarlar.html", ikon: IKON.ayar, metin: "nav.ayarlar" },
 ];
 
 function ustCiz() {
   const nav = document.getElementById("ust-nav");
   if (!nav) return;
-  const { kullanici } = durum;
+  // Kompüterdə yuxarıda qısa keçidlər; telefonda yalnız aşağı menyu
   nav.innerHTML =
-    MENYU.map((m) => `<a class="ust-link masaustu ${m.id === aktifSehife ? "aktif" : ""}" href="${m.href}">${m.ikon}<span>${kacis(t(m.metin))}</span></a>`).join("") +
-    (kullanici ? "" : `<a class="btn btn-kucuk" href="giris.html" style="margin-left:6px">${kacis(t("nav.giris"))}</a>`);
+    MENYU.filter((m) => !m.orta).map((m) => `<a class="ust-link masaustu ${m.id === aktifSehife ? "aktif" : ""}" href="${m.href}">
+      ${m.ikon}<span>${kacis(t(m.metin))}</span>${m.say ? `<b class="sayac" data-say="${m.say}" hidden></b>` : ""}</a>`).join("") +
+    (durum.kullanici ? "" : `<a class="btn btn-kucuk" href="giris.html" style="margin-left:6px">${kacis(t("nav.giris"))}</a>`);
+  saylariYenile();
 }
 
 function altMenyuCiz() {
   if (document.querySelector(".alt-menyu")) return;
   const el = document.createElement("nav");
   el.className = "alt-menyu";
-  el.innerHTML = MENYU.map((m) =>
-    `<a href="${m.href}" class="${m.id === aktifSehife ? "aktif" : ""}">${m.ikon}<span>${kacis(t(m.metin))}</span></a>`).join("");
+  el.innerHTML = MENYU.map((m) => `
+    <a href="${m.href}" class="${m.id === aktifSehife ? "aktif" : ""} ${m.orta ? "orta" : ""}">
+      <span class="ikon-kap">${m.ikon}</span><span>${kacis(t(m.metin))}</span>
+      ${m.say ? `<b class="sayac" data-say="${m.say}" hidden></b>` : ""}
+    </a>`).join("");
   document.body.appendChild(el);
   document.body.classList.add("menyulu");
+}
+
+function saylariYenile() {
+  const say = { fav: favoriListesi().length, sebet: sebetSayi() };
+  document.querySelectorAll("[data-say]").forEach((el) => {
+    const n = say[el.dataset.say] || 0;
+    el.hidden = n === 0;
+    el.textContent = n > 99 ? "99+" : n;
+  });
 }
 
 sayfayiCevir();
 altMenyuCiz();
 ustCiz();
+depoDinle(saylariYenile);
 
 onAuthStateChanged(auth, async (kullanici) => {
   let profil = null;
@@ -63,6 +88,7 @@ onAuthStateChanged(auth, async (kullanici) => {
   durum = { kullanici, profil, uye: !!(kullanici && kullanici.emailVerified) };
   hazir = true;
   ustCiz();
+  favorileriBagla(kullanici, profil);
   dinleyiciler.forEach((fn) => fn(durum));
   hazirCoz(durum);
 });

@@ -58,7 +58,9 @@ Müşteri sipariş verirken fiyatı değiştiremez; güvenlik kuralı fiyatın �
 - **Müşteri:** ad, soyad, e-posta ve şifreyle kayıt olur → Firebase doğrulama maili gönderir → linke tıklayınca üye olur, indirimli fiyatları görür ve sipariş (istek) verebilir.
 - **Abla (admin):** `admin/` adresinden girer. Ürün ekler, fiyatı hesaplar, siparişleri görür ve kaynak linke tıklayıp ürünü bulur, durum değiştirir.
 - **Bildirim:** admin paneli açıkken yeni sipariş gelince bildirim + ses.
-- **Yedek:** Admin → Ehtiyat nüsxə → tüm veriler tek JSON dosyası.
+- **Yedek:** Admin → Ayarlar → Ehtiyat nüsxə → tüm veriler tek JSON dosyası.
+- **Müşteri menüsü:** Bəyəndiklərim · Kataloq · Ana səhifə · Səbətim · Ayarlar. Sepetten tek seferde sipariş verilir.
+- **Yeni sürüm:** her `firebase deploy` öncesi `skript/versiya.js` otomatik çalışır ve `public/versiya.json` güncellenir. Açık sayfalarda "Yeni versiya hazırdır — Yenilə" bildirimi çıkar; uygulama arka plandan dönünce kendisi yenilenir.
 - **Telefonda uygulama:** her iki site "Ana ekrana ekle" ile uygulama gibi açılır; telefonda aşağıda menü çıkar.
 - **Dizayn:** her iki site her zaman koyu (dark) temada, gümüş (silver) renklerle açılır.
 - **Sipariş akışı:** Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı; her aşamada Ləğv et. Admin → Sifariş izləmə bölümünden kargo firması, takip kodu ve tahmini tarih girilir; müşteri "Sifarişlərim"de adım adım görür.

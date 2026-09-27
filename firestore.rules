@@ -47,12 +47,14 @@ service cloud.firestore {
         && request.resource.data.rol == 'musteri'
         && request.resource.data.olusturma == request.time;
 
-      // Müşteri adını/soyadını/dilini değiştirebilir; rolünü ve e-postasını değiştiremez.
+      // Müşteri adını/soyadını/dilini ve bəyəndiklərini değiştirebilir; rolünü ve e-postasını değiştiremez.
       allow update: if (girisli()
           && request.auth.uid == uid
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ad', 'soyad', 'dil'])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ad', 'soyad', 'dil', 'favoriler'])
           && metin(request.resource.data.ad, 1, 50)
-          && metin(request.resource.data.soyad, 1, 50))
+          && metin(request.resource.data.soyad, 1, 50)
+          && (!('favoriler' in request.resource.data)
+              || (request.resource.data.favoriler is list && request.resource.data.favoriler.size() <= 200)))
         || admin();
 
       allow delete: if admin();
@@ -98,7 +100,8 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly([
              'kullaniciId', 'musteriAd', 'musteriEmail', 'telefon', 'musteriNotu',
              'urunId', 'urunAd', 'marka', 'olcu', 'renk', 'adet', 'birimFiyat',
-             'durum', 'olusturma'])
+             'durum', 'olusturma', 'sebetId'])
+        && (!('sebetId' in request.resource.data) || metin(request.resource.data.sebetId, 1, 40))
         && request.resource.data.kullaniciId == request.auth.uid
         && request.resource.data.musteriEmail == request.auth.token.email
         && metin(request.resource.data.musteriAd, 1, 120)

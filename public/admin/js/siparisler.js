@@ -163,6 +163,7 @@ function kartHtml(o) {
         <div><b>${kacis(o.musteriAd)}</b> <span class="soluk">· ${kacis(tarih(o.olusturma))}</span></div>
         ${durumEtiketi(o.durum)}
       </div>
+      ${sebetNisani(o)}
       <div>
         <a href="../urun.html?id=${encodeURIComponent(o.urunId)}" target="_blank" rel="noopener">${kacis(o.urunAd)}</a>
         <span class="soluk">${kacis([o.marka, o.olcu && `${t("urun.olcu")}: ${o.olcu}`, o.renk && `${t("urun.renk")}: ${o.renk}`].filter(Boolean).join(" · "))}</span>
@@ -193,4 +194,14 @@ function novbetiHtml(o) {
   if (i < 0 || i >= IZLEME_ADIMLARI.length - 1) return "";
   const novbeti = IZLEME_ADIMLARI[i + 1];
   return `<button class="btn btn-kucuk" data-novbeti="${novbeti}" data-id="${kacis(o.id)}">${kacis(t("admin.sip.kec." + novbeti))} →</button>`;
+}
+
+/** Eyni səbətdən gələn sifarişlər: "Səbət #ABC · 2/3" */
+function sebetNisani(o) {
+  if (!o.sebetId) return "";
+  const hamisi = siparisler.filter((x) => x.sebetId === o.sebetId);
+  if (hamisi.length < 2) return "";
+  const sira = hamisi.slice().reverse().findIndex((x) => x.id === o.id) + 1;
+  const cem = hamisi.reduce((c, x) => c + x.birimFiyat * x.adet, 0);
+  return `<div class="soluk" style="font-size:.8rem">🛍️ ${kacis(t("admin.sip.sebet"))} <b class="kod">#${kacis(o.sebetId)}</b> · ${sira}/${hamisi.length} · ${kacis(t("urun.toplam"))}: <b>${para(cem)}</b></div>`;
 }

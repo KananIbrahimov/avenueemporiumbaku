@@ -4,6 +4,7 @@ import { auth, onAuthStateChanged, signOut, profilGetir } from "../../ortak/fire
 import { t, sayfayiCevir } from "../../ortak/i18n.js";
 import { $, $$, kacis } from "../../ortak/yardim.js";
 import { temaUygula } from "../../ortak/tema.js";
+import { versiyaYoxla } from "../../ortak/versiya.js";
 import { IKON } from "../../ortak/ikon.js";
 import { siparisleriBaslat, siparislerSekmesi } from "./siparisler.js";
 import { urunlerSekmesi } from "./urunler.js";
@@ -13,6 +14,7 @@ import { izlemeSekmesi } from "./izleme.js";
 import { ayarlarSekmesi } from "./ayarlar.js";
 
 temaUygula();
+versiyaYoxla();
 sayfayiCevir();
 
 // Aşağı menyu

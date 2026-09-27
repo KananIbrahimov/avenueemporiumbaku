@@ -2,9 +2,11 @@
 import { auth, signInWithEmailAndPassword, signOut, onAuthStateChanged, profilGetir } from "../../ortak/firebase.js";
 import { t, sayfayiCevir } from "../../ortak/i18n.js";
 import { temaUygula } from "../../ortak/tema.js";
+import { versiyaYoxla } from "../../ortak/versiya.js";
 import { $, kacis, hataMesaji } from "../../ortak/yardim.js";
 
 temaUygula();
+versiyaYoxla();
 sayfayiCevir();
 const mesaj = (m, tur = "hata") => ($("#mesaj").innerHTML = `<div class="kutu-mesaj kutu-${tur}">${kacis(m)}</div>`);
 if (new URLSearchParams(location.search).get("yetki") === "yok") mesaj(t("admin.yetkiYok"));

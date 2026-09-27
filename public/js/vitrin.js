@@ -1,14 +1,15 @@
 // Vitrin: ürün listesi + filtreler
 import { db, collection, getDocs, query, where } from "../ortak/firebase.js";
 import { t, yerel } from "../ortak/i18n.js";
-import { fiyatHtml } from "./fiyat-goster.js";
+import { kartHtml, urekleriBagla } from "./kart.js";
 import { $, kacis } from "../ortak/yardim.js";
 import { girisDinle } from "./ust.js";
 
 let urunler = [];
 let kategoriler = [];
 let uye = false;
-const secim = { kategori: new URLSearchParams(location.search).get("k") || "", ara: "", marka: "", olcu: "", renk: "", sirala: "yeni" };
+const parametr = new URLSearchParams(location.search);
+const secim = { kategori: parametr.get("k") || "", ara: parametr.get("q") || "", marka: parametr.get("m") || "", olcu: "", renk: "", sirala: "yeni" };
 
 const benzersiz = (dizi) => [...new Set(dizi.filter(Boolean))].sort((a, b) => a.localeCompare(b, "az"));
 
@@ -46,17 +47,11 @@ function ciz() {
   }[secim.sirala]);
 
   $("#urunler").innerHTML = liste.length
-    ? liste.map((u) => `
-      <a class="urun-kart" href="urun.html?id=${encodeURIComponent(u.id)}">
-        <div class="foto">
-          ${u.kapak ? `<img src="${kacis(u.kapak)}" alt="${kacis(yerel(u.ad))}" loading="lazy">` : ""}
-          ${Number(u.indirimYuzde) > 0 ? `<span class="rozet">−${kacis(u.indirimYuzde)}%</span>` : ""}
-        </div>
-        <div class="marka">${kacis(u.marka || "")}</div>
-        <div class="ad">${kacis(yerel(u.ad))}</div>
-        ${fiyatHtml(u, uye)}
-      </a>`).join("")
+    ? liste.map((u) => kartHtml(u, uye)).join("")
     : `<p class="bos">${kacis(t("vitrin.bos"))}</p>`;
+  $("#say").textContent = `${liste.length} ${t("vitrin.mehsul")}`;
+  const filtrli = secim.ara || secim.kategori || secim.marka || secim.olcu || secim.renk;
+  $("#basliq").textContent = filtrli ? t("vitrin.netice") : t("vitrin.baslik");
 }
 
 function uyeKutusu(durum) {
@@ -78,7 +73,22 @@ $("#kategoriler").addEventListener("click", (e) => {
   kategoriCiz();
   ciz();
 });
-$("#f-ara").addEventListener("input", (e) => { secim.ara = e.target.value; ciz(); });
+const araInput = $("#f-ara");
+araInput.value = secim.ara;
+$("#ara-temizle").hidden = !secim.ara;
+araInput.addEventListener("input", (e) => {
+  secim.ara = e.target.value;
+  $("#ara-temizle").hidden = !secim.ara;
+  ciz();
+});
+araInput.addEventListener("keydown", (e) => { if (e.key === "Enter") araInput.blur(); });
+$("#ara-temizle").addEventListener("click", () => {
+  araInput.value = secim.ara = "";
+  $("#ara-temizle").hidden = true;
+  ciz();
+  araInput.focus();
+});
+urekleriBagla($("#urunler"));
 for (const [id, alan] of [["#f-marka", "marka"], ["#f-olcu", "olcu"], ["#f-renk", "renk"], ["#f-sirala", "sirala"]]) {
   $(id).addEventListener("change", (e) => { secim[alan] = e.target.value; ciz(); });
 }

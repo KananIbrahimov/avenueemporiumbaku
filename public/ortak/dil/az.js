@@ -13,6 +13,10 @@ export default {
   "nav.cikis": "Çıxış",
   "nav.siparislerim": "Sifarişlərim",
   "nav.magaza": "Mağaza",
+  "nav.begendiklerim": "Bəyəndiklərim",
+  "nav.katalog": "Kataloq",
+  "nav.ana": "Ana səhifə",
+  "nav.sebet": "Səbətim",
   "nav.ayarlar": "Ayarlar",
 
   // Ayarlar və tema
@@ -49,9 +53,38 @@ export default {
   "vitrin.baslik": "Yeni gələnlər",
   "vitrin.alt": "Dünyanın müxtəlif ölkələrindən seçilmiş məhsullar",
   "vitrin.bos": "Bu seçimə uyğun məhsul tapılmadı.",
+  "vitrin.mehsul": "məhsul",
+  "vitrin.netice": "Nəticələr",
+
+  // Kataloq
+  "katalog.baslik": "Kataloq",
+  "katalog.hamisi": "Bütün məhsullar",
+  "katalog.markalar": "Brendlər",
+
+  // Bəyəndiklərim
+  "begen.baslik": "Bəyəndiklərim",
+  "begen.bos": "Hələ bəyəndiyiniz məhsul yoxdur. Məhsulun üzərindəki ♡ işarəsinə toxunun.",
+  "begen.elave": "Bəyən",
+  "begen.cixar": "Bəyəndiklərimdən çıxar",
+  "begen.elaveOlundu": "Bəyəndiklərimə əlavə olundu",
+  "begen.cixarildi": "Bəyəndiklərimdən çıxarıldı",
+
+  // Səbət
+  "sebet.baslik": "Səbətim",
+  "sebet.bos": "Səbətiniz boşdur.",
+  "sebet.cixar": "Səbətdən çıxar",
+  "sebet.satisdaDeyil": "Bu məhsul artıq satışda deyil",
+  "sebet.normalQiymet": "Normal qiymət",
+  "sebet.uzvEndirimi": "Üzv endirimi",
+  "sebet.uzvOl": "Üzv olun — endirimli qiymətlə sifariş verin.",
+  "sebet.sifarisVer": "Sifarişi göndər",
+  "sebet.qebulOldu": "Sifarişiniz qəbul olundu!",
+  "sebet.nomre": "Sifariş nömrəsi",
+  "sebet.dolu": "Səbət doludur (ən çox 30 məhsul).",
   "vitrin.uyeOl": "Üzv olun və məhsullarda xüsusi endirim qazanın.",
   "filtre.tumu": "Hamısı",
   "filtre.ara": "Axtar…",
+  "filtre.araUzun": "Məhsul və ya brend axtar…",
   "filtre.marka": "Brend",
   "filtre.olcu": "Ölçü",
   "filtre.renk": "Rəng",
@@ -70,13 +103,17 @@ export default {
   "urun.toplam": "Cəmi",
   "urun.siparisVer": "Sifariş ver",
   "urun.siparisAciklama": "Sifarişiniz sorğu kimi göndəriləcək, sizinlə əlaqə saxlanılacaq.",
-  "urun.siparisAlindi": "Sorğunuz qəbul edildi! Tezliklə sizinlə əlaqə saxlanılacaq.",
+  "urun.siparisAlindi": "Tezliklə sizinlə əlaqə saxlanılacaq. Sifarişin vəziyyətini \"Sifarişlərim\"də izləyə bilərsiniz.",
   "urun.girisGerekli": "Sifariş vermək üçün daxil olun və ya qeydiyyatdan keçin.",
   "urun.olcuSec": "Zəhmət olmasa ölçü seçin.",
   "urun.renkSec": "Zəhmət olmasa rəng seçin.",
   "urun.adetHata": "Say 1 ilə 20 arasında olmalıdır.",
   "urun.telefonHata": "Düzgün əlaqə nömrəsi yazın.",
   "urun.paylas": "Paylaş",
+  "urun.sebeteAt": "Səbətə at",
+  "urun.sebeteAtildi": "Səbətə əlavə olundu",
+  "urun.sebeteKec": "Səbətə keç",
+  "urun.sebetIpucu": "Sifariş vermək üçün səbətdə daxil olmağınız istəniləcək. Üzvlər endirimli qiymətlə alır.",
   "urun.linkKopyalandi": "Link kopyalandı",
   "urun.fiyatDegisti": "Qiymət yenilənib. Səhifəni yeniləyib yenidən cəhd edin.",
 
@@ -207,6 +244,7 @@ export default {
   "admin.sip.kec.yolda": "Yola sal",
   "admin.sip.kec.catdirildi": "Çatdırıldı",
   "admin.sip.berpa": "Bərpa et",
+  "admin.sip.sebet": "Səbət",
   "admin.sip.kargoyaKec": "Kargo məlumatı",
 
   // Məhsullar

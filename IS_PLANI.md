@@ -55,6 +55,12 @@
 - [x] "Ana ekrana ekle" (PWA)
 - [x] Ayarlar səhifəsi: hesab (ad/soyad dəyişmə, çıxış), dil
 - [x] Sifarişlərim: addım-addım izləmə + kargo məlumatı
+- [x] Aşağı menyu (5 ikon): Bəyəndiklərim · Kataloq · (ortada) Ana səhifə · Səbətim · Ayarlar
+- [x] Ana səhifə: yuxarıda yapışqan axtarış (ad/brend yazanda dərhal çıxır) + kateqoriya, brend, ölçü, rəng, sıralama
+- [x] Bəyəndiklərim: ♡ ilə; qonaqda cihazda, üzvdə hesabda saxlanılır
+- [x] Kataloq: məhsul qrupları (kateqoriyalar) şəkil ilə + brendlər
+- [x] Səbət: bir neçə məhsul, say +/−, üzv endirimi hesabı, bir düymə ilə sifariş (admin-də "Səbət #..." nişanı)
+- [x] Yeni versiya yoxlaması: bildiriş + arxa fondan qayıdanda avtomatik yeniləmə (hər iki sayt)
 - [x] Dizayn: həmişə qaranlıq, gümüşü rənglər (SafeMoney üslubu), hər iki saytda
 - [x] Telefon yönümlü: aşağı menyu (Mağaza, Sifarişlərim, Ayarlar)
 - [x] Məhsul səhifəsində "Paylaş" düyməsi
@@ -65,5 +71,4 @@
 - [ ] Doğrulama / şifre sıfırlama mail şablonlarını Azerbaycanca yap
 - [ ] 2. ve 3. dil (örn. rusça, ingilizce)
 - [ ] Blaze'e geçiş kararı: fotoğraflar Storage'a, kapalıyken push bildirim, otomatik yedek, Instagram'a tam avtomatik paylaşım
-- [ ] Sepet (birden fazla ürün tek siparişte)
 - [ ] Online ödeme
