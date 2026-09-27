@@ -288,3 +288,8 @@ th { font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; color:
 .toplam-kutu .buyuk { font-size: 1.15rem; font-weight: 700; }
 .alt-menyu a > span:not(.ikon-kap) { max-width: 100%; padding: 0 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 380px) { .alt-menyu a { font-size: .6rem; } }
+
+/* Ayarların ən aşağısı: müəllif və sürüm */
+.imza { text-align: center; margin: 36px 0 12px; color: var(--soluk); font-size: .82rem; line-height: 1.6; }
+.imza b { color: var(--vurgu-metin); font-weight: 600; }
+.imza-surum { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .76rem; opacity: .8; }

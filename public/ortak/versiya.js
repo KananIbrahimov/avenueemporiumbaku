@@ -5,6 +5,7 @@ const YOXLAMA_ARALIGI = 5 * 60 * 1000; // 5 dəqiqə
 
 const kok = new URL("../", import.meta.url); // saytın kökü (mağaza və admin eyni faylı istifadə edir)
 let yuklenen = null;   // səhifə açılanda olan versiya
+let yeniSurum = "";
 let yeniVar = false;
 let formaDeyisib = false;
 let gizlenmeVaxti = null; // tətbiq arxa fona keçən an (heç keçməyibsə null)
@@ -13,7 +14,9 @@ async function versiyaAl() {
   try {
     const r = await fetch(new URL("versiya.json", kok) + "?t=" + Date.now(), { cache: "no-store" });
     if (!r.ok) return null;
-    return (await r.json()).versiya || null;
+    const j = await r.json();
+    if (j.surum) yeniSurum = j.surum;
+    return j.versiya || null;
   } catch { return null; }
 }
 
@@ -28,7 +31,7 @@ function bildirisGoster() {
   const el = document.createElement("div");
   el.id = "yeni-versiya";
   el.setAttribute("role", "status");
-  el.innerHTML = `<span>✨ Yeni versiya hazırdır</span><button type="button" class="btn btn-kucuk">Yenilə</button>`;
+  el.innerHTML = `<span>✨ Yeni versiya hazırdır${yeniSurum ? ` <span class="soluk">v${yeniSurum}</span>` : ""}</span><button type="button" class="btn btn-kucuk">Yenilə</button>`;
   el.querySelector("button").addEventListener("click", yenile);
   document.body.appendChild(el);
 }

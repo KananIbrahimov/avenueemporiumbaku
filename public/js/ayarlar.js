@@ -4,6 +4,9 @@ import { MAGAZA_URL } from "../ortak/ayarlar.js";
 import { t, DILLER, dil, dilDegistir } from "../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji } from "../ortak/yardim.js";
 import { girisDinle } from "./ust.js";
+import { imzaHtml } from "../ortak/surum.js";
+
+$("#imza").innerHTML = imzaHtml();
 
 if (DILLER.length > 1) {
   $("#dil-alan").hidden = false;

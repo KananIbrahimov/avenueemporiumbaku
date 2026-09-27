@@ -61,6 +61,7 @@
 - [x] Kataloq: məhsul qrupları (kateqoriyalar) şəkil ilə + brendlər
 - [x] Səbət: bir neçə məhsul, say +/−, üzv endirimi hesabı, bir düymə ilə sifariş (admin-də "Səbət #..." nişanı)
 - [x] Yeni versiya yoxlaması: bildiriş + arxa fondan qayıdanda avtomatik yeniləmə (hər iki sayt)
+- [x] Sürüm nömrəsi v1.1 + "Powered by Kanan Ibrahimov" — hər iki saytda Ayarların ən aşağısında
 - [x] Dizayn: həmişə qaranlıq, gümüşü rənglər (SafeMoney üslubu), hər iki saytda
 - [x] Telefon yönümlü: aşağı menyu (Mağaza, Sifarişlərim, Ayarlar)
 - [x] Məhsul səhifəsində "Paylaş" düyməsi

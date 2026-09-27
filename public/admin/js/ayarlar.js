@@ -3,6 +3,7 @@ import { auth, db, doc, getDoc, setDoc, signOut, profilGetir, serverTimestamp } 
 import { t } from "../../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { yedekBolumu } from "./yedek.js";
+import { imzaHtml } from "../../ortak/surum.js";
 import { VARSAYILAN_SABLON, SABLON_ACARLARI } from "./instagram.js";
 
 export async function ayarlarSekmesi(kok) {
@@ -32,6 +33,7 @@ export async function ayarlarSekmesi(kok) {
 
       <div class="bolum-baslik">${kacis(t("admin.sekme.yedek"))}</div>
       <div id="yedek"></div>
+      ${imzaHtml()}
     </div>`;
 
   yedekBolumu($("#yedek", kok));

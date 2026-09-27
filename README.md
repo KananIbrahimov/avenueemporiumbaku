@@ -60,6 +60,7 @@ Müşteri sipariş verirken fiyatı değiştiremez; güvenlik kuralı fiyatın �
 - **Bildirim:** admin paneli açıkken yeni sipariş gelince bildirim + ses.
 - **Yedek:** Admin → Ayarlar → Ehtiyat nüsxə → tüm veriler tek JSON dosyası.
 - **Müşteri menüsü:** Bəyəndiklərim · Kataloq · Ana səhifə · Səbətim · Ayarlar. Sepetten tek seferde sipariş verilir.
+- **Sürüm:** `public/ortak/surum.js` içindeki `SURUM` (şu an 1.1) — her yenilikte artırılır, Ayarlar'ın en altında "Powered by Kanan Ibrahimov · v1.1" olarak görünür.
 - **Yeni sürüm:** her `firebase deploy` öncesi `skript/versiya.js` otomatik çalışır ve `public/versiya.json` güncellenir. Açık sayfalarda "Yeni versiya hazırdır — Yenilə" bildirimi çıkar; uygulama arka plandan dönünce kendisi yenilenir.
 - **Telefonda uygulama:** her iki site "Ana ekrana ekle" ile uygulama gibi açılır; telefonda aşağıda menü çıkar.
 - **Dizayn:** her iki site her zaman koyu (dark) temada, gümüş (silver) renklerle açılır.
