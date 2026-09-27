@@ -12,7 +12,7 @@ jobs:
   yayinla:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Anahtar var mı?
         id: anahtar
@@ -27,7 +27,7 @@ jobs:
             echo "var=evet" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         if: steps.anahtar.outputs.var == 'evet'
         with:
           node-version: 22
@@ -36,4 +36,10 @@ jobs:
         if: steps.anahtar.outputs.var == 'evet'
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
-        run: npx --yes firebase-tools@latest deploy --only hosting,firestore:rules --project default --non-interactive
+        run: |
+          set -o pipefail
+          if ! npx --yes firebase-tools@latest deploy --only hosting,firestore:rules --project default --non-interactive 2>&1 | tee "$RUNNER_TEMP/deploy.log"; then
+            # Xətanın səbəbi GitHub-da qısa qeyd kimi görünsün
+            grep -iE "error|permission|denied|403|401|not have|failed" "$RUNNER_TEMP/deploy.log" | tail -n 8 | while IFS= read -r l; do echo "::error::$l"; done
+            exit 1
+          fi
