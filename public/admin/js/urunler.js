@@ -10,7 +10,7 @@ import { tumDetaylar, detayGuncelle, kategorileriGetir } from "./veri.js";
 import { instagramAc } from "./instagram.js";
 import { secici } from "./secici.js";
 import { siyahilariGetir, siyahiyaElave } from "./siyahilar.js";
-import { VALYUTALAR, kurslariAl } from "./kurs.js";
+import { VALYUTALAR, hesabKursu } from "./kurs.js";
 import { IKON } from "../../ortak/ikon.js";
 
 
@@ -299,10 +299,12 @@ async function formAc(kok, id) {
     $("#kurs-val", kok).textContent = val;
     if (val === "AZN") { faizdenSatis(); xulaseCiz(); return; }
     $("#kurs-menbe", kok).textContent = t("genel.yukleniyor");
-    kurslar ||= await kurslariAl();
-    if (kurslar?.[val]) {
-      if (yeniVal || !f("kurs").value) f("kurs").value = kurslar[val];
-      $("#kurs-menbe", kok).textContent = t("admin.hesap.kursMenbe", { tarix: kurslar.tarix || "" });
+    const k = await hesabKursu(val);
+    if (k.deger > 0) {
+      if (yeniVal || !f("kurs").value) f("kurs").value = k.deger;
+      $("#kurs-menbe", kok).innerHTML = k.menbe === "ayarlar"
+        ? `${kacis(t("admin.hesap.kursAyarlar"))} · <a href="#ayarlar">${kacis(t("admin.sekme.ayarlar"))}</a>`
+        : kacis(t("admin.hesap.kursMenbe", { tarix: k.tarix || "" }));
     } else {
       $("#kurs-menbe", kok).textContent = t("admin.hesap.kursYoxdur");
     }

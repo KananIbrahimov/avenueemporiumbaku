@@ -131,3 +131,11 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .qazanc-qutu b { font-size: 1.25rem; }
 .qazanc-qutu small { color: var(--soluk); font-weight: 600; }
 .form-alt { border-top: 1px solid var(--cizgi); margin-top: 16px; }
+
+/* Valyuta kursları (Ayarlar) */
+.kurs-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.kurs-oge { display: grid; gap: 4px; background: var(--kart-2); border: 1px solid var(--cizgi); border-radius: 12px; padding: 10px 12px; margin: 0; color: var(--yazi); }
+.kurs-ad { font-weight: 700; font-size: .9rem; }
+.kurs-giris { display: flex; align-items: center; gap: 6px; }
+.kurs-giris input { padding: 8px 10px; }
+.kurs-oge .ipucu { margin: 0; min-height: 1em; }
