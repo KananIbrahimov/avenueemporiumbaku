@@ -381,7 +381,7 @@ export default {
   "admin.yoxla.hazir": "✓ Hər şey hazırdır — məhsul müştəri ekranına çıxa bilər",
   "admin.yoxla.eksik": "{say} sahə çatışmır — tamamlanmadan vitrinə çıxmaz",
   "admin.yoxla.qaralama": "Yarımçıq məhsulu saxlamaq üçün \"Vitrində göstər\" işarəsini götürün — gizli qalacaq.",
-  "admin.yoxla.icazeYox": "Vitrinə çıxarmaq olmaz. Çatışmır: {liste}",
+  "admin.yoxla.icazeYox": "Boş sahələr: {liste}",
   "admin.yoxla.ad": "Ad",
   "admin.yoxla.marka": "Brend",
   "admin.yoxla.kategori": "Kateqoriya",

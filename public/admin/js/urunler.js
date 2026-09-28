@@ -203,8 +203,8 @@ async function formAc(kok, id) {
       <div class="bolum-baslik">📷 ${kacis(t("admin.urun.fotolar"))} <span class="vacib">*</span></div>
       <div class="kart" data-yoxla="foto">
         <div class="foto-butonlar">
-          <label class="btn btn-ince" for="foto-sec">🖼️ ${kacis(t("admin.urun.qalereya"))}</label>
-          <label class="btn btn-ince" for="foto-kamera">📷 ${kacis(t("admin.urun.kamera"))}</label>
+          <label class="btn btn-ince btn-kucuk" for="foto-sec">🖼️ ${kacis(t("admin.urun.qalereya"))}</label>
+          <label class="btn btn-ince btn-kucuk" for="foto-kamera">📷 ${kacis(t("admin.urun.kamera"))}</label>
         </div>
         <input class="gizli-input" type="file" id="foto-sec" accept="image/*" multiple>
         <input class="gizli-input" type="file" id="foto-kamera" accept="image/*" capture="environment">
@@ -212,14 +212,11 @@ async function formAc(kok, id) {
         <div class="foto-izgara" id="fotolar"></div>
       </div>
 
-      <div class="bolum-baslik">✅ ${kacis(t("admin.yoxla.baslik"))}</div>
-      <div class="kart yoxlama" id="yoxlama"></div>
-
       <div class="form-alt yapiskan">
         <label class="onay"><input type="checkbox" name="aktif" ${urun.aktif !== false ? "checked" : ""}> 👁️ ${kacis(t("admin.urun.vitrindeGoster"))}</label>
         <div class="aksiyonlar">
-          ${id ? `<button type="button" class="btn btn-tehlike btn-kucuk" id="sil">${kacis(t("admin.sil"))}</button>` : ""}
-          <button type="submit" class="btn">${kacis(t("admin.kaydet"))}</button>
+          ${id ? `<button type="button" class="btn btn-link btn-kucuk sil-link" id="sil">${kacis(t("admin.sil"))}</button>` : ""}
+          <button type="submit" class="btn btn-kucuk">${kacis(t("admin.kaydet"))}</button>
         </div>
       </div>
     </form>`;
@@ -254,7 +251,7 @@ async function formAc(kok, id) {
   });
   const sRenk = secici($("#s-renk", kok), {
     ikon: "🎨", vacib: true, deyisdi: () => yoxlamaCiz(),
-    etiket: t("admin.urun.renkler"), yerTutucu: t("secici.renkSec"), yeniBasliq: t("secici.yeniRenk"), coxlu: true,
+    etiket: t("admin.urun.renkler"), yerTutucu: t("secici.renkSec"), yeniBasliq: t("secici.yeniRenk"), coxlu: true, renkli: true,
     secenekler: renkler.map((x) => ({ id: x, ad: x })), secili: urun.renkler || [],
     yeniElave: async (ad) => { await siyahiyaElave("renkler", ad); return { id: ad, ad }; },
   });
@@ -275,12 +272,6 @@ async function formAc(kok, id) {
   let yoxlamaGoster = !!id; // yeni məhsulda qırmızı işarələr yalnız saxla basılandan sonra
   function yoxlamaCiz() {
     const eksik = indikiEksikler();
-    const hazir = !eksik.length;
-    $("#yoxlama", kok).innerHTML = `
-      <div class="yoxlama-ust ${hazir ? "hazir" : ""}">${kacis(t(hazir ? "admin.yoxla.hazir" : "admin.yoxla.eksik", { say: eksik.length }))}</div>
-      <div class="yoxlama-izgara">${YOXLAMA_SAHELERI.map((s) => `
-        <span class="${eksik.includes(s) ? "yox" : "var"}">${eksik.includes(s) ? "○" : "✓"} ${kacis(t("admin.yoxla." + s))}</span>`).join("")}</div>
-      ${hazir ? "" : `<p class="ipucu" style="margin:8px 0 0">${kacis(t("admin.yoxla.qaralama"))}</p>`}`;
     $$("[data-yoxla]", kok).forEach((el) => el.classList.toggle("sahe-eksik", yoxlamaGoster && eksik.includes(el.dataset.yoxla)));
     return eksik;
   }
@@ -434,7 +425,7 @@ async function formAc(kok, id) {
     const eksik = yoxlamaCiz();
     if (f("aktif").checked && eksik.length) {
       bildir(t("admin.yoxla.icazeYox", { liste: eksik.map((s) => t("admin.yoxla." + s)).join(", ") }), "hata");
-      $("#yoxlama", kok).scrollIntoView({ behavior: "smooth", block: "center" });
+      $(".sahe-eksik", kok)?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     if (!ad[ilkDil]) return bildir(t("admin.urun.adGerekli"), "hata"); // qaralama üçün də ad lazımdır

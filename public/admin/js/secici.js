@@ -4,6 +4,7 @@
 // - Çoxlu seçimdə (ölçü, rəng) seçilənlər qutunun altında 3 sütunlu düzülür
 import { t } from "../../ortak/i18n.js";
 import { kacis, bildir } from "../../ortak/yardim.js";
+import { renkNoktasi } from "../../ortak/renk.js";
 
 const norm = (s) => String(s || "").toLocaleLowerCase("az").trim();
 
@@ -39,6 +40,7 @@ export function adSorus(basliq, ilkDeger = "") {
  * @param {HTMLElement} kok  - komponentin yerləşəcəyi element
  * @param {object} o
  *   etiket, yerTutucu, coxlu (bool), secenekler: [{id, ad}], secili: [id] və ya id,
+ *   renkli (bool): adların yanında rəng dairəsi göstərilsin (Rənglər),
  *   yeniBasliq: pop-up başlığı, yeniElave: async (ad) => {id, ad} | null, deyisdi: (secili) => void
  */
 export function secici(kok, o) {
@@ -46,6 +48,7 @@ export function secici(kok, o) {
   let secili = o.coxlu ? [...(o.secili || [])] : (o.secili ? [o.secili] : []);
 
   const adOf = (id) => secenekler.find((s) => s.id === id)?.ad ?? id;
+  const nokta = (ad) => (o.renkli ? renkNoktasi(ad) : "");
 
   function qutuCiz() {
     const bos = !secili.length;
@@ -56,7 +59,7 @@ export function secici(kok, o) {
         <span class="ox">▾</span>
       </button>
       ${o.coxlu && secili.length ? `<div class="secilenler">${secili.map((id) =>
-        `<span class="secilen">${kacis(adOf(id))}<button type="button" data-cixar="${kacis(id)}" aria-label="×">×</button></span>`).join("")}</div>` : ""}`;
+        `<span class="secilen"><span class="secilen-ad">${nokta(adOf(id))}${kacis(adOf(id))}</span><button type="button" data-cixar="${kacis(id)}" aria-label="×">×</button></span>`).join("")}</div>` : ""}`;
     kok.querySelector(".secici-qutu").addEventListener("click", ac);
     kok.querySelectorAll("[data-cixar]").forEach((b) => b.addEventListener("click", () => {
       secili = secili.filter((x) => x !== b.dataset.cixar);
@@ -89,7 +92,7 @@ export function secici(kok, o) {
       liste.innerHTML = uygun.map((s) => {
         const sec = secili.includes(s.id);
         return `<button type="button" class="secici-oge ${sec ? "secili" : ""}" data-id="${kacis(s.id)}">
-          <span class="isaret">${sec ? "✓" : ""}</span><span>${kacis(s.ad)}</span></button>`;
+          <span class="isaret">${sec ? "✓" : ""}</span>${nokta(s.ad)}<span>${kacis(s.ad)}</span></button>`;
       }).join("") +
         (q && !tamVar ? `<button type="button" class="secici-oge yeni" data-yeni-ad="${kacis(input.value.trim())}">
           <span class="isaret">+</span><span>${kacis(t("secici.elaveEtAd", { ad: input.value.trim() }))}</span></button>` : "") +

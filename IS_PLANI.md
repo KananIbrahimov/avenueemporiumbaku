@@ -47,6 +47,7 @@
 - [x] v1.4 Valyuta kursları Ayarlar-dan təyin olunur (standart: 1 USD = 1.70 ₼, 1 EUR = 1.95 ₼); məhsul formu bu kurslarla hesablayır, boş qalan valyuta üçün bazar kursu
 - [x] (köhnə) Sifariş axını: Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı; istənilən mərhələdə Ləğv et, ləğvdən Bərpa et; status tarixçəsi
 - [x] v2.0 Sifariş axını: Yeni sifariş → Ödəniş (30%) edildi (məbləğ addımda görünür) → Sifariş verildi (alış qiyməti düzəlir) → Yoldadır → Gömrükdədir (kargo + vergi düzəlir) → Çatdırıldı (sifariş bağlanır). Hər keçiddə eyni maliyyə pəncərəsi açılır, həmin mərhələnin sahəsi vurğulanır; köhnə "Qəbul edildi" statusu "Sifariş verildi" sayılır
+- [x] v2.1 Rəng adlarının yanında rəng dairəsi (məhsul formunda seçim, Ayarlar → Rənglər, müştərinin məhsul səhifəsi); "Vitrinə hazırlıq" bloku götürüldü — "Yadda saxla" basılanda boş sahələrin adları göstərilir və qırmızı olur; formun düymələri yığcamlaşdı
 - [x] Sifariş izləmə: kargo şirkəti, izləmə kodu/link, təxmini tarix, müştəriyə qeyd
 - [x] Instagram üçün hazırla: post (1080×1080) və story (1080×1920) şəkli + hazır mətn, telefonda paylaş menyusu
 - [x] Yeni məhsul əlavə edəndə "Instagram üçün hazırlansın?" təklifi

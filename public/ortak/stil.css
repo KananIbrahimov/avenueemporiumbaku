@@ -364,3 +364,10 @@ input.kecid:disabled { opacity: .45; cursor: not-allowed; }
 /* 6 addımlı izləmə: ödənilən məbləğ addımın altında */
 .adimlar .adim-mebleg { display: block; font-size: .64rem; font-weight: 700; color: var(--basari); margin-top: 1px; }
 @media (max-width: 420px) { .adimlar .adim-ad { font-size: .6rem; } .adimlar .nokta { width: 24px; height: 24px; } .adimlar li::before { top: 11px; } }
+
+/* Rəng dairəsi (rəng adlarının yanında) */
+.renk-nokta { display: inline-block; flex: none; width: 16px; height: 16px; border-radius: 50%; vertical-align: -3px; margin-right: 7px;
+  border: 1px solid color-mix(in srgb, var(--yazi) 28%, transparent); box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+.renk-nokta.bilinmir { background: transparent; border-style: dashed; }
+.secici-oge .renk-nokta, .secilen-ad .renk-nokta { margin-right: 0; }
+.secenek .renk-nokta { width: 14px; height: 14px; }

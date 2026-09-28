@@ -8,6 +8,7 @@ import { urekHtml, urekleriBagla } from "./kart.js";
 import { girisDinle, girisHazir } from "./ust.js";
 import { fiyatHtml } from "./fiyat-goster.js";
 import { IKON } from "../ortak/ikon.js";
+import { renkNoktasi } from "../ortak/renk.js";
 
 const id = new URLSearchParams(location.search).get("id");
 const kok = $("#urun");
@@ -23,7 +24,7 @@ function secenekHtml(ad, degerler) {
   if (!degerler?.length) return "";
   return `<div class="alan"><label>${kacis(t("urun." + ad))}</label>
     <div class="secenekler" data-grup="${ad}">${degerler.map((d) =>
-      `<button type="button" class="secenek" data-deger="${kacis(d)}">${kacis(d)}</button>`).join("")}</div></div>`;
+      `<button type="button" class="secenek" data-deger="${kacis(d)}">${ad === "renk" ? renkNoktasi(d) : ""}${kacis(d)}</button>`).join("")}</div></div>`;
 }
 
 function siparisBolumu() {

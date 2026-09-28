@@ -8,6 +8,7 @@ import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { kategorileriGetir } from "./veri.js";
 import { siyahilariGetir, siyahiYaz, markalariTohumla } from "./siyahilar.js";
 import { adSorus } from "./secici.js";
+import { renkNoktasi } from "../../ortak/renk.js";
 
 const norm = (s) => String(s || "").toLocaleLowerCase("az").trim();
 const ILK_DIL = DILLER[0].kod;
@@ -87,7 +88,7 @@ export function siyahiSekmesi(novu) {
       const gorunen = siyahi.filter((x) => !q || norm(x.ad).includes(q));
       $("#s-liste", kok).innerHTML = gorunen.length ? gorunen.map((x) => {
         return `<div class="siyahi-satir" data-id="${kacis(x.id)}">
-          <div class="siyahi-ad"><b>${kacis(x.ad)}</b><span class="soluk">${kacis(t("admin.siyahi.mehsulSay", { say: x.say }))}</span></div>
+          <div class="siyahi-ad"><b>${novu === "renkler" ? renkNoktasi(x.ad) : ""}${kacis(x.ad)}</b><span class="soluk">${kacis(t("admin.siyahi.mehsulSay", { say: x.say }))}</span></div>
           <div class="siyahi-aksiyon">
             <button type="button" class="ikon-btn" data-is="deyis" aria-label="${kacis(t("admin.siyahi.deyis"))}">✎</button>
             <button type="button" class="ikon-btn tehlike" data-is="sil" aria-label="${kacis(t("admin.sil"))}">✕</button>
