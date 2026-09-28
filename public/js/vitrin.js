@@ -4,6 +4,7 @@ import { t, yerel } from "../ortak/i18n.js";
 import { kartHtml, urekleriBagla } from "./kart.js";
 import { $, kacis } from "../ortak/yardim.js";
 import { girisDinle } from "./ust.js";
+import { kategoriSirala, kategoriyeAit, ozelMi, ozelIkon } from "../ortak/kategori.js";
 
 let urunler = [];
 let kategoriler = [];
@@ -19,14 +20,21 @@ function secimDoldur(el, bosMetin, degerler, secili) {
 }
 
 function kategoriCiz() {
-  const tumu = [{ id: "", ad: t("filtre.tumu") }, ...kategoriler.map((k) => ({ id: k.id, ad: yerel(k.ad) }))];
-  $("#kategoriler").innerHTML = tumu.map((k) =>
-    `<button class="cip ${k.id === secim.kategori ? "secili" : ""}" data-id="${kacis(k.id)}">${kacis(k.ad)}</button>`).join("");
+  // Sale və 24 saat həmişə solda; sonra "Hamısı"; sonra məhsulu olan kateqoriyalar əlifba sırası ilə
+  const ozel = kategoriler.filter((k) => ozelMi(k.id));
+  const diger = kategoriler.filter((k) => !ozelMi(k.id) && (k.id === secim.kategori || urunler.some((u) => kategoriyeAit(u, k.id))));
+  const tumu = [...ozel, { id: "", ad: { az: t("filtre.tumu") }, hamisi: true }, ...diger];
+  $("#kategoriler").innerHTML = tumu.map((k) => {
+    const ikon = ozelIkon(k.id);
+    const ad = k.hamisi ? t("filtre.tumu") : yerel(k.ad);
+    return `<button class="cip ${ikon ? "cip-ozel" : ""} ${k.id === secim.kategori ? "secili" : ""}" data-id="${kacis(k.id)}">${ikon ? `${ikon} ` : ""}${kacis(ad)}</button>`;
+  }).join("");
+  $("#kategoriler .secili")?.scrollIntoView({ block: "nearest", inline: "nearest" });
 }
 
 function ciz() {
   // Filtre seçenekleri seçili kategoriye göre
-  const kategoridekiler = urunler.filter((u) => !secim.kategori || u.kategoriId === secim.kategori);
+  const kategoridekiler = urunler.filter((u) => !secim.kategori || kategoriyeAit(u, secim.kategori));
   secimDoldur($("#f-marka"), t("filtre.marka"), benzersiz(kategoridekiler.map((u) => u.marka)), secim.marka);
   secimDoldur($("#f-olcu"), t("filtre.olcu"), benzersiz(kategoridekiler.flatMap((u) => u.olculer || [])), secim.olcu);
   secimDoldur($("#f-renk"), t("filtre.renk"), benzersiz(kategoridekiler.flatMap((u) => u.renkler || [])), secim.renk);
@@ -100,7 +108,7 @@ try {
     getDocs(collection(db, "kategoriler")),
     getDocs(query(collection(db, "urunler"), where("aktif", "==", true))),
   ]);
-  kategoriler = ks.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.sira ?? 0) - (b.sira ?? 0));
+  kategoriler = kategoriSirala(ks.docs.map((d) => ({ id: d.id, ...d.data() })));
   urunler = us.docs.map((d) => ({ id: d.id, ...d.data() }));
   if (secim.kategori && !kategoriler.some((k) => k.id === secim.kategori)) secim.kategori = "";
   kategoriCiz();

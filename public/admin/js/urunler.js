@@ -7,6 +7,7 @@ import { hesapla, para } from "../../ortak/fiyat.js";
 import { fotoHazirla, kapakHazirla, FOTO_MAX_ADET } from "../../ortak/foto.js";
 import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { tumDetaylar, detayGuncelle, kategorileriGetir, vitrinEksikleri } from "./veri.js";
+import { OZEL_KATEGORILER, ozelMi } from "../../ortak/kategori.js";
 import { instagramAc } from "./instagram.js";
 import { secici } from "./secici.js";
 import { siyahilariGetir, siyahiyaElave, markalariTohumla } from "./siyahilar.js";
@@ -42,7 +43,7 @@ async function listeAc(kok) {
             ${u.kapak ? `<img class="kucuk-foto" src="${kacis(u.kapak)}" alt="">` : `<div class="kucuk-foto"></div>`}
             <div class="bilgi">
               <div class="ad">${kacis(yerel(u.ad))}</div>
-              <div class="soluk">${kacis([u.marka, katAd[u.kategoriId]].filter(Boolean).join(" · "))}</div>
+              <div class="soluk">${kacis([u.marka, katAd[u.kategoriId], ...OZEL_KATEGORILER.filter((o) => (u.ekKategoriler || []).includes(o.id)).map((o) => `${o.ikon} ${katAd[o.id] || o.ad}`)].filter(Boolean).join(" · "))}</div>
               <div class="rakamlar">
                 <span>${kacis(t("admin.hesap.maya"))}: <b>${para(h.maliyet)}</b></span>
                 <span>${kacis(t("admin.hesap.satis"))}: <b>${para(u.satisFiyati)}</b></span>
@@ -155,6 +156,16 @@ async function formAc(kok, id) {
           <div class="alan" id="s-olcu" data-yoxla="olcu"></div>
           <div class="alan" id="s-renk" data-yoxla="renk"></div>
         </div>
+        <div class="alan ozel-kat-secim">
+          <label>📌 ${kacis(t("admin.urun.ozelKat"))}</label>
+          <div class="ozel-kat-sira">
+            ${OZEL_KATEGORILER.map((o) => {
+              const k = kategoriler.find((x) => x.id === o.id);
+              return `<label class="onay"><input type="checkbox" name="ek_${o.id}" ${(urun.ekKategoriler || []).includes(o.id) ? "checked" : ""}> ${o.ikon} ${kacis(k ? yerel(k.ad) : o.ad)}</label>`;
+            }).join("")}
+          </div>
+          <p class="ipucu" style="margin:6px 0 0">${kacis(t("admin.urun.ozelKatIpucu"))}</p>
+        </div>
         ${DILLER.map((d) => `
           <div class="alan" style="margin-bottom:0"><label>📄 ${kacis(t("admin.urun.aciklama"))}${DILLER.length > 1 ? ` (${d.kod.toUpperCase()})` : ""}</label>
             <textarea name="aciklama_${d.kod}" maxlength="3000" style="min-height:70px">${v(urun.aciklama?.[d.kod])}</textarea></div>`).join("")}
@@ -234,7 +245,7 @@ async function formAc(kok, id) {
   const sKategori = secici($("#s-kategori", kok), {
     ikon: "🗂️", vacib: true, deyisdi: () => yoxlamaCiz(),
     etiket: t("admin.urun.kategori"), yerTutucu: t("secici.kategoriSec"), yeniBasliq: t("secici.yeniKategori"),
-    secenekler: kategoriler.map((k) => ({ id: k.id, ad: yerel(k.ad) })), secili: urun.kategoriId || "",
+    secenekler: kategoriler.filter((k) => !ozelMi(k.id)).map((k) => ({ id: k.id, ad: yerel(k.ad) })), secili: ozelMi(urun.kategoriId) ? "" : (urun.kategoriId || ""),
     yeniElave: async (ad) => {
       const ref = doc(collection(db, "kategoriler"));
       const sira = kategoriler.length ? Math.max(...kategoriler.map((k) => k.sira ?? 0)) + 1 : 0;
@@ -445,6 +456,7 @@ async function formAc(kok, id) {
         ad, aciklama,
         marka: sMarka.deger(),
         kategoriId: sKategori.deger(),
+        ekKategoriler: OZEL_KATEGORILER.filter((o) => f(`ek_${o.id}`)?.checked).map((o) => o.id),
         olculer: sOlcu.deger(),
         renkler: sRenk.deger(),
         satisFiyati: iki(x.satis),

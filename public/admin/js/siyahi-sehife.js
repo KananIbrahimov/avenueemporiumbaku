@@ -6,6 +6,7 @@ import {
 import { t, yerel, DILLER } from "../../ortak/i18n.js";
 import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { kategorileriGetir } from "./veri.js";
+import { ozelMi, ozelIkon, kategoriyeAit } from "../../ortak/kategori.js";
 import { siyahilariGetir, siyahiYaz, markalariTohumla } from "./siyahilar.js";
 import { adSorus } from "./secici.js";
 import { renkNoktasi } from "../../ortak/renk.js";
@@ -48,7 +49,7 @@ function metinSiyahisi(ad, sahe, coxlu) {
 const kategoriAdapter = {
   async yukle(urunler) {
     const k = await kategorileriGetir();
-    return k.map((x) => ({ id: x.id, ad: yerel(x.ad), ham: x, say: urunler.filter((u) => u.kategoriId === x.id).length }));
+    return k.map((x) => ({ id: x.id, ad: yerel(x.ad), ham: x, ozel: ozelMi(x.id), say: urunler.filter((u) => kategoriyeAit(u, x.id)).length }));
   },
   async elave(yeni, siyahi) {
     const sira = siyahi.length ? Math.max(...siyahi.map((k) => k.ham?.sira ?? 0)) + 1 : 0;
@@ -61,7 +62,9 @@ const kategoriAdapter = {
   },
   async sil(id) { await deleteDoc(doc(db, "kategoriler", id)); },
   async sirala(siyahi) { await Promise.all(siyahi.map((k, i) => updateDoc(doc(db, "kategoriler", k.id), { sira: i }))); },
-  silmekOlar: (x) => x.say === 0, // içində məhsul olan kateqoriya silinmir
+  // Sale və 24 saat heç vaxt silinmir; içində məhsul olan kateqoriya da silinmir
+  silmekOlar: (x) => !x.ozel && x.say === 0,
+  silinmezMesaj: (x) => (x.ozel ? "admin.kat.ozelSilinmez" : "admin.kat.doluSilinmez"),
 };
 
 export const SIYAHILAR = {
@@ -88,7 +91,7 @@ export function siyahiSekmesi(novu) {
       const gorunen = siyahi.filter((x) => !q || norm(x.ad).includes(q));
       $("#s-liste", kok).innerHTML = gorunen.length ? gorunen.map((x) => {
         return `<div class="siyahi-satir" data-id="${kacis(x.id)}">
-          <div class="siyahi-ad"><b>${novu === "renkler" ? renkNoktasi(x.ad) : ""}${kacis(x.ad)}</b><span class="soluk">${kacis(t("admin.siyahi.mehsulSay", { say: x.say }))}</span></div>
+          <div class="siyahi-ad"><b>${novu === "renkler" ? renkNoktasi(x.ad) : ""}${x.ozel ? `${ozelIkon(x.id)} ` : ""}${kacis(x.ad)}${x.ozel ? ` <span class="soluk" title="${kacis(t("admin.kat.sabit"))}">📌</span>` : ""}</b><span class="soluk">${kacis(t("admin.siyahi.mehsulSay", { say: x.say }))}</span></div>
           <div class="siyahi-aksiyon">
             <button type="button" class="ikon-btn" data-is="deyis" aria-label="${kacis(t("admin.siyahi.deyis"))}">✎</button>
             <button type="button" class="ikon-btn tehlike" data-is="sil" aria-label="${kacis(t("admin.sil"))}">✕</button>
@@ -110,7 +113,7 @@ export function siyahiSekmesi(novu) {
           const n = await c.adapter.adDeyis(id, yeni, siyahi, urunDocs);
           bildir(n ? t("admin.siyahi.deyisdiMehsul", { say: n }) : t("admin.kaydedildi"), "basari");
         } else if (is === "sil") {
-          if (!c.adapter.silmekOlar(x)) return bildir(t("admin.kat.doluSilinmez"), "hata");
+          if (!c.adapter.silmekOlar(x)) return bildir(t(c.adapter.silinmezMesaj?.(x) || "admin.kat.doluSilinmez"), "hata");
           const sual = x.say ? t("admin.siyahi.silIstifade", { ad: x.ad, say: x.say }) : t("admin.siyahi.silOnay", { ad: x.ad });
           if (!confirm(sual)) return;
           await c.adapter.sil(id, siyahi);
@@ -134,6 +137,7 @@ export function siyahiSekmesi(novu) {
         </div>
         <button type="button" class="btn" id="s-yeni">+ ${kacis(t("secici.elaveEt"))}</button>
       </div>
+      ${novu === "kategoriler" ? `<p class="ipucu">${kacis(t("admin.kat.siraIpucu"))}</p>` : ""}
       <div class="kart siyahi-kart" id="s-liste"></div>`;
     ciz();
 

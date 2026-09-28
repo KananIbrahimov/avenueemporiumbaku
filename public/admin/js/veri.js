@@ -1,5 +1,7 @@
 // Admin panelinde ortak veri önbelleği
-import { db, collection, getDocs, doc, getDoc } from "../../ortak/firebase.js";
+import { db, collection, getDocs, doc, getDoc, writeBatch, serverTimestamp } from "../../ortak/firebase.js";
+import { DILLER, yerel } from "../../ortak/i18n.js";
+import { OZEL_KATEGORILER, kategoriSirala } from "../../ortak/kategori.js";
 
 const detaylar = new Map(); // urunId → urunDetay
 let detaylarYuklendi = false;
@@ -45,7 +47,50 @@ export function vitrinEksikleri(u, d = {}) {
   return x;
 }
 
+// Qadın mağazası üçün hazır kateqoriyalar (bir dəfə əlavə olunur; admin sonra silə/dəyişə bilər)
+const HAZIR_KATEGORILER = [
+  "Paltar", "Bluz və köynək", "Şalvar", "Cins", "Ətək", "Şort", "Sviter və trikotaj",
+  "Gödəkçə və palto", "Kostyum və dəst", "İdman geyimi", "Ev geyimi", "Alt paltarı",
+  "Çimərlik geyimi", "Ayaqqabı", "Çanta", "Aksesuar",
+];
+const ILK_DIL = DILLER[0].kod;
+const norm = (s) => String(s || "").toLocaleLowerCase("az").trim();
+
+let tohumYoxlandi = false;
+
+/** Xüsusi kateqoriyalar (Sale, 24 saat) həmişə olmalıdır; hazır siyahı yalnız ilk dəfə əlavə olunur */
+async function kategorileriTohumla(liste) {
+  if (tohumYoxlandi) return false;
+  tohumYoxlandi = true;
+  const b = writeBatch(db);
+  let deyisdi = false;
+  for (const o of OZEL_KATEGORILER) {
+    if (liste.some((k) => k.id === o.id)) continue;
+    b.set(doc(db, "kategoriler", o.id), { ad: { [ILK_DIL]: o.ad }, ozel: true, sira: 0, olusturma: serverTimestamp() });
+    deyisdi = true;
+  }
+  const bayraq = await getDoc(doc(db, "ayarlar", "tohum")).catch(() => null);
+  if (!bayraq?.data()?.kategoriler) {
+    const varOlan = new Set(liste.map((k) => norm(yerel(k.ad))));
+    for (const ad of HAZIR_KATEGORILER) {
+      if (varOlan.has(norm(ad))) continue;
+      b.set(doc(collection(db, "kategoriler")), { ad: { [ILK_DIL]: ad }, sira: 0, olusturma: serverTimestamp() });
+    }
+    b.set(doc(db, "ayarlar", "tohum"), { kategoriler: true }, { merge: true });
+    deyisdi = true;
+  }
+  if (deyisdi) await b.commit();
+  return deyisdi;
+}
+
 export async function kategorileriGetir() {
-  const s = await getDocs(collection(db, "kategoriler"));
-  return s.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.sira ?? 0) - (b.sira ?? 0));
+  let s = await getDocs(collection(db, "kategoriler"));
+  let liste = s.docs.map((d) => ({ id: d.id, ...d.data() }));
+  try {
+    if (await kategorileriTohumla(liste)) {
+      s = await getDocs(collection(db, "kategoriler"));
+      liste = s.docs.map((d) => ({ id: d.id, ...d.data() }));
+    }
+  } catch (e) { console.warn(e); tohumYoxlandi = false; }
+  return kategoriSirala(liste);
 }

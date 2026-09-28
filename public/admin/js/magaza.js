@@ -4,6 +4,7 @@ import { t, yerel } from "../../ortak/i18n.js";
 import { $, $$, kacis, hataMesaji } from "../../ortak/yardim.js";
 import { fiyatHtml } from "../../js/fiyat-goster.js";
 import { kategorileriGetir } from "./veri.js";
+import { ozelIkon, kategoriyeAit } from "../../ortak/kategori.js";
 import { instagramAc } from "./instagram.js";
 import { IKON } from "../../ortak/ikon.js";
 
@@ -35,15 +36,20 @@ export async function magazaSekmesi(kok) {
     <div class="izgara" id="m-urunler"></div>`;
 
   const katCiz = () => {
-    const tumu = [{ id: "", ad: t("filtre.tumu") }, ...kategoriler.map((k) => ({ id: k.id, ad: yerel(k.ad) }))];
-    $("#m-kat", kok).innerHTML = tumu.map((k) =>
-      `<button class="cip ${k.id === secim.kategori ? "secili" : ""}" data-k="${kacis(k.id)}">${kacis(k.ad)}</button>`).join("");
+    // Sale və 24 saat solda, sonra "Hamısı", sonra əlifba sırası ilə
+    const ozel = kategoriler.filter((k) => ozelIkon(k.id));
+    const diger = kategoriler.filter((k) => !ozelIkon(k.id));
+    const tumu = [...ozel, { id: "", ad: t("filtre.tumu") }, ...diger];
+    $("#m-kat", kok).innerHTML = tumu.map((k) => {
+      const ikon = ozelIkon(k.id);
+      return `<button class="cip ${ikon ? "cip-ozel" : ""} ${k.id === secim.kategori ? "secili" : ""}" data-k="${kacis(k.id)}">${ikon ? `${ikon} ` : ""}${kacis(k.id ? yerel(k.ad) : k.ad)}</button>`;
+    }).join("");
   };
   const ciz = () => {
     const q = secim.ara.toLocaleLowerCase("az");
     const liste = urunler.filter((u) =>
       (secim.pasif || u.aktif) &&
-      (!secim.kategori || u.kategoriId === secim.kategori) &&
+      (!secim.kategori || kategoriyeAit(u, secim.kategori)) &&
       (!q || `${yerel(u.ad)} ${u.marka || ""}`.toLocaleLowerCase("az").includes(q)));
     $("#m-urunler", kok).innerHTML = liste.length ? liste.map((u) => `
       <div class="urun-kart-kap">

@@ -484,6 +484,11 @@ export default {
   "admin.kat.bos": "Hələ kateqoriya yoxdur.",
   "admin.kat.adGerekli": "Kateqoriya adını yazın.",
   "admin.kat.doluSilinmez": "Bu kateqoriyada məhsul var. Əvvəlcə məhsulları başqa kateqoriyaya keçirin.",
+  "admin.kat.ozelSilinmez": "Sale və 24 saata çatdırılma kateqoriyaları sabitdir, silinmir. Adını dəyişə bilərsiniz.",
+  "admin.kat.sabit": "Sabit kateqoriya — həmişə birinci göstərilir",
+  "admin.kat.siraIpucu": "🔥 Sale və ⚡ 24 saata çatdırılma həmişə solda/yuxarıda göstərilir. Digər kateqoriyalar əlifba sırası ilə düzülür. Müştəri yalnız içində məhsul olan kateqoriyaları görür.",
+  "admin.urun.ozelKat": "Xüsusi kateqoriyalar",
+  "admin.urun.ozelKatIpucu": "Məhsul öz kateqoriyasında qalır, əlavə olaraq işarələnən bölmələrdə də görünür.",
   "admin.kat.silOnay": "\"{ad}\" kateqoriyası silinsin?",
 
   // Müştərilər

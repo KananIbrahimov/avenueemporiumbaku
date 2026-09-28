@@ -191,6 +191,10 @@ textarea { min-height: 90px; resize: vertical; }
 .cipler::-webkit-scrollbar { display: none; }
 .cip { border: 1px solid var(--cizgi); background: var(--kart); color: var(--yazi); border-radius: 999px; padding: 8px 15px; font: inherit; font-size: .85rem; cursor: pointer; white-space: nowrap; }
 .cip.secili { background: var(--vurgu-parlaq); color: var(--vurgu-yazi); border-color: #d5d9de; }
+/* Sale və 24 saat — həmişə solda, fərqlənən çiplər */
+.cip-ozel { border-color: var(--tehlike); color: var(--tehlike); font-weight: 600; }
+.cip-ozel.secili { background: var(--tehlike); color: #fff; border-color: var(--tehlike); }
+.kat-adlari { padding-top: 4px; margin-bottom: 4px; }
 .filtreler { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; padding: 4px 0 16px; }
 .filtreler input[type=search] { grid-column: 1 / -1; }
 @media (min-width: 761px) { .filtreler { grid-template-columns: 2fr repeat(4, 1fr); } .filtreler input[type=search] { grid-column: auto; } }
@@ -303,6 +307,8 @@ th { font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; color:
 .katalog-kart .ust-yazi { position: absolute; inset: auto 0 0 0; padding: 40px 14px 14px; background: linear-gradient(transparent, rgba(0,0,0,.8)); color: #fff; }
 .katalog-kart .ust-yazi b { display: block; font-size: 1.05rem; }
 .katalog-kart .ust-yazi span { font-size: .8rem; opacity: .8; }
+.katalog-ozel { border-color: var(--tehlike); }
+.katalog-ozel-ikon { position: absolute; inset: 0; display: grid; place-items: center; font-size: 3rem; opacity: .9; }
 .marka-cipleri { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 30px; }
 
 /* Səbət */
