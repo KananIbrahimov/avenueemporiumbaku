@@ -158,10 +158,14 @@ async function formAc(kok, id) {
         </div>
         <div class="alan ozel-kat-secim">
           <label>📌 ${kacis(t("admin.urun.ozelKat"))}</label>
-          <div class="ozel-kat-sira">
+          <div class="ios-siyahi">
             ${OZEL_KATEGORILER.map((o) => {
               const k = kategoriler.find((x) => x.id === o.id);
-              return `<label class="onay"><input type="checkbox" name="ek_${o.id}" ${(urun.ekKategoriler || []).includes(o.id) ? "checked" : ""}> ${o.ikon} ${kacis(k ? yerel(k.ad) : o.ad)}</label>`;
+              return `<label class="ios-satir">
+                <span class="ios-ad">${o.ikon} ${kacis(k ? yerel(k.ad) : o.ad)}</span>
+                <input type="checkbox" class="ios-input" name="ek_${o.id}" ${(urun.ekKategoriler || []).includes(o.id) ? "checked" : ""}>
+                <span class="ios-switch" aria-hidden="true"></span>
+              </label>`;
             }).join("")}
           </div>
           <p class="ipucu" style="margin:6px 0 0">${kacis(t("admin.urun.ozelKatIpucu"))}</p>

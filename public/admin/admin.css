@@ -220,3 +220,24 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 /* Maliyyə pəncərəsi: bu mərhələdə doldurulacaq sahə */
 .mal-modal .alan.vurgulu label { color: var(--vurgu); }
 .mal-modal .alan.vurgulu input { border-color: var(--vurgu); box-shadow: 0 0 0 3px var(--vurgu-acik); }
+
+/* iPhone tipli açar (Sale / 24 saat) */
+.ios-siyahi { border: 1px solid var(--cizgi); border-radius: 12px; overflow: hidden; background: var(--kart-2); margin-top: 6px; }
+.ios-satir { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 11px 14px; min-height: 48px; box-sizing: border-box; cursor: pointer; margin: 0;
+  -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+.ios-satir + .ios-satir { border-top: 1px solid var(--cizgi); }
+.ios-ad { font-weight: 500; color: var(--yazi); font-size: .95rem; }
+.ios-input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.ios-switch { position: relative; flex: none; width: 51px; height: 31px; border-radius: 31px;
+  background: #39393d; transition: background .25s ease; }
+.ios-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%;
+  background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.16);
+  transition: transform .25s cubic-bezier(.3,.7,.4,1); }
+.ios-input:checked + .ios-switch { background: #34c759; }
+.ios-input:checked + .ios-switch::after { transform: translateX(20px); }
+.ios-input:focus-visible + .ios-switch { outline: 2px solid var(--vurgu); outline-offset: 2px; }
+.ios-satir:active .ios-switch::after { width: 31px; }
+.ios-satir:active .ios-input:checked + .ios-switch::after { transform: translateX(16px); }
+/* Açıq tema: iPhone-dakı kimi açıq boz */
+:root[data-tema="aciq"] .ios-switch { background: #e9e9ea; }
