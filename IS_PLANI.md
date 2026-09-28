@@ -85,7 +85,7 @@
 - [x] v1.8 "Qəbul et" pəncərəsi: alış, kargo, vergi, satış qiyməti, alınan bəh → maya, qazanc, qalıq ödəniş; müştəri bəh/qalığı görür
 - [x] v1.8 Finans: ay seçimi, alınan mal, xərc, satış, qazanc (reallaşan + yolda), bəh, qalıq alacaq; 6 aylıq qrafiklər + cədvəl; "💰 Maliyyə" ilə sonradan düzəliş
 - [x] v1.9 Səbətdə 30% ön ödəniş (faiz Ayarlar-dan): cəmi, ön ödəniş, qalıq göstərilir; "Sifarişi göndər" → sifariş panelə düşür + müştərinin telefonunda WhatsApp hazır sifariş mesajı ilə mağaza nömrəsinə açılır; sifariş sonrası ekranda ön ödəniş məbləği və ödəniş məlumatı
-- [x] v1.9 Admin Ayarlar → 💳 Sifariş və ön ödəniş: mağazanın WhatsApp nömrəsi, ön ödəniş %, ödəniş məlumatı (kart); sifariş kartında "Ön ödəniş (30%) — gözlənilir" + müştəriyə "💬 WhatsApp: ön ödəniş" hazır mesaj; Sifarişlərim-də tələb olunan ön ödəniş
+- [x] v1.9 Admin Ayarlar → 💳 Sifariş və ön ödəniş: mağazanın WhatsApp nömrəsi, ön ödəniş %, ödəniş məlumatı (kart); sifariş kartında "Ön ödəniş (30%) — gözlənilir" + müştəriyə "💬 WhatsApp: ön ödəniş" hazır mesaj; "✓ Ödəniş edildi" düyməsi (məbləğ soruşulur, səbətdəki sifarişlərə bəh kimi yazılır, Finans-da da yenilənir; sətir yaşıl "ödənildi" olur); Sifarişlərim-də tələb olunan ön ödəniş
 
 ## Faz 3 — Yayın ve sonrası
 - [ ] avenuebaku.az alan adını al ve bağla (+ admin.avenuebaku.az)

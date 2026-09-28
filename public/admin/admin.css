@@ -215,3 +215,9 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .mal-modal .x-satir { font-size: .9rem; }
 .fin-cedvel { font-size: .86rem; }
 .fin-cedvel td, .fin-cedvel th { white-space: nowrap; padding-left: 6px; padding-right: 6px; }
+
+/* Ön ödəniş sətri: düymələr sağda, ödənilibsə yaşıl */
+.odeme-satir { align-items: center; }
+.odeme-satir .odeme-dugmeler { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.odeme-satir.odenib { color: var(--basari); border-color: color-mix(in srgb, var(--basari) 40%, var(--cizgi)); background: color-mix(in srgb, var(--basari) 10%, var(--kart-2)); }
+.btn-odenildi { background: var(--basari); border-color: var(--basari); color: #07130b; }

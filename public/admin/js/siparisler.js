@@ -1,12 +1,12 @@
 // Siparişler: canlı liste, durum değiştirme, panel açıkken web bildirimi
-import { db, collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, arrayUnion, Timestamp } from "../../ortak/firebase.js";
+import { db, collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, arrayUnion, Timestamp, writeBatch, setDoc } from "../../ortak/firebase.js";
 import { t } from "../../ortak/i18n.js";
 import { para, yuvarla } from "../../ortak/fiyat.js";
 import { $, $$, kacis, tarih, bildir, hataMesaji, durumEtiketi, SIPARIS_DURUMLARI } from "../../ortak/yardim.js";
 import { detayGetir } from "./veri.js";
 import { adimlarHtml, IZLEME_ADIMLARI } from "../../ortak/izleme-ui.js";
 import { kargoHtml, kargoBagla, kargoDatalist } from "./kargo.js";
-import { maliyyePenceresi } from "./maliyye.js";
+import { maliyyePenceresi, maliyyeGetir } from "./maliyye.js";
 
 export let siparisler = [];
 const dinleyiciler = new Set();
@@ -150,6 +150,7 @@ async function ciz() {
   $$("[data-legv]", kok).forEach((b) => b.addEventListener("click", () => deyis(b.dataset.legv, "legv", t("izleme.legvOnay"))));
   $$("[data-berpa]", kok).forEach((b) => b.addEventListener("click", () => deyis(b.dataset.berpa, "yeni")));
   kargoBagla(kok, { siparisler: () => siparisler, durumDegistir, yenidenCiz: ciz });
+  $$("[data-odenildi]", kok).forEach((b) => b.addEventListener("click", () => odenisEdildi(b.dataset.odenildi)));
   $$("[data-mal]", kok).forEach((b) => b.addEventListener("click", () => {
     const o = siparisler.find((x) => x.id === b.dataset.mal);
     if (o) maliyyePenceresi(o, { rejim: "duzelt", durumDegistir });
@@ -217,14 +218,54 @@ function onOdemeSatiri(o, wa) {
   const cem = hamisi.reduce((c, x) => c + x.birimFiyat * x.adet, 0);
   const tutar = yuvarla((cem * y) / 100);
   const odenib = hamisi.some((x) => +x.beh > 0);
+  const odenen = yuvarla(hamisi.reduce((c, x) => c + (+x.beh || 0), 0));
   const metin = [
     `Salam, ${o.musteriAd}! AvenueBaku-dan yazırıq.`,
     `Sifarişiniz${o.sebetId ? ` №${o.sebetId}` : ""} alındı. Cəmi: ${para(cem)}.`,
     `Sifarişin təsdiqi üçün ${y}% ön ödəniş — ${para(tutar)} tələb olunur.`,
   ].join("\n");
+  if (odenib) {
+    const tarix = o.onOdemeTarixi ? ` · ${tarih(o.onOdemeTarixi)}` : "";
+    return `<div class="odeme-satir odenib"><span>✅ ${kacis(t("admin.sip.onOdeme"))} (${y}%): <b>${para(odenen)}</b>
+      <span>· ${kacis(t("admin.sip.odenildi"))}${kacis(tarix)}</span></span></div>`;
+  }
   return `<div class="odeme-satir"><span>💳 ${kacis(t("admin.sip.onOdeme"))} (${y}%): <b>${para(tutar)}</b>
-      ${odenib ? "" : `<span class="soluk">· ${kacis(t("admin.sip.gozlenilir"))}</span>`}</span>
-    ${wa && !odenib ? `<a class="btn btn-ince btn-kucuk" href="https://wa.me/${kacis(wa)}?text=${encodeURIComponent(metin)}" target="_blank" rel="noopener">💬 ${kacis(t("admin.sip.waXatirlat"))}</a>` : ""}</div>`;
+      <span class="soluk">· ${kacis(t("admin.sip.gozlenilir"))}</span></span>
+    <span class="odeme-dugmeler">
+      ${wa ? `<a class="btn btn-ince btn-kucuk" href="https://wa.me/${kacis(wa)}?text=${encodeURIComponent(metin)}" target="_blank" rel="noopener">💬 ${kacis(t("admin.sip.waXatirlat"))}</a>` : ""}
+      <button type="button" class="btn btn-kucuk btn-odenildi" data-odenildi="${kacis(o.id)}">✓ ${kacis(t("admin.sip.odenisEdildi"))}</button>
+    </span></div>`;
+}
+
+/**
+ * "Ödəniş edildi": ön ödəniş alındı. Məbləğ soruşulur (standart: tələb olunan %),
+ * səbətdəki bütün sifarişlərə payına görə bəh kimi yazılır. Müştəri "Sifarişlərim"də ödənilən / qalığı görür.
+ */
+async function odenisEdildi(id) {
+  const o = siparisler.find((x) => x.id === id);
+  if (!o) return;
+  const hamisi = o.sebetId ? siparisler.filter((x) => x.sebetId === o.sebetId && x.durum !== "legv") : [o];
+  const cem = yuvarla(hamisi.reduce((c, x) => c + x.birimFiyat * x.adet, 0));
+  const teleb = yuvarla((cem * (+o.onOdemeYuzde || 0)) / 100);
+  const cavab = prompt(t("admin.sip.odenisSoru").replace("{c}", para(cem)), teleb.toFixed(2));
+  if (cavab == null) return;
+  const mebleg = yuvarla(parseFloat(String(cavab).replace(",", ".")));
+  if (!(mebleg > 0) || mebleg > cem) return bildir(t("admin.mal.behCox"), "hata");
+  try {
+    const indi = Timestamp.now();
+    const toplu = writeBatch(db);
+    let qalan = mebleg;
+    for (const [i, x] of hamisi.entries()) {
+      const cemi = yuvarla(x.birimFiyat * x.adet);
+      const pay = i === hamisi.length - 1 ? yuvarla(qalan) : yuvarla((mebleg * cemi) / cem);
+      qalan -= pay;
+      toplu.update(doc(db, "siparisler", x.id), { beh: pay, odenecek: x.odenecek ?? cemi, onOdemeTarixi: indi });
+      // Maliyyə artıq yazılıbsa (qəbul olunubsa) Finans-da da bəh yenilənsin
+      if (await maliyyeGetir(x.id)) toplu.set(doc(db, "siparisMaliyye", x.id), { beh: pay, guncelleme: indi }, { merge: true });
+    }
+    await toplu.commit();
+    bildir(t("admin.sip.odenisYazildi"), "basari");
+  } catch (e) { bildir(hataMesaji(e), "hata"); }
 }
 
 /** Növbəti mərhələyə keçid düyməsi: Yeni → Qəbul et → Yola sal → Çatdırıldı */
