@@ -9,11 +9,13 @@ import { para, yuvarla } from "../ortak/fiyat.js";
 import { $, $$, kacis, bildir, hataMesaji } from "../ortak/yardim.js";
 import { girisDinle } from "./ust.js";
 import { sebetOxu, sebetAdet, sebettenSil, sebetiBosalt, depoDinle } from "./depo.js";
+import { sifarisAyarAl, onOdemeHesab, sifarisMesaji, waLink } from "../ortak/sifaris-ayar.js";
 
 const kok = $("#sebet");
 const urunOnbellek = new Map();
 let durum = { kullanici: null, profil: null, uye: false };
 let gonderilir = false;
+let ayar = null; // sifariş ayarları: WhatsApp nömrəsi, ön ödəniş %
 
 async function urunAl(id) {
   if (!urunOnbellek.has(id)) {
@@ -33,7 +35,8 @@ async function ciz() {
       <a class="btn" href="./">${kacis(t("genel.vitrineDon"))}</a></div>`;
     return;
   }
-  const urunler = await Promise.all(sebet.map((x) => urunAl(x.urunId)));
+  const [urunler, a] = await Promise.all([Promise.all(sebet.map((x) => urunAl(x.urunId))), sifarisAyarAl()]);
+  ayar = a;
   const uye = durum.uye;
   let cem = 0, cemNormal = 0;
   const satirlar = sebet.map((x, i) => {
@@ -72,6 +75,7 @@ async function ciz() {
       ${uye && qenaet > 0 ? `<div class="satir-h soluk"><span>${kacis(t("sebet.normalQiymet"))}</span><span style="text-decoration:line-through">${para(cemNormal)}</span></div>
         <div class="satir-h" style="color:var(--basari)"><span>${kacis(t("sebet.uzvEndirimi"))}</span><span>−${para(qenaet)}</span></div>` : ""}
       <div class="satir-h buyuk"><span>${kacis(t("urun.toplam"))}</span><span>${para(cem)}</span></div>
+      ${onOdemeHtml(cem)}
       ${!uye && urunler.some((u) => u && Number(u.indirimYuzde) > 0)
         ? `<div class="fiyat-uye">${kacis(t("sebet.uzvOl"))}</div>` : ""}
     </div>
@@ -82,6 +86,17 @@ async function ciz() {
   $$("[data-sil]", kok).forEach((b) => b.addEventListener("click", () => sebettenSil(+b.dataset.sil)));
 
   sifarisBolumu(hazirSay > 0);
+}
+
+/** Səbətdə: "Ön ödəniş (30%)" və "Qalıq" sətirləri */
+function onOdemeHtml(cem) {
+  const h = onOdemeHesab(cem, ayar?.onOdemeYuzde);
+  if (!h.yuzde) return "";
+  return `<div class="on-odeme">
+    <div class="satir-h"><span>💳 ${kacis(t("sebet.onOdeme").replace("{y}", h.yuzde))}</span><b>${para(h.onOdeme)}</b></div>
+    <div class="satir-h soluk"><span>${kacis(t("sebet.qaliq"))}</span><span>${para(h.qaliq)}</span></div>
+    <div class="ipucu" style="margin:0">${kacis(t("sebet.onOdemeIzah").replace("{y}", h.yuzde))}</div>
+  </div>`;
 }
 
 function sifarisBolumu(varMi) {
@@ -120,7 +135,7 @@ function sifarisBolumu(varMi) {
       <div class="alan"><label for="not">${kacis(t("urun.not"))}</label>
         <textarea id="not" maxlength="500" style="min-height:60px"></textarea></div>
       <button class="btn btn-tam" type="submit">${kacis(t("sebet.sifarisVer"))}</button>
-      <p class="ipucu" style="text-align:center;margin-bottom:0">${kacis(t("urun.siparisAciklama"))}</p>
+      <p class="ipucu" style="text-align:center;margin-bottom:0">${kacis(t(ayar?.whatsapp ? "sebet.waAciklama" : "urun.siparisAciklama"))}</p>
     </form>`;
   $("#sifaris-form").addEventListener("submit", sifarisGonder);
 }
@@ -142,16 +157,20 @@ async function sifarisGonder(e) {
     const p = durum.profil;
     const sebetId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`.toUpperCase();
     const toplu = writeBatch(db);
-    let say = 0;
+    let say = 0, cem = 0;
+    const setirler = [];
+    const yuzde = Math.min(100, Math.max(0, Math.round(+ayar?.onOdemeYuzde || 0)));
+    const musteriAd = p ? `${p.ad} ${p.soyad}` : (auth.currentUser.displayName || auth.currentUser.email);
+    const not = $("#not").value.trim().slice(0, 500);
     sebet.forEach((x, i) => {
       const u = urunler[i];
       if (!u) return;
       toplu.set(doc(collection(db, "siparisler")), {
         kullaniciId: auth.currentUser.uid,
-        musteriAd: p ? `${p.ad} ${p.soyad}` : (auth.currentUser.displayName || auth.currentUser.email),
+        musteriAd,
         musteriEmail: auth.currentUser.email,
         telefon,
-        musteriNotu: $("#not").value.trim().slice(0, 500),
+        musteriNotu: not,
         urunId: u.id,
         urunAd: yerel(u.ad).slice(0, 200),
         marka: u.marka || "",
@@ -162,22 +181,40 @@ async function sifarisGonder(e) {
         durum: "yeni",
         olusturma: serverTimestamp(),
         sebetId,
+        onOdemeYuzde: yuzde,
       });
       say++;
+      cem += u.uyeFiyati * x.adet;
+      setirler.push({ ad: yerel(u.ad), marka: u.marka || "", olcu: x.olcu || "", renk: x.renk || "", adet: x.adet, fiyat: u.uyeFiyati });
     });
     if (!say) throw new Error("bos");
     await toplu.commit();
     try { localStorage.setItem("telefon", telefon); } catch {}
     sebetiBosalt();
+    cem = yuvarla(cem);
+    const h = onOdemeHesab(cem, yuzde);
+    const wa = ayar?.whatsapp
+      ? waLink(ayar.whatsapp, sifarisMesaji({ sebetId, musteriAd, telefon, setirler, cem, yuzde, odemeQeydi: ayar.odemeQeydi, qeyd: not }))
+      : "";
     kok.innerHTML = `<div class="kart" style="text-align:center;padding:28px 18px">
       <p style="font-size:2.4rem;margin:0">✓</p>
       <h2>${kacis(t("sebet.qebulOldu"))}</h2>
-      <p class="soluk">${kacis(t("urun.siparisAlindi"))}</p>
       <p class="soluk">${kacis(t("sebet.nomre"))}: <b class="kod">${kacis(sebetId)}</b></p>
+      ${h.yuzde ? `<div class="kutu-mesaj kutu-bilgi on-odeme-kutu">
+        <div>💳 ${kacis(t("sebet.onOdemeTeleb").replace("{y}", h.yuzde))}</div>
+        <div class="on-odeme-mebleg">${para(h.onOdeme)}</div>
+        <div class="soluk">${kacis(t("sebet.qaliq"))}: ${para(h.qaliq)} · ${kacis(t("urun.toplam"))}: ${para(cem)}</div>
+        ${ayar.odemeQeydi ? `<div style="margin-top:6px;white-space:pre-line">${kacis(ayar.odemeQeydi)}</div>` : ""}
+      </div>` : ""}
+      <p class="soluk">${kacis(t(wa ? "sebet.waSon" : "urun.siparisAlindi"))}</p>
       <div style="display:grid;gap:8px;margin-top:14px">
-        <a class="btn btn-tam" href="siparislerim.html">${kacis(t("nav.siparislerim"))}</a>
+        ${wa ? `<a class="btn btn-tam btn-wa" href="${kacis(wa)}" target="_blank" rel="noopener">💬 ${kacis(t("sebet.waGonder"))}</a>` : ""}
+        <a class="btn ${wa ? "btn-ince " : ""}btn-tam" href="siparislerim.html">${kacis(t("nav.siparislerim"))}</a>
         <a class="btn btn-ince btn-tam" href="./">${kacis(t("genel.vitrineDon"))}</a>
       </div></div>`;
+    // Sifariş yazıldı → WhatsApp özü açılsın (mesaj hazır, müştəri yalnız "Göndər" basır).
+    // Açılmasa (brauzer bloklasa) yuxarıdakı düymə qalır.
+    if (wa) setTimeout(() => { location.href = wa; }, 900);
   } catch (err) {
     gonderilir = false;
     bildir(err?.code === "permission-denied" ? t("urun.fiyatDegisti") : hataMesaji(err), "hata");

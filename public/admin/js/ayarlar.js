@@ -9,6 +9,7 @@ import { kilitAyari } from "../../ortak/kilit.js";
 import { siyahiSaylari } from "./siyahi-sehife.js";
 import { VARSAYILAN_SABLON, SABLON_ACARLARI } from "./instagram.js";
 import { VALYUTALAR, SIMGE, teyinliKurslar, kurslariYaz, bazarKurslari } from "./kurs.js";
+import { sifarisAyarAl, sifarisAyarYaz, waNomre } from "../../ortak/sifaris-ayar.js";
 
 const satir = (href, ikon, metin, say = "") =>
   `<a class="ayar-satir" href="${href}"><span>${ikon} ${kacis(metin)}</span><span class="soluk">${say} ›</span></a>`;
@@ -44,6 +45,7 @@ export async function ayarlarSekmesi(kok) {
 
       <div class="bolum-baslik">${kacis(t("admin.ayar.aletler"))}</div>
       <div class="kart menyu-kart">
+        ${satir("#sifarisAyar", "💳", t("admin.sa.baslik"), `<span id="sa-qisa"></span>`)}
         ${satir("#kurslar", "💱", t("admin.kurs.baslik"), `<span id="kurs-qisa"></span>`)}
         ${satir("#instagram", "📸", t("admin.ig.sablonBaslik"))}
         ${satir("#yedek", "💾", t("admin.sekme.yedek"))}
@@ -66,6 +68,11 @@ export async function ayarlarSekmesi(kok) {
   teyinliKurslar().then((k) => {
     const el = $("#kurs-qisa", kok);
     if (el) el.textContent = ["USD", "EUR"].filter((v) => k[v]).map((v) => `${v} ${k[v]}`).join(" · ");
+  }).catch(() => {});
+
+  sifarisAyarAl({ tezeden: true }).then((a) => {
+    const el = $("#sa-qisa", kok);
+    if (el) el.textContent = `${a.onOdemeYuzde}%${a.whatsapp ? " · WhatsApp ✓" : ""}`;
   }).catch(() => {});
 
   const u = auth.currentUser;
@@ -147,4 +154,36 @@ export async function instagramSablonSekmesi(kok) {
 export function yedekSekmesi(kok) {
   kok.innerHTML = `${geriBasliq("💾", t("admin.sekme.yedek"))}<div class="ayar-kap" id="yedek"></div>`;
   yedekBolumu($("#yedek", kok));
+}
+
+// ---------- Sifariş və ön ödəniş (ayrı səhifə) ----------
+export async function sifarisAyarSekmesi(kok) {
+  kok.innerHTML = `${geriBasliq("💳", t("admin.sa.baslik"))}
+    <form class="kart ayar-kap" id="sa-form" novalidate>
+      <p class="ipucu" style="margin-top:0">${kacis(t("admin.sa.aciklama"))}</p>
+      <div class="alan"><label for="sa-wa">💬 ${kacis(t("admin.sa.whatsapp"))}</label>
+        <input id="sa-wa" name="whatsapp" type="tel" inputmode="tel" placeholder="+994 50 123 45 67">
+        <div class="ipucu">${kacis(t("admin.sa.whatsappIpucu"))}</div></div>
+      <div class="alan" style="max-width:200px"><label for="sa-y">💳 ${kacis(t("admin.sa.yuzde"))}</label>
+        <input id="sa-y" name="yuzde" inputmode="numeric" placeholder="30"></div>
+      <div class="alan"><label for="sa-q">🏦 ${kacis(t("admin.sa.qeyd"))}</label>
+        <textarea id="sa-q" name="qeyd" maxlength="500" style="min-height:80px"></textarea>
+        <div class="ipucu">${kacis(t("admin.sa.qeydIpucu"))}</div></div>
+      <button class="btn" type="submit">${kacis(t("admin.kaydet"))}</button>
+    </form>`;
+  const form = $("#sa-form", kok);
+  const a = await sifarisAyarAl({ tezeden: true });
+  form.whatsapp.value = a.whatsapp ? `+${a.whatsapp}` : "";
+  form.yuzde.value = a.onOdemeYuzde;
+  form.qeyd.value = a.odemeQeydi || "";
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const n = waNomre(form.whatsapp.value);
+    if (form.whatsapp.value.trim() && (n.length < 10 || n.length > 15)) return bildir(t("admin.sa.nomreHata"), "hata");
+    try {
+      await sifarisAyarYaz({ whatsapp: n, onOdemeYuzde: form.yuzde.value, odemeQeydi: form.qeyd.value.trim() });
+      bildir(t("admin.kaydedildi"), "basari");
+      location.hash = "ayarlar";
+    } catch (err) { bildir(hataMesaji(err), "hata"); }
+  });
 }

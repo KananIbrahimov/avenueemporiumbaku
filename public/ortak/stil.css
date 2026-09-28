@@ -343,3 +343,10 @@ input.kecid:checked { background: var(--basari); }
 input.kecid:checked::after { transform: translateX(20px); }
 input.kecid:disabled { opacity: .45; cursor: not-allowed; }
 .odeme-satir { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .85rem; background: var(--kart-2); border: 1px solid var(--cizgi); border-radius: 10px; padding: 8px 10px; margin-top: 8px; }
+
+/* Ön ödəniş (səbət + sifariş sonrası) və WhatsApp düyməsi */
+.on-odeme { display: grid; gap: 4px; margin-top: 6px; padding-top: 10px; border-top: 1px dashed var(--cizgi); }
+.on-odeme-kutu { text-align: center; margin: 14px 0; }
+.on-odeme-mebleg { font-size: 1.6rem; font-weight: 700; margin: 4px 0; }
+.btn-wa { background: #25d366; color: #0b1a10; border-color: #25d366; }
+.btn-wa:hover { filter: brightness(1.05); }

@@ -187,6 +187,7 @@ function kartHtml(o) {
         <span class="soluk">${kacis([o.marka, o.olcu && `${t("urun.olcu")}: ${o.olcu}`, o.renk && `${t("urun.renk")}: ${o.renk}`].filter(Boolean).join(" · "))}</span>
       </div>
       <div>${o.adet} × ${para(o.birimFiyat)} = <b>${para(o.adet * o.birimFiyat)}</b></div>
+      ${onOdemeSatiri(o, wa)}
       ${o.beh != null && o.odenecek != null ? `<div class="odeme-satir"><span>🤝 ${kacis(t("admin.mal.beh"))}: <b>${para(o.beh)}</b></span>
         <span>⏳ ${kacis(t("admin.mal.qaliq"))}: <b>${para(o.odenecek - o.beh)}</b></span></div>` : ""}
       <div class="soluk">
@@ -206,6 +207,24 @@ function kartHtml(o) {
         <button class="btn btn-link btn-kucuk" data-sil="${kacis(o.id)}" style="margin-left:auto">${kacis(t("admin.sil"))}</button>
       </div>
     </div>`;
+}
+
+/** Ön ödəniş: tələb olunan məbləğ; bəh hələ yazılmayıbsa müştəriyə WhatsApp xatırlatması */
+function onOdemeSatiri(o, wa) {
+  const y = +o.onOdemeYuzde || 0;
+  if (!y || o.durum === "legv") return "";
+  const hamisi = o.sebetId ? siparisler.filter((x) => x.sebetId === o.sebetId) : [o];
+  const cem = hamisi.reduce((c, x) => c + x.birimFiyat * x.adet, 0);
+  const tutar = yuvarla((cem * y) / 100);
+  const odenib = hamisi.some((x) => +x.beh > 0);
+  const metin = [
+    `Salam, ${o.musteriAd}! AvenueBaku-dan yazırıq.`,
+    `Sifarişiniz${o.sebetId ? ` №${o.sebetId}` : ""} alındı. Cəmi: ${para(cem)}.`,
+    `Sifarişin təsdiqi üçün ${y}% ön ödəniş — ${para(tutar)} tələb olunur.`,
+  ].join("\n");
+  return `<div class="odeme-satir"><span>💳 ${kacis(t("admin.sip.onOdeme"))} (${y}%): <b>${para(tutar)}</b>
+      ${odenib ? "" : `<span class="soluk">· ${kacis(t("admin.sip.gozlenilir"))}</span>`}</span>
+    ${wa && !odenib ? `<a class="btn btn-ince btn-kucuk" href="https://wa.me/${kacis(wa)}?text=${encodeURIComponent(metin)}" target="_blank" rel="noopener">💬 ${kacis(t("admin.sip.waXatirlat"))}</a>` : ""}</div>`;
 }
 
 /** Növbəti mərhələyə keçid düyməsi: Yeni → Qəbul et → Yola sal → Çatdırıldı */

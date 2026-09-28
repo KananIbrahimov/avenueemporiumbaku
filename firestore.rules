@@ -10,6 +10,7 @@ rules_version = '2';
 //   urunFoto/{id}        ürün fotoğrafları (sıkıştırılmış, herkese açık)
 //   siparisler/{id}      müşteri siparişleri / istekleri
 //   ayarlar/{id}         admin ayarları (instagram şablonu) — sadece admin
+//   magazaAyar/{id}      açıq mağaza ayarları (sifariş WhatsApp nömrəsi, ön ödəniş %) — hamı oxuyur, admin yazır
 //   siparisMaliyye/{id}  sifarişin xərcləri və bəh — sadece admin (Finans hesabatı)
 
 service cloud.firestore {
@@ -93,6 +94,12 @@ service cloud.firestore {
       allow read, write: if admin();
     }
 
+    // ---------- Mağaza ayarları (hamı oxuyur): sifariş WhatsApp nömrəsi, ön ödəniş %, ödəniş məlumatı ----------
+    match /magazaAyar/{id} {
+      allow read: if true;
+      allow write: if admin();
+    }
+
     // ---------- Sifariş maliyyəsi (alış, kargo, vergi, bəh) — YALNIZ admin ----------
     match /siparisMaliyye/{id} {
       allow read, write: if admin();
@@ -109,8 +116,11 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly([
              'kullaniciId', 'musteriAd', 'musteriEmail', 'telefon', 'musteriNotu',
              'urunId', 'urunAd', 'marka', 'olcu', 'renk', 'adet', 'birimFiyat',
-             'durum', 'olusturma', 'sebetId'])
+             'durum', 'olusturma', 'sebetId', 'onOdemeYuzde'])
         && (!('sebetId' in request.resource.data) || metin(request.resource.data.sebetId, 1, 40))
+        && (!('onOdemeYuzde' in request.resource.data)
+            || (request.resource.data.onOdemeYuzde is int
+                && request.resource.data.onOdemeYuzde >= 0 && request.resource.data.onOdemeYuzde <= 100))
         && request.resource.data.kullaniciId == request.auth.uid
         && request.resource.data.musteriEmail == request.auth.token.email
         && metin(request.resource.data.musteriAd, 1, 120)

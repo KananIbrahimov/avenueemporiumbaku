@@ -10,7 +10,7 @@ import { IKON } from "../../ortak/ikon.js";
 import { siparisleriBaslat, siparislerSekmesi } from "./siparisler.js";
 import { urunlerSekmesi } from "./urunler.js";
 import { musterilerSekmesi } from "./musteriler.js";
-import { ayarlarSekmesi, kurslarSekmesi, instagramSablonSekmesi, yedekSekmesi } from "./ayarlar.js";
+import { ayarlarSekmesi, kurslarSekmesi, instagramSablonSekmesi, yedekSekmesi, sifarisAyarSekmesi } from "./ayarlar.js";
 import { magazaSekmesi } from "./magaza.js";
 import { finansSekmesi } from "./finans.js";
 import { siyahiSekmesi } from "./siyahi-sehife.js";
@@ -42,6 +42,7 @@ const MARSRUT = {
   olculer: { fn: siyahiSekmesi("olculer"), menyu: "ayarlar" },
   renkler: { fn: siyahiSekmesi("renkler"), menyu: "ayarlar" },
   kurslar: { fn: kurslarSekmesi, menyu: "ayarlar" },
+  sifarisAyar: { fn: sifarisAyarSekmesi, menyu: "ayarlar" },
   instagram: { fn: instagramSablonSekmesi, menyu: "ayarlar" },
   yedek: { fn: yedekSekmesi, menyu: "ayarlar" },
 };
