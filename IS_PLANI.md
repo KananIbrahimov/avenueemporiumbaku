@@ -52,6 +52,11 @@
 - [x] Instagram üçün hazırla: post (1080×1080) və story (1080×1920) şəkli + hazır mətn, telefonda paylaş menyusu
 - [x] Yeni məhsul əlavə edəndə "Instagram üçün hazırlansın?" təklifi
 - [x] Telefon yönümlü: aşağı menyu, məhsul və müştəri siyahıları kart şəklində, yapışqan "Yadda saxla" paneli
+- [x] v2.2 Hazır qadın mağazası kateqoriyaları (bir dəfə əlavə olunur); sabit 🔥 Sale və ⚡ 24 saata çatdırılma — həmişə solda, digərləri əlifba sırası ilə
+- [x] v2.3–2.4 Məhsul formunda Sale / 24 saat iPhone tipli açarla; məhsul öz kateqoriyası + Sale + 24 saat — 3 yerdə görünə bilir
+- [x] v2.5–2.6 "Vitrində göstər" götürüldü (saxlanan məhsul vitrinə çıxır); ayrıca ⏸ Passiv et / ▶ Aktiv et düyməsi
+- [x] v2.9 Aşağı menyu: Məhsullar · Finans · (+) · Sifarişlər · Ayarlar (Mağaza götürüldü); v2.10 yuxarıda "Mağazaya keç ↗"
+- [x] v2.11 Yoxlama: ehtiyat nüsxəyə mağaza ayarları əlavə olundu; sifariş silinəndə maliyyə sənədi də silinir; istifadə olunmayan kod götürüldü
 - [ ] Yedekten geri yükleme
 - [ ] Gerçek cihazda test (abla ile)
 
@@ -78,6 +83,9 @@
 - [x] Sürüm nömrəsi v1.1 + "Powered by Kanan Ibrahimov" — hər iki saytda Ayarların ən aşağısında
 - [x] Dizayn: həmişə qaranlıq, gümüşü rənglər (SafeMoney üslubu), hər iki saytda
 - [x] Telefon yönümlü: aşağı menyu (Mağaza, Sifarişlərim, Ayarlar)
+- [x] v2.2 Kataloqda yuxarıda kateqoriya adları (sürüşən sıra); boş kateqoriyalar müştəriyə göstərilmir
+- [x] v2.7 Qeydiyyatsız sifariş: ad + telefon → WhatsApp hazır mesajla (normal qiymət, bazaya yazılmır)
+- [x] v2.11 Sale məhsullarının kartında SALE nişanı; link paylaşanda önizləmə (başlıq, təsvir, şəkil)
 - [x] Məhsul səhifəsində "Paylaş" düyməsi
 - [x] Mobil görünüm son kontrolleri (v1.8 tam tarama: 144 səhifə/vəziyyət, 0 problem)
 - [x] v1.8 Face ID / Touch ID kilidi — hər iki saytda Ayarlar → 🔐 (cihaza/sayta görə; 1 dəq arxa fondan sonra yenidən kilid)

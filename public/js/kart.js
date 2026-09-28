@@ -18,6 +18,7 @@ export function kartHtml(u, uye) {
         <div class="foto">
           ${u.kapak ? `<img src="${kacis(u.kapak)}" alt="${kacis(yerel(u.ad))}" loading="lazy">` : ""}
           ${Number(u.indirimYuzde) > 0 ? `<span class="rozet">−${kacis(u.indirimYuzde)}%</span>` : ""}
+          ${(u.ekKategoriler || []).includes("sale") ? `<span class="rozet rozet-sale">SALE</span>` : ""}
         </div>
         <div class="marka">${kacis(u.marka || "")}</div>
         <div class="ad">${kacis(yerel(u.ad))}</div>

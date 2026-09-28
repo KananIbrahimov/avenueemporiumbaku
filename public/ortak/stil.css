@@ -192,6 +192,7 @@ textarea { min-height: 90px; resize: vertical; }
 .cip { border: 1px solid var(--cizgi); background: var(--kart); color: var(--yazi); border-radius: 999px; padding: 8px 15px; font: inherit; font-size: .85rem; cursor: pointer; white-space: nowrap; }
 .cip.secili { background: var(--vurgu-parlaq); color: var(--vurgu-yazi); border-color: #d5d9de; }
 /* Sale və 24 saat — həmişə solda, fərqlənən çiplər */
+.rozet-sale { top: auto !important; bottom: 8px; background: var(--tehlike) !important; color: #fff !important; letter-spacing: .06em; }
 .cip-ozel { border-color: var(--tehlike); color: var(--tehlike); font-weight: 600; }
 .cip-ozel.secili { background: var(--tehlike); color: #fff; border-color: var(--tehlike); }
 .kat-adlari { padding-top: 4px; margin-bottom: 4px; }

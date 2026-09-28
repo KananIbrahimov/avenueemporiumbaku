@@ -3,7 +3,7 @@ import { db, collection, getDocs } from "../../ortak/firebase.js";
 import { t } from "../../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 
-const KOLEKSIYONLAR = ["kategoriler", "urunler", "urunDetay", "urunFoto", "kullanicilar", "siparisler", "siparisMaliyye", "ayarlar"];
+const KOLEKSIYONLAR = ["kategoriler", "urunler", "urunDetay", "urunFoto", "kullanicilar", "siparisler", "siparisMaliyye", "ayarlar", "magazaAyar"];
 
 // Firestore Timestamp → ISO tarih metni
 const temizle = (v) => {

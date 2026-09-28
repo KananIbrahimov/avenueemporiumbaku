@@ -166,7 +166,11 @@ async function ciz() {
   }));
   $$("[data-sil]", kok).forEach((b) => b.addEventListener("click", async () => {
     if (!confirm(t("admin.sip.silOnay"))) return;
-    try { await deleteDoc(doc(db, "siparisler", b.dataset.sil)); } catch (e) { bildir(hataMesaji(e), "hata"); }
+    try {
+      // Sifarişin maliyyə sənədi də silinsin (yoxsa bazada yetim qalır)
+      await deleteDoc(doc(db, "siparisMaliyye", b.dataset.sil)).catch(() => {});
+      await deleteDoc(doc(db, "siparisler", b.dataset.sil));
+    } catch (e) { bildir(hataMesaji(e), "hata"); }
   }));
 
   // Kaynak linkleri ve kâr (gizli detaylardan)
