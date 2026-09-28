@@ -2,7 +2,7 @@
 // - Qutuya toxunanda aşağıdan pəncərə açılır: axtarış + siyahı
 // - Axtarışda tapılmayanı "+ yenisini əlavə et" ilə əlavə etmək olur (ad yazılan kiçik pəncərə)
 // - Çoxlu seçimdə (ölçü, rəng) seçilənlər qutunun altında 3 sütunlu düzülür
-import { t } from "../../ortak/i18n.js";
+import { t, DILLER } from "../../ortak/i18n.js";
 import { kacis, bildir } from "../../ortak/yardim.js";
 import { renkNoktasi } from "../../ortak/renk.js";
 
@@ -149,4 +149,19 @@ export function secici(kok, o) {
   const deger = () => (o.coxlu ? [...secili] : secili[0] || "");
   qutuCiz();
   return { deger, secenekler: () => secenekler };
+}
+
+/**
+ * Kateqoriya adını bütün dillərdə soruşur (hamısı məcburidir). Qaytarır: { az: "...", ru: "..." } və ya null (ləğv).
+ * @param ilk mövcud adlar ({ az, ru }) və ya birinci dildəki ad (mətn)
+ */
+export async function kategoriAdlariSor(ilk = {}, dugme = "") {
+  const ad = typeof ilk === "string" ? { [DILLER[0].kod]: ilk } : { ...ilk };
+  for (const d of DILLER) {
+    const bas = DILLER.length > 1 ? t("admin.kat.dilAd", { dil: d.kod.toUpperCase() }) : t("admin.kat.ad");
+    const v = await adSorus(bas, ad[d.kod] || "", { dugme: dugme || t("secici.elaveEt") });
+    if (!v) return null;
+    ad[d.kod] = v;
+  }
+  return ad;
 }

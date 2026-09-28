@@ -252,3 +252,5 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
 /* Açıq tema: iPhone-dakı kimi açıq boz */
 :root[data-tema="aciq"] .ios-switch { background: #e9e9ea; }
+
+.dil-eksik { color: var(--uyari); font-size: .75rem; font-weight: 700; margin-left: 6px; }

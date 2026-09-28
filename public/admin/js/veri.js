@@ -1,7 +1,7 @@
 // Admin panelinde ortak veri önbelleği
 import { db, collection, getDocs, doc, getDoc, writeBatch, serverTimestamp, query, where, setDoc } from "../../ortak/firebase.js";
 import { DILLER, yerel } from "../../ortak/i18n.js";
-import { OZEL_KATEGORILER, kategoriSirala } from "../../ortak/kategori.js";
+import { OZEL_KATEGORILER, kategoriSirala, ozelMi } from "../../ortak/kategori.js";
 
 const detaylar = new Map(); // urunId → urunDetay
 let detaylarYuklendi = false;
@@ -71,6 +71,9 @@ const HAZIR_KATEGORILER = [
 const TOHUMLANMAYAN = new Set(["Geyim"]);
 const ILK_DIL = DILLER[0].kod;
 const norm = (s) => String(s || "").toLocaleLowerCase("az").trim();
+// Yazı fərqlərinə baxmadan müqayisə: "Ayaqqabi" = "Ayaqqabı", "Salvar" = "Şalvar"
+const sade = (s) => norm(s).replace(/[ıi̇]/g, "i").replace(/ə/g, "e").replace(/ş/g, "s").replace(/ç/g, "c")
+  .replace(/ğ/g, "g").replace(/ö/g, "o").replace(/ü/g, "u").replace(/\s+/g, " ");
 
 let tohumYoxlandi = false;
 
@@ -94,18 +97,43 @@ async function kategorileriTohumla(liste) {
       deyisdi = true;
     }
   }
-  // Mövcud hazır kateqoriyalara çatışmayan dilləri əlavə et (Azərbaycan dilindəki adla tanınır)
+  // Eyni adlı (yazı fərqi ilə) təkrar kateqoriyalar: məhsulu olan saxlanılır, boş təkrar silinir
+  const silinen = new Set();
+  const qruplar = new Map();
+  for (const k of liste.filter((x) => !ozelMi(x.id))) {
+    const a = sade(k.ad?.[ILK_DIL]);
+    if (!qruplar.has(a)) qruplar.set(a, []);
+    qruplar.get(a).push(k);
+  }
+  if ([...qruplar.values()].some((g) => g.length > 1)) {
+    const us = await getDocs(collection(db, "urunler"));
+    const say = (id) => us.docs.filter((d) => d.data().kategoriId === id).length;
+    for (const g of qruplar.values()) {
+      if (g.length < 2) continue;
+      const saxla = g.find((k) => say(k.id) > 0) || g[0];
+      for (const k of g) {
+        if (k === saxla || say(k.id) > 0) continue;
+        b.delete(doc(db, "kategoriler", k.id));
+        silinen.add(k.id);
+        deyisdi = true;
+      }
+    }
+  }
+  // Hazır kateqoriyalar: düzgün yazılış və çatışmayan dillər (Azərbaycan dilindəki adla tanınır)
   for (const k of liste) {
-    const h = HAZIR_KATEGORILER.find((x) => norm(x[ILK_DIL]) === norm(k.ad?.[ILK_DIL]));
-    if (!h || !Object.keys(h).some((d) => !k.ad?.[d])) continue;
-    b.update(doc(db, "kategoriler", k.id), { ad: { ...h, ...k.ad } });
+    if (silinen.has(k.id) || ozelMi(k.id)) continue;
+    const h = HAZIR_KATEGORILER.find((x) => sade(x[ILK_DIL]) === sade(k.ad?.[ILK_DIL]));
+    if (!h) continue;
+    const yeni = { ...k.ad, ...Object.fromEntries(Object.entries(h).filter(([d]) => !k.ad?.[d])), [ILK_DIL]: h[ILK_DIL] };
+    if (Object.keys(yeni).every((d) => yeni[d] === k.ad?.[d])) continue;
+    b.update(doc(db, "kategoriler", k.id), { ad: yeni });
     deyisdi = true;
   }
   const bayraq = await getDoc(doc(db, "ayarlar", "tohum")).catch(() => null);
   if (!bayraq?.data()?.kategoriler) {
-    const varOlan = new Set(liste.map((k) => norm(yerel(k.ad))));
+    const varOlan = new Set(liste.map((k) => sade(k.ad?.[ILK_DIL])));
     for (const h of HAZIR_KATEGORILER) {
-      if (TOHUMLANMAYAN.has(h[ILK_DIL]) || varOlan.has(norm(h[ILK_DIL]))) continue;
+      if (TOHUMLANMAYAN.has(h[ILK_DIL]) || varOlan.has(sade(h[ILK_DIL]))) continue;
       b.set(doc(collection(db, "kategoriler")), { ad: { ...h }, sira: 0, olusturma: serverTimestamp() });
     }
     b.set(doc(db, "ayarlar", "tohum"), { kategoriler: true }, { merge: true });

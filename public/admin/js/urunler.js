@@ -9,7 +9,7 @@ import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { tumDetaylar, detayGuncelle, kategorileriGetir, vitrinEksikleri, fotoAktifYaz } from "./veri.js";
 import { OZEL_KATEGORILER, ozelMi } from "../../ortak/kategori.js";
 import { instagramAc } from "./instagram.js";
-import { secici } from "./secici.js";
+import { secici, kategoriAdlariSor } from "./secici.js";
 import { siyahilariGetir, siyahiyaElave, markalariTohumla } from "./siyahilar.js";
 import { VALYUTALAR, hesabKursu } from "./kurs.js";
 import { IKON } from "../../ortak/ikon.js";
@@ -254,9 +254,11 @@ async function formAc(kok, id) {
     yeniElave: async (ad) => {
       const ref = doc(collection(db, "kategoriler"));
       const sira = kategoriler.length ? Math.max(...kategoriler.map((k) => k.sira ?? 0)) + 1 : 0;
-      await setDoc(ref, { ad: { [DILLER[0].kod]: ad }, sira, olusturma: serverTimestamp() });
-      kategoriler.push({ id: ref.id, ad: { [DILLER[0].kod]: ad }, sira });
-      return { id: ref.id, ad };
+      const adlar = await kategoriAdlariSor(ad); // hər dildə ad məcburidir
+      if (!adlar) return null;
+      await setDoc(ref, { ad: adlar, sira, olusturma: serverTimestamp() });
+      kategoriler.push({ id: ref.id, ad: adlar, sira });
+      return { id: ref.id, ad: yerel(adlar) };
     },
   });
   const sOlcu = secici($("#s-olcu", kok), {

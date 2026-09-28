@@ -8,7 +8,7 @@ import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { kategorileriGetir } from "./veri.js";
 import { ozelMi, ozelIkon, kategoriyeAit } from "../../ortak/kategori.js";
 import { siyahilariGetir, siyahiYaz, markalariTohumla } from "./siyahilar.js";
-import { adSorus } from "./secici.js";
+import { adSorus, kategoriAdlariSor } from "./secici.js";
 import { renkNoktasi } from "../../ortak/renk.js";
 
 const norm = (s) => String(s || "").toLocaleLowerCase("az").trim();
@@ -53,19 +53,12 @@ const kategoriAdapter = {
   },
   async elave(yeni, siyahi) {
     const sira = siyahi.length ? Math.max(...siyahi.map((k) => k.ham?.sira ?? 0)) + 1 : 0;
-    await setDoc(doc(collection(db, "kategoriler")), { ad: { [ILK_DIL]: yeni }, sira, olusturma: serverTimestamp() });
+    await setDoc(doc(collection(db, "kategoriler")), { ad: yeni, sira, olusturma: serverTimestamp() });
   },
+  // Yeni kateqoriya: hər dildə ad məcburidir
+  yeniSor: (ilk) => kategoriAdlariSor(ilk),
   // Hər dil üçün ayrıca ad soruşulur (AZ məcburi, digərləri boş qala bilər)
-  async adSor(x) {
-    const ad = { ...(x.ham?.ad || {}) };
-    for (const d of DILLER) {
-      const bas = DILLER.length > 1 ? t("admin.kat.dilAd", { dil: d.kod.toUpperCase() }) : t("admin.siyahi.deyisBaslik");
-      const v = await adSorus(bas, ad[d.kod] || "", { bosOlar: d.kod !== ILK_DIL, dugme: t("admin.kaydet") });
-      if (v == null || (d.kod === ILK_DIL && !v)) return null; // ləğv
-      if (v) ad[d.kod] = v; else delete ad[d.kod];
-    }
-    return ad;
-  },
+  adSor: (x) => kategoriAdlariSor(x.ham?.ad || {}, t("admin.kaydet")),
   async adDeyis(id, yeni) {
     await updateDoc(doc(db, "kategoriler", id), { ad: yeni });
     return 0;
@@ -84,6 +77,13 @@ export const SIYAHILAR = {
   renkler: { basliq: "admin.siyahi.renkler", tek: "secici.yeniRenk", ikon: "🎨", adapter: metinSiyahisi("renkler", "renkler", true) },
 };
 
+/** Kateqoriyanın tərcüməsi çatışmayan dilləri: "⚠ RU" */
+function eksikDil(x) {
+  if (!x.ham?.ad) return "";
+  const yox = DILLER.filter((d) => !x.ham.ad[d.kod]).map((d) => d.kod.toUpperCase());
+  return yox.length ? ` <span class="dil-eksik" title="${kacis(t("admin.kat.tercumeYox"))}">⚠ ${yox.join(", ")}</span>` : "";
+}
+
 export function siyahiSekmesi(novu) {
   return async function (kok) {
     const c = SIYAHILAR[novu];
@@ -101,7 +101,7 @@ export function siyahiSekmesi(novu) {
       const gorunen = siyahi.filter((x) => !q || norm(x.ad).includes(q));
       $("#s-liste", kok).innerHTML = gorunen.length ? gorunen.map((x) => {
         return `<div class="siyahi-satir" data-id="${kacis(x.id)}">
-          <div class="siyahi-ad"><b>${novu === "renkler" ? renkNoktasi(x.ad) : ""}${x.ozel ? `${ozelIkon(x.id)} ` : ""}${kacis(x.ad)}${x.ozel ? ` <span class="soluk" title="${kacis(t("admin.kat.sabit"))}">📌</span>` : ""}</b><span class="soluk">${kacis(t("admin.siyahi.mehsulSay", { say: x.say }))}</span></div>
+          <div class="siyahi-ad"><b>${novu === "renkler" ? renkNoktasi(x.ad) : ""}${x.ozel ? `${ozelIkon(x.id)} ` : ""}${kacis(x.ad)}${x.ozel ? ` <span class="soluk" title="${kacis(t("admin.kat.sabit"))}">📌</span>` : ""}</b><span class="soluk">${kacis(t("admin.siyahi.mehsulSay", { say: x.say }))}</span>${eksikDil(x)}</div>
           <div class="siyahi-aksiyon">
             <button type="button" class="ikon-btn" data-is="deyis" aria-label="${kacis(t("admin.siyahi.deyis"))}">✎</button>
             <button type="button" class="ikon-btn tehlike" data-is="sil" aria-label="${kacis(t("admin.sil"))}">✕</button>
@@ -162,6 +162,18 @@ export function siyahiSekmesi(novu) {
 
     $("#s-ara", kok).addEventListener("input", (e) => { ara = e.target.value; ciz(); });
     $("#s-yeni", kok).addEventListener("click", async () => {
+      if (c.adapter.yeniSor) {
+        const ad = await c.adapter.yeniSor(ara.trim());
+        if (!ad) return;
+        if (siyahi.some((y) => norm(y.ham?.ad?.[ILK_DIL]) === norm(ad[ILK_DIL]))) return bildir(t("admin.siyahi.varDir"), "hata");
+        try {
+          await c.adapter.elave(ad, siyahi);
+          bildir(t("secici.elaveOlundu", { ad: yerel(ad) }), "basari");
+          ara = ""; $("#s-ara", kok).value = "";
+          await yenile();
+        } catch (e) { bildir(hataMesaji(e), "hata"); }
+        return;
+      }
       const yeni = await adSorus(t(c.tek), ara.trim());
       if (!yeni) return;
       if (siyahi.some((y) => norm(y.ad) === norm(yeni))) return bildir(t("admin.siyahi.varDir"), "hata");
