@@ -42,7 +42,7 @@ async function listeAc(kok) {
           return `<div class="kart urun-satir ${u.aktif ? "" : "pasif"}">
             ${u.kapak ? `<img class="kucuk-foto" src="${kacis(u.kapak)}" alt="">` : `<div class="kucuk-foto"></div>`}
             <div class="bilgi">
-              <div class="ad">${kacis(yerel(u.ad))}</div>
+              <div class="ad">${u.aktif ? "" : `<span class="pasif-rozet">${kacis(t("admin.urun.pasif"))}</span> `}${kacis(yerel(u.ad))}</div>
               <div class="soluk">${kacis([u.marka, katAd[u.kategoriId], ...OZEL_KATEGORILER.filter((o) => (u.ekKategoriler || []).includes(o.id)).map((o) => `${o.ikon} ${katAd[o.id] || o.ad}`)].filter(Boolean).join(" · "))}</div>
               <div class="rakamlar">
                 <span>${kacis(t("admin.hesap.maya"))}: <b>${para(h.maliyet)}</b></span>
@@ -53,6 +53,7 @@ async function listeAc(kok) {
               <div class="aksiyonlar">
                 <a class="btn btn-ince btn-kucuk" href="#urunler/${encodeURIComponent(u.id)}">${kacis(t("admin.duzenle"))}</a>
                 <button class="btn btn-ince btn-kucuk" data-ig="${kacis(u.id)}">${IKON.instagram} Instagram</button>
+                <button class="btn btn-ince btn-kucuk" data-durum="${kacis(u.id)}">${kacis(t(u.aktif ? "admin.urun.pasifEt" : "admin.urun.aktifEt"))}</button>
                 ${d.kaynakLink ? `<a class="btn btn-link btn-kucuk" href="${kacis(d.kaynakLink)}" target="_blank" rel="noopener noreferrer">🔗 ${kacis(t("admin.sip.kaynakAc"))}</a>` : ""}
               </div>
             </div></div>`;
@@ -60,6 +61,23 @@ async function listeAc(kok) {
         : `<p class="bos">${kacis(t(urunler.length ? "vitrin.bos" : "admin.urun.bos"))}</p>`;
 
       $$("[data-ig]", kok).forEach((b) => b.addEventListener("click", () => instagramAc(b.dataset.ig)));
+      // Passiv / aktiv et — passiv məhsul müştəriyə görünmür, amma silinmir
+      $$("[data-durum]", kok).forEach((b) => b.addEventListener("click", async () => {
+        const u = urunler.find((x) => x.id === b.dataset.durum);
+        if (!u) return;
+        const yeni = !u.aktif;
+        if (yeni) {
+          const eksik = vitrinEksikleri(u, detaylar.get(u.id) || {});
+          if (eksik.length) return bildir(t("admin.yoxla.icazeYox", { liste: eksik.map((s) => t("admin.yoxla." + s)).join(", ") }), "hata");
+        } else if (!confirm(t("admin.urun.pasifOnay"))) return;
+        b.disabled = true;
+        try {
+          await updateDoc(doc(db, "urunler", u.id), { aktif: yeni, guncelleme: serverTimestamp() });
+          u.aktif = yeni;
+          bildir(t(yeni ? "admin.urun.aktifEdildi" : "admin.urun.pasifEdildi"), "basari");
+          ciz();
+        } catch (e) { b.disabled = false; bildir(hataMesaji(e), "hata"); }
+      }));
     };
 
     kok.innerHTML = `
@@ -211,12 +229,14 @@ async function formAc(kok, id) {
       <div class="form-alt yapiskan">
         <div class="aksiyonlar" style="margin-left:auto">
           ${id ? `<button type="button" class="btn btn-link btn-kucuk sil-link" id="sil">${kacis(t("admin.sil"))}</button>` : ""}
+          ${id ? `<button type="button" class="btn btn-ince btn-kucuk" id="durum">${kacis(t(urun.aktif !== false ? "admin.urun.pasifEt" : "admin.urun.aktifEt"))}</button>` : ""}
           <button type="submit" class="btn btn-kucuk">${kacis(t("admin.kaydet"))}</button>
         </div>
       </div>
     </form>`;
 
   const form = $("#urun-form", kok);
+  let aktifDurum = id ? urun.aktif !== false : true;
   const f = (ad) => form.elements[ad];
 
   // ---- Axtarışlı siyahılar ----
@@ -445,7 +465,7 @@ async function formAc(kok, id) {
         satisFiyati: iki(x.satis),
         indirimYuzde: iki(x.endirim),
         uyeFiyati: iki(x.uye),
-        aktif: true, // məhsul həmişə vitrindədir (gizlətmə yoxdur)
+        aktif: aktifDurum, // yeni məhsul vitrinə çıxır; passiv edilmiş məhsul passiv qalır
         kapak,
         fotoSayisi: fotolar.length,
         olusturma: urun.olusturma || serverTimestamp(),
@@ -489,6 +509,24 @@ async function formAc(kok, id) {
       buton.disabled = false;
       buton.textContent = t("admin.kaydet");
     }
+  });
+
+  // ---- Passiv / aktiv et (dərhal yazılır) ----
+  $("#durum", kok)?.addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    const yeni = !aktifDurum;
+    if (yeni) {
+      const eksik = indikiEksikler();
+      if (eksik.length) { yoxlamaGoster = true; yoxlamaCiz(); return bildir(t("admin.yoxla.icazeYox", { liste: eksik.map((s) => t("admin.yoxla." + s)).join(", ") }), "hata"); }
+    } else if (!confirm(t("admin.urun.pasifOnay"))) return;
+    b.disabled = true;
+    try {
+      await updateDoc(doc(db, "urunler", id), { aktif: yeni, guncelleme: serverTimestamp() });
+      aktifDurum = yeni;
+      b.textContent = t(yeni ? "admin.urun.pasifEt" : "admin.urun.aktifEt");
+      bildir(t(yeni ? "admin.urun.aktifEdildi" : "admin.urun.pasifEdildi"), "basari");
+    } catch (err) { bildir(hataMesaji(err), "hata"); }
+    b.disabled = false;
   });
 
   // ---- Sil ----

@@ -70,6 +70,10 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .onay { display: flex; align-items: center; gap: 10px; font-weight: 500; color: var(--yazi); font-size: .9rem; margin: 0; }
 .onay input { width: 20px; }
 .pasif { opacity: .5; }
+.urun-satir.pasif { opacity: 1; }
+.urun-satir.pasif .kucuk-foto, .urun-satir.pasif .soluk, .urun-satir.pasif .rakamlar { opacity: .5; }
+.pasif-rozet { display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 999px; background: var(--uyari); color: #111; vertical-align: 1px; }
 
 /* Instagram önizləmə */
 .ig-onizleme { background: var(--zemin); border-radius: 12px; padding: 10px; display: flex; justify-content: center; }
