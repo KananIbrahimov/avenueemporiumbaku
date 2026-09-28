@@ -117,7 +117,7 @@ async function formAc(kok, id) {
     siyahilar = sy;
     tumUrunler = tum.docs.map((d) => d.data());
     if (id) {
-      if (!us.exists()) { bildir(t("urun.yok"), "hata"); location.hash = "magaza"; return; }
+      if (!us.exists()) { bildir(t("urun.yok"), "hata"); location.hash = "urunler"; return; }
       urun = us.data();
       detay = ds.exists() ? ds.data() : {};
       eskiFotolar = fs.docs.map((d) => ({ docId: d.id, ...d.data() })).sort((a, b) => a.sira - b.sira);

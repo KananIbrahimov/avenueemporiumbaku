@@ -11,7 +11,6 @@ import { siparisleriBaslat, siparislerSekmesi } from "./siparisler.js";
 import { urunlerSekmesi } from "./urunler.js";
 import { musterilerSekmesi } from "./musteriler.js";
 import { ayarlarSekmesi, kurslarSekmesi, instagramSablonSekmesi, yedekSekmesi, sifarisAyarSekmesi } from "./ayarlar.js";
-import { magazaSekmesi } from "./magaza.js";
 import { finansSekmesi } from "./finans.js";
 import { siyahiSekmesi } from "./siyahi-sehife.js";
 
@@ -19,21 +18,21 @@ temaUygula();
 versiyaYoxla();
 sayfayiCevir();
 
-// Aşağı menyu: Mağaza · Finans · (+) Məhsul · Sifarişlər (mərhələlər + kargo) · Ayarlar (Müştərilər Ayarlar-da)
+// Aşağı menyu: Məhsullar · Finans · (+) Məhsul · Sifarişlər (mərhələlər + kargo) · Ayarlar (Müştərilər Ayarlar-da)
 const MENYU = [
-  { id: "magaza", ikon: IKON.magaza, metin: "admin.sekme.magaza", href: "#magaza" },
+  { id: "mehsullar", ikon: IKON.magaza, metin: "admin.sekme.urunler", href: "#urunler" },
   { id: "finans", ikon: IKON.finans, metin: "admin.sekme.finans", href: "#finans" },
-  { id: "urunler", ikon: IKON.artir, metin: "admin.menyu.urunEkle", href: "#urunler/yeni", orta: true },
+  { id: "yeni", ikon: IKON.artir, metin: "admin.menyu.urunEkle", href: "#urunler/yeni", orta: true },
   { id: "siparisler", ikon: IKON.siparis, metin: "admin.sekme.siparisler", href: "#siparisler" },
   { id: "ayarlar", ikon: IKON.ayar, metin: "admin.sekme.ayarlar", href: "#ayarlar" },
 ];
 
 // Marşrutlar: hash → { çəkən funksiya, hansı menyu aktiv olsun }
 const MARSRUT = {
-  magaza: { fn: magazaSekmesi, menyu: "magaza" },
+  magaza: { fn: urunlerSekmesi, menyu: "mehsullar" }, // köhnə link → Məhsullar
   finans: { fn: finansSekmesi, menyu: "finans" },
   musteriler: { fn: musterilerSekmesi, menyu: "ayarlar" },
-  urunler: { fn: urunlerSekmesi, menyu: "urunler" },
+  urunler: { fn: urunlerSekmesi, menyu: "mehsullar" },
   siparisler: { fn: siparislerSekmesi, menyu: "siparisler" },
   izleme: { fn: siparislerSekmesi, menyu: "siparisler" }, // köhnə link
   ayarlar: { fn: ayarlarSekmesi, menyu: "ayarlar" },
@@ -57,8 +56,9 @@ function menyuCiz() {
 
 function sekmeAc() {
   const parcalar = location.hash.slice(1).split("/");
-  const m = MARSRUT[parcalar[0]] || MARSRUT.magaza;
-  $$("#sekmeler a").forEach((a) => a.classList.toggle("aktif", a.dataset.menyu === m.menyu));
+  const m = MARSRUT[parcalar[0]] || MARSRUT.urunler;
+  const aktivMenyu = parcalar[0] === "urunler" && parcalar[1] === "yeni" ? "yeni" : m.menyu;
+  $$("#sekmeler a").forEach((a) => a.classList.toggle("aktif", a.dataset.menyu === aktivMenyu));
   const kok = $("#icerik");
   kok.innerHTML = "";
   window.scrollTo(0, 0);
