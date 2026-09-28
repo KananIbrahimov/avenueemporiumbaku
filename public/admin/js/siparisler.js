@@ -137,14 +137,14 @@ async function ciz() {
     if (sual && !confirm(sual)) return;
     const o = siparisler.find((x) => x.id === id);
     if (!o) return;
-    // İrəli keçiddə maliyyə pəncərəsi açılır: ödənişdə bəh, sifariş verəndə alış, gömrükdə kargo + vergi
+    // İrəli keçiddə maliyyə pəncərəsi açılır: "Sifariş edildi"-də ön ödəniş (bəh) + alış, gömrükdə kargo + vergi
     const irəli = IZLEME_ADIMLARI.indexOf(durum) > IZLEME_ADIMLARI.indexOf(esasDurum(o.durum));
-    const pencere = { odenildi: ["beh"], sifarisVerildi: ["alis", "satis"], gomrukde: ["kargo", "vergi"] }[durum];
+    const pencere = { sifarisVerildi: ["beh", "alis"], gomrukde: ["kargo", "vergi"] }[durum];
     if (pencere && irəli && o.durum !== "legv") {
       const y = +o.onOdemeYuzde || 30;
       await maliyyePenceresi(o, {
         rejim: "kec", hedef: durum, fokus: pencere, durumDegistir,
-        behTeklif: durum === "odenildi" ? yuvarla((o.birimFiyat * o.adet * y) / 100) : null,
+        behTeklif: durum === "sifarisVerildi" ? yuvarla((o.birimFiyat * o.adet * y) / 100) : null,
       });
       return;
     }
@@ -238,7 +238,7 @@ function onOdemeSatiri(o, wa) {
     `Sifarişin təsdiqi üçün ${y}% ön ödəniş — ${para(tutar)} tələb olunur.`,
   ].join("\n");
   if (odenib) {
-    const q = (o.tarixce || []).filter((x) => x.durum === "odenildi").pop();
+    const q = (o.tarixce || []).find((x) => ["odenildi", "sifarisVerildi", "tesdiq"].includes(x.durum));
     const tarix = q ? ` · ${tarih(q.tarix)}` : "";
     return `<div class="odeme-satir odenib"><span>✅ ${kacis(t("admin.sip.onOdeme"))} (${y}%): <b>${para(odenen)}</b>
       <span>· ${kacis(t("admin.sip.odenildi"))}${kacis(tarix)}</span></span></div>`;
@@ -250,7 +250,7 @@ function onOdemeSatiri(o, wa) {
     </span></div>`;
 }
 
-/** Növbəti mərhələyə keçid düyməsi: Yeni → Qəbul et → Yola sal → Çatdırıldı */
+/** Növbəti mərhələyə keçid düyməsi: Yeni → Ödəniş gözlənilir → Sifariş edildi → Yoldadır → Gömrükdədir → Kuryerdədir → Çatdırıldı */
 function novbetiHtml(o) {
   const i = IZLEME_ADIMLARI.indexOf(esasDurum(o.durum));
   if (i < 0 || i >= IZLEME_ADIMLARI.length - 1) return "";

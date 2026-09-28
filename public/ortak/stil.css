@@ -234,7 +234,8 @@ textarea { min-height: 90px; resize: vertical; }
 .durum-tesdiq { --d: #2f6fbf; }
 .durum-sifarisVerildi { --d: #7a52c7; }
 .durum-yolda { --d: #1f8f84; }
-.durum-odenildi { --d: #3a9d6a; }
+.durum-odenildi, .durum-odemeGozlenilir { --d: #c9a227; }
+.durum-kuryerde { --d: #2f7fbf; }
 .durum-gomrukde { --d: #b0643a; }
 .durum-catdirildi { --d: #2f9d5a; }
 .durum-legv { --d: #8a857e; }
@@ -370,6 +371,9 @@ input.kecid:disabled { opacity: .45; cursor: not-allowed; }
 /* 6 addımlı izləmə: ödənilən məbləğ addımın altında */
 .adimlar .adim-mebleg { display: block; font-size: .64rem; font-weight: 700; color: var(--basari); margin-top: 1px; }
 @media (max-width: 420px) { .adimlar .adim-ad { font-size: .6rem; } .adimlar .nokta { width: 24px; height: 24px; } .adimlar li::before { top: 11px; } }
+/* 7 addım: uzun adlar (Gömrükdədir, Kuryerdədir) qonşuya daşmasın, sətrə bölünsün */
+.adimlar .adim-ad { overflow-wrap: anywhere; }
+@media (max-width: 520px) { .adimlar .adim-ad { font-size: .56rem; letter-spacing: -.01em; padding: 0 1px; } .adimlar .adim-tarix, .adimlar .adim-mebleg { font-size: .56rem; } }
 
 /* Rəng dairəsi (rəng adlarının yanında) */
 .renk-nokta { display: inline-block; flex: none; width: 16px; height: 16px; border-radius: 50%; vertical-align: -3px; margin-right: 7px;

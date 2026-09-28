@@ -60,6 +60,7 @@
 - [x] v2.12 Rus dili (müştəri + admin), yuxarıda AZ · RU seçimi; Azərbaycan dili mətnləri rəsmi dilə uyğunlaşdırıldı; kateqoriya, rəng və ölçü adları tərcümə olunur; passiv məhsulun şəkilləri də müştəriyə bağlıdır; qonağa "Üzvlərə −5%" nişanı
 - [ ] İngilis dili: ortak/dil/en.js + i18n.js-də bir sətir
 - [x] ~~Yedekten geri yükleme~~ — lazım deyil (ehtiyat nüsxə götürüldü)
+- [x] v2.16 Sifariş axını: Yeni sifariş → Ödəniş gözlənilir → Sifariş edildi (ön ödəniş + alış qiyməti bir pəncərədə) → Yoldadır → Gömrükdədir (kargo + vergi) → Kuryerdədir → Çatdırıldı; köhnə "Ödəniş edildi" statusu "Ödəniş gözlənilir" mərhələsində göstərilir
 - [ ] Gerçek cihazda test (abla ile)
 
 ## Faz 2 — Müşteri sitesi

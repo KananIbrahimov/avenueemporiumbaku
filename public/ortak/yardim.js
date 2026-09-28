@@ -67,10 +67,10 @@ export function sifreKontrol(s) {
   return eksik;
 }
 
-export const SIPARIS_DURUMLARI = ["yeni", "odenildi", "sifarisVerildi", "yolda", "gomrukde", "catdirildi", "legv"];
+export const SIPARIS_DURUMLARI = ["yeni", "odemeGozlenilir", "sifarisVerildi", "yolda", "gomrukde", "kuryerde", "catdirildi", "legv"];
 
-/** Köhnə "tesdiq" (Qəbul edildi) statusu indiki "Sifariş verildi" sayılır */
-export const esasDurum = (d) => (d === "tesdiq" ? "sifarisVerildi" : d);
+/** Köhnə statuslar: "tesdiq" (Qəbul edildi) → "Sifariş edildi"; "odenildi" (v2.0–2.15) → "Ödəniş gözlənilir" mərhələsi */
+export const esasDurum = (d) => (d === "tesdiq" ? "sifarisVerildi" : d === "odenildi" ? "odemeGozlenilir" : d);
 
 export function durumEtiketi(d) {
   d = esasDurum(d);

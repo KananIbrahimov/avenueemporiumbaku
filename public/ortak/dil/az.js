@@ -197,9 +197,9 @@ export default {
 
   // Sifariş statusları
   "durum.yeni": "Yeni sifariş",
-  "durum.tesdiq": "Sifariş verildi",
+  "durum.tesdiq": "Sifariş edildi",
   "durum.odenildi": "Ödəniş edildi",
-  "durum.sifarisVerildi": "Sifariş verildi",
+  "durum.sifarisVerildi": "Sifariş edildi",
   "durum.yolda": "Yoldadır",
   "durum.gomrukde": "Gömrükdədir",
   "durum.catdirildi": "Çatdırıldı",
@@ -367,10 +367,10 @@ export default {
   "admin.sip.urunSilinmis": "Məhsul silinib",
   "admin.sip.silOnay": "Bu sifariş tamamilə silinsin? (Ləğv etmək tövsiyə olunur — tarixçə saxlanılır.)",
   "admin.sip.kec.odenildi": "İlkin ödəniş ({y}%) edildi",
-  "admin.sip.kec.sifarisVerildi": "Sifariş verildi",
+  "admin.sip.kec.sifarisVerildi": "Ödəniş alındı — sifariş edildi",
   "admin.sip.kec.gomrukde": "Gömrükdədir",
   "admin.mal.odenildiBaslik": "İlkin ödəniş edildi",
-  "admin.mal.sifarisVerildiBaslik": "Sifariş verildi — alış qiyməti",
+  "admin.mal.sifarisVerildiBaslik": "Sifariş edildi — ön ödəniş və alış qiyməti",
   "admin.mal.gomrukdeBaslik": "Gömrükdədir — karqo və vergi",
   "admin.mal.tesdiqle": "Təsdiqlə",
   "admin.sip.catdirildiOnay": "Sifariş çatdırıldı? Bundan sonra sifariş bağlanacaq.",
@@ -544,4 +544,8 @@ export default {
   "eylem.xeta.etibarsiz": "Bu keçid artıq istifadə olunub və ya etibarsızdır. Hesabınız təsdiqlənibsə, sadəcə daxil olun.",
   "eylem.xeta.bagli": "Bu hesab bloklanıb. Ətraflı məlumat üçün mağaza ilə əlaqə saxlayın.",
   "huquq.bolum": "Hüquqi məlumat",
+  "durum.odemeGozlenilir": "Ödəniş gözlənilir",
+  "durum.kuryerde": "Kuryerdədir",
+  "admin.sip.kec.odemeGozlenilir": "Qəbul et — ödəniş ({y}%) gözlənilir",
+  "admin.sip.kec.kuryerde": "Kuryerə verildi",
 };

@@ -3,8 +3,8 @@ import { t } from "./i18n.js";
 import { kacis, tarih, esasDurum } from "./yardim.js";
 import { para } from "./fiyat.js";
 
-// Yeni sifariş → Ödəniş edildi (ön ödəniş) → Sifariş verildi → Yoldadır → Gömrükdədir → Çatdırıldı
-export const IZLEME_ADIMLARI = ["yeni", "odenildi", "sifarisVerildi", "yolda", "gomrukde", "catdirildi"];
+// Yeni sifariş → Ödəniş gözlənilir → Sifariş edildi → Yoldadır → Gömrükdədir → Kuryerdədir → Çatdırıldı
+export const IZLEME_ADIMLARI = ["yeni", "odemeGozlenilir", "sifarisVerildi", "yolda", "gomrukde", "kuryerde", "catdirildi"];
 
 /** Hər addımın tarixi: tarixçədən (sonuncu qeyd), "yeni" üçün sifariş tarixi */
 export function adimTarixleri(o) {
@@ -33,7 +33,7 @@ export function adimlarHtml(o, { tiklanan = false } = {}) {
     const ic = `<span class="nokta">${i < indeks ? "✓" : ""}</span>
       <span class="adim-ad">${kacis(t("durum." + a))}</span>
       <span class="adim-tarix">${i <= indeks ? kacis(qisaTarix(tarixler[a])) : ""}</span>
-      ${a === "odenildi" && +o.beh > 0 && i <= indeks ? `<span class="adim-mebleg">${para(o.beh)}</span>` : ""}`;
+      ${a === "odemeGozlenilir" && +o.beh > 0 && i < indeks ? `<span class="adim-mebleg">${para(o.beh)}</span>` : ""}`;
     return `<li class="${sinif}">${tiklanan
       ? `<button type="button" data-adim="${a}" ${i === indeks ? "disabled" : ""}>${ic}</button>`
       : ic}</li>`;

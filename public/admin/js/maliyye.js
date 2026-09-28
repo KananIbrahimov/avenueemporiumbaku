@@ -25,7 +25,7 @@ export async function butunMaliyye() {
  * @param o sifariş; @param durumDegistir (id, durum, elave) => Promise
  */
 export async function maliyyePenceresi(o, { rejim = "duzelt", hedef = null, fokus = null, behTeklif = null, durumDegistir }) {
-  // rejim "kec": pəncərə təsdiqlənəndə sifariş "hedef" statusuna keçir (odenildi / sifarisVerildi / gomrukde)
+  // rejim "kec": pəncərə təsdiqlənəndə sifariş "hedef" statusuna keçir (sifarisVerildi / gomrukde)
   const [evvel, d] = await Promise.all([maliyyeGetir(o.id), detayGetir(o.urunId).catch(() => null)]);
   const adet = o.adet || 1;
   // Başlanğıc dəyərlər: əvvəl yazılıbsa onlar, yoxdursa məhsulun gizli detallarından × say
