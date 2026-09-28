@@ -84,8 +84,10 @@ service cloud.firestore {
     }
 
     // ---------- Ürün fotoğrafları ----------
+    // Müştəri yalnız aktiv məhsulun şəkillərini görür (şəkildə "aktif" sahəsi məhsulla eyni saxlanılır).
+    // Sorğu where("aktif","==",true) ilə edilməlidir.
     match /urunFoto/{id} {
-      allow read: if true;
+      allow read: if resource.data.aktif == true || admin();
       allow write: if admin();
     }
 

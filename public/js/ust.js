@@ -2,7 +2,7 @@
 // Aşağı menyu: Bəyəndiklərim · Kataloq · (ortada) Ana səhifə · Səbətim · Ayarlar
 import { auth, onAuthStateChanged, profilGetir, signOut } from "../ortak/firebase.js";
 import { kilitBaslat } from "../ortak/kilit.js";
-import { t, sayfayiCevir } from "../ortak/i18n.js";
+import { t, sayfayiCevir, dilSeciciHtml, dilSeciciBagla } from "../ortak/i18n.js";
 import { kacis } from "../ortak/yardim.js";
 import { temaUygula } from "../ortak/tema.js";
 import { IKON } from "../ortak/ikon.js";
@@ -50,7 +50,9 @@ function ustCiz() {
   nav.innerHTML =
     MENYU.filter((m) => !m.orta).map((m) => `<a class="ust-link masaustu ${m.id === aktifSehife ? "aktif" : ""}" href="${m.href}">
       ${m.ikon}<span>${kacis(t(m.metin))}</span>${m.say ? `<b class="sayac" data-say="${m.say}" hidden></b>` : ""}</a>`).join("") +
+    dilSeciciHtml() +
     (durum.kullanici ? "" : `<a class="btn btn-kucuk" href="giris.html" style="margin-left:6px">${kacis(t("nav.giris"))}</a>`);
+  dilSeciciBagla(nav);
   saylariYenile();
 }
 

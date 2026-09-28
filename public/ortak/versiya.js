@@ -1,6 +1,7 @@
 // Yeni versiya yoxlaması: sayt yenilənəndə (deploy) açıq səhifələr bunu görür.
 // - Bildiriş göstərir: "Yeni versiya var — Yenilə"
 // - Tətbiq arxa fondan qayıdanda, yarımçıq forma yoxdursa, özü yenilənir.
+import { t } from "./i18n.js";
 const YOXLAMA_ARALIGI = 5 * 60 * 1000; // 5 dəqiqə
 
 const kok = new URL("../", import.meta.url); // saytın kökü (mağaza və admin eyni faylı istifadə edir)
@@ -31,7 +32,7 @@ function bildirisGoster() {
   const el = document.createElement("div");
   el.id = "yeni-versiya";
   el.setAttribute("role", "status");
-  el.innerHTML = `<span>✨ Yeni versiya hazırdır${yeniSurum ? ` <span class="soluk">v${yeniSurum}</span>` : ""}</span><button type="button" class="btn btn-kucuk">Yenilə</button>`;
+  el.innerHTML = `<span>✨ ${t("versiya.hazir")}${yeniSurum ? ` <span class="soluk">v${yeniSurum}</span>` : ""}</span><button type="button" class="btn btn-kucuk">${t("versiya.yenile")}</button>`;
   el.querySelector("button").addEventListener("click", yenile);
   document.body.appendChild(el);
 }

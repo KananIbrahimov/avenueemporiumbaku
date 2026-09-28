@@ -4,7 +4,7 @@ import {
   auth, db, doc, getDoc, collection, writeBatch, serverTimestamp, reload, sendEmailVerification,
 } from "../ortak/firebase.js";
 import { MAGAZA_URL } from "../ortak/ayarlar.js";
-import { t, yerel } from "../ortak/i18n.js";
+import { t, yerel, degerCevir } from "../ortak/i18n.js";
 import { para, yuvarla } from "../ortak/fiyat.js";
 import { $, $$, kacis, bildir, hataMesaji } from "../ortak/yardim.js";
 import { girisDinle } from "./ust.js";
@@ -54,7 +54,7 @@ async function ciz() {
       <div class="bilgi">
         <div class="soluk" style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase">${kacis(u.marka || "")}</div>
         <a href="urun.html?id=${encodeURIComponent(u.id)}" style="font-weight:600;text-decoration:none">${kacis(yerel(u.ad))}</a>
-        <div class="soluk">${kacis([x.olcu && `${t("urun.olcu")}: ${x.olcu}`, x.renk && `${t("urun.renk")}: ${x.renk}`].filter(Boolean).join(" · "))}</div>
+        <div class="soluk">${kacis([x.olcu && `${t("urun.olcu")}: ${degerCevir(x.olcu)}`, x.renk && `${t("urun.renk")}: ${degerCevir(x.renk)}`].filter(Boolean).join(" · "))}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px">
           <div class="adet-sec">
             <button type="button" data-azalt="${i}" aria-label="−">−</button><span>${x.adet}</span><button type="button" data-artir="${i}" aria-label="+">+</button>
@@ -196,7 +196,7 @@ async function qonaqGonder(e) {
     const sebetId = `Q${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`.toUpperCase();
     const qeyd = $("#q-not").value.trim().slice(0, 500);
     const wa = waLink(ayar.whatsapp, sifarisMesaji({
-      sebetId, musteriAd: `${musteriAd} (${t("sebet.qonaq")})`, telefon, setirler, cem, yuzde, odemeQeydi: ayar.odemeQeydi, qeyd,
+      sebetId, musteriAd: `${musteriAd} (qeydiyyatsız)`, telefon, setirler, cem, yuzde, odemeQeydi: ayar.odemeQeydi, qeyd,
     }));
     try { localStorage.setItem("telefon", telefon); localStorage.setItem("qonaqAd", musteriAd); } catch {}
     sebetiBosalt();

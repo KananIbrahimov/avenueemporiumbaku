@@ -7,8 +7,8 @@
 import { yerel } from "./i18n.js";
 
 export const OZEL_KATEGORILER = [
-  { id: "sale", ad: "Sale", ikon: "🔥" },
-  { id: "24saat", ad: "24 saata çatdırılma", ikon: "⚡" },
+  { id: "sale", ad: { az: "Sale", ru: "Sale" }, ikon: "🔥" },
+  { id: "24saat", ad: { az: "24 saata çatdırılma", ru: "Доставка за 24 часа" }, ikon: "⚡" },
 ];
 
 export const ozelMi = (id) => OZEL_KATEGORILER.some((k) => k.id === id);

@@ -17,7 +17,7 @@ export function kartHtml(u, uye) {
       <a class="urun-kart" href="urun.html?id=${encodeURIComponent(u.id)}">
         <div class="foto">
           ${u.kapak ? `<img src="${kacis(u.kapak)}" alt="${kacis(yerel(u.ad))}" loading="lazy">` : ""}
-          ${Number(u.indirimYuzde) > 0 ? `<span class="rozet">−${kacis(u.indirimYuzde)}%</span>` : ""}
+          ${Number(u.indirimYuzde) > 0 ? `<span class="rozet">${uye ? "" : `${kacis(t("fiyat.uzvlere"))} `}−${kacis(u.indirimYuzde)}%</span>` : ""}
           ${(u.ekKategoriler || []).includes("sale") ? `<span class="rozet rozet-sale">SALE</span>` : ""}
         </div>
         <div class="marka">${kacis(u.marka || "")}</div>

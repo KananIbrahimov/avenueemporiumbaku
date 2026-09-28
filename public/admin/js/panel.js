@@ -1,7 +1,7 @@
 // Admin paneli: giriş yoxlaması + aşağı menyu
 // Sıra: Sifarişlər · Müştərilər · (+) Məhsul · İzləmə · Ayarlar
 import { auth, onAuthStateChanged, signOut, profilGetir } from "../../ortak/firebase.js";
-import { t, sayfayiCevir } from "../../ortak/i18n.js";
+import { t, sayfayiCevir, dilSeciciHtml, dilSeciciBagla } from "../../ortak/i18n.js";
 import { $, $$, kacis } from "../../ortak/yardim.js";
 import { temaUygula } from "../../ortak/tema.js";
 import { versiyaYoxla } from "../../ortak/versiya.js";
@@ -14,6 +14,7 @@ import { musterilerSekmesi } from "./musteriler.js";
 import { ayarlarSekmesi, kurslarSekmesi, instagramSablonSekmesi, yedekSekmesi, sifarisAyarSekmesi } from "./ayarlar.js";
 import { finansSekmesi } from "./finans.js";
 import { siyahiSekmesi } from "./siyahi-sehife.js";
+import { fotoAktifKocur } from "./veri.js";
 
 temaUygula();
 versiyaYoxla();
@@ -53,6 +54,8 @@ function magazaKecidi() {
   if (!a) return;
   a.href = MAGAZA_URL || "../";
   a.innerHTML = `<span class="ikon-kap">${IKON.magaza}</span><span>${kacis(t("admin.magazayaKec"))}</span><span aria-hidden="true">↗</span>`;
+  a.insertAdjacentHTML("beforebegin", dilSeciciHtml());
+  dilSeciciBagla(a.parentElement);
 }
 
 function menyuCiz() {
@@ -85,6 +88,7 @@ const kapat = onAuthStateChanged(auth, async (u) => {
   kilitBaslat({ girisli: async () => true, cixis: async () => { await signOut(auth); location.replace("./"); } });
   menyuCiz();
   magazaKecidi();
+  fotoAktifKocur().catch((e) => console.warn("fotoAktif", e)); // bir dəfəlik köçürmə
   siparisleriBaslat(); // canlı dinləmə + bildirişlər (bütün bölmələrdə işləyir)
   window.addEventListener("hashchange", sekmeAc);
   sekmeAc();

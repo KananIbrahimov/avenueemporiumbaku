@@ -1,6 +1,6 @@
 // Müşterinin kendi siparişleri
 import { db, collection, query, where, onSnapshot } from "../ortak/firebase.js";
-import { t } from "../ortak/i18n.js";
+import { t, degerCevir } from "../ortak/i18n.js";
 import { para } from "../ortak/fiyat.js";
 import { $, kacis, tarih, durumEtiketi, bildir } from "../ortak/yardim.js";
 import { adimlarHtml, kargoHtml } from "../ortak/izleme-ui.js";
@@ -25,7 +25,7 @@ if (!kullanici) {
                 <a href="urun.html?id=${encodeURIComponent(o.urunId)}" style="font-weight:600">${kacis(o.urunAd)}</a>
                 ${durumEtiketi(o.durum)}
               </div>
-              <div class="soluk">${kacis([o.marka, o.olcu, o.renk].filter(Boolean).join(" · "))}</div>
+              <div class="soluk">${kacis([o.marka, degerCevir(o.olcu), degerCevir(o.renk)].filter(Boolean).join(" · "))}</div>
               <div class="soluk">${kacis(t("urun.adet"))}: ${o.adet} × ${para(o.birimFiyat)} = <b>${para(o.adet * o.birimFiyat)}</b></div>
               <div class="soluk">${kacis(tarih(o.olusturma))}</div>
               ${o.beh != null && o.odenecek != null && o.durum !== "legv" ? `<div class="odeme-satir">

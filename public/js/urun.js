@@ -1,7 +1,7 @@
 // Məhsul səhifəsi: şəkillər, ölçü/rəng seçimi, səbətə at, bəyən, paylaş
 import { db, doc, getDoc, getDocs, collection, query, where } from "../ortak/firebase.js";
 import { MAGAZA_URL } from "../ortak/ayarlar.js";
-import { t, yerel } from "../ortak/i18n.js";
+import { t, yerel, degerCevir } from "../ortak/i18n.js";
 import { $, $$, kacis, bildir } from "../ortak/yardim.js";
 import { sebeteAt } from "./depo.js";
 import { urekHtml, urekleriBagla } from "./kart.js";
@@ -24,7 +24,7 @@ function secenekHtml(ad, degerler) {
   if (!degerler?.length) return "";
   return `<div class="alan"><label>${kacis(t("urun." + ad))}</label>
     <div class="secenekler" data-grup="${ad}">${degerler.map((d) =>
-      `<button type="button" class="secenek" data-deger="${kacis(d)}">${ad === "renk" ? renkNoktasi(d) : ""}${kacis(d)}</button>`).join("")}</div></div>`;
+      `<button type="button" class="secenek" data-deger="${kacis(d)}">${ad === "renk" ? renkNoktasi(d) : ""}${kacis(degerCevir(d))}</button>`).join("")}</div></div>`;
 }
 
 function siparisBolumu() {
@@ -119,7 +119,7 @@ else {
     if (!s.exists()) { bulunamadi(); }
     else {
       urun = { id: s.id, ...s.data() };
-      const fs = await getDocs(query(collection(db, "urunFoto"), where("urunId", "==", id)));
+      const fs = await getDocs(query(collection(db, "urunFoto"), where("urunId", "==", id), where("aktif", "==", true)));
       const fotolar = fs.docs.map((d) => d.data()).sort((a, b) => a.sira - b.sira).map((f) => f.veri);
       ciz(fotolar);
       durum = await girisHazir;

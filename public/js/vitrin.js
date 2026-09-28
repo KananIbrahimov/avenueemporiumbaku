@@ -1,6 +1,6 @@
 // Vitrin: ürün listesi + filtreler
 import { db, collection, getDocs, query, where } from "../ortak/firebase.js";
-import { t, yerel } from "../ortak/i18n.js";
+import { t, yerel, degerCevir } from "../ortak/i18n.js";
 import { kartHtml, urekleriBagla } from "./kart.js";
 import { $, kacis } from "../ortak/yardim.js";
 import { girisDinle } from "./ust.js";
@@ -16,7 +16,7 @@ const benzersiz = (dizi) => [...new Set(dizi.filter(Boolean))].sort((a, b) => a.
 
 function secimDoldur(el, bosMetin, degerler, secili) {
   el.innerHTML = `<option value="">${kacis(bosMetin)}</option>` +
-    degerler.map((d) => `<option ${d === secili ? "selected" : ""}>${kacis(d)}</option>`).join("");
+    degerler.map((d) => `<option value="${kacis(d)}" ${d === secili ? "selected" : ""}>${kacis(degerCevir(d))}</option>`).join("");
 }
 
 function kategoriCiz() {

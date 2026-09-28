@@ -55,9 +55,19 @@ const kategoriAdapter = {
     const sira = siyahi.length ? Math.max(...siyahi.map((k) => k.ham?.sira ?? 0)) + 1 : 0;
     await setDoc(doc(collection(db, "kategoriler")), { ad: { [ILK_DIL]: yeni }, sira, olusturma: serverTimestamp() });
   },
-  async adDeyis(id, yeni, siyahi) {
-    const k = siyahi.find((x) => x.id === id);
-    await updateDoc(doc(db, "kategoriler", id), { ad: { ...(k?.ham?.ad || {}), [ILK_DIL]: yeni } });
+  // Hər dil üçün ayrıca ad soruşulur (AZ məcburi, digərləri boş qala bilər)
+  async adSor(x) {
+    const ad = { ...(x.ham?.ad || {}) };
+    for (const d of DILLER) {
+      const bas = DILLER.length > 1 ? t("admin.kat.dilAd", { dil: d.kod.toUpperCase() }) : t("admin.siyahi.deyisBaslik");
+      const v = await adSorus(bas, ad[d.kod] || "", { bosOlar: d.kod !== ILK_DIL, dugme: t("admin.kaydet") });
+      if (v == null || (d.kod === ILK_DIL && !v)) return null; // ləğv
+      if (v) ad[d.kod] = v; else delete ad[d.kod];
+    }
+    return ad;
+  },
+  async adDeyis(id, yeni) {
+    await updateDoc(doc(db, "kategoriler", id), { ad: yeni });
     return 0;
   },
   async sil(id) { await deleteDoc(doc(db, "kategoriler", id)); },
@@ -107,6 +117,15 @@ export function siyahiSekmesi(novu) {
       if (!x) return;
       try {
         if (is === "deyis") {
+          if (c.adapter.adSor) {
+            const ad = await c.adapter.adSor(x);
+            if (!ad) return;
+            if (siyahi.some((y) => y.id !== id && norm(y.ham?.ad?.[ILK_DIL]) === norm(ad[ILK_DIL]))) return bildir(t("admin.siyahi.varDir"), "hata");
+            await c.adapter.adDeyis(id, ad);
+            bildir(t("admin.kaydedildi"), "basari");
+            await yenile();
+            return;
+          }
           const yeni = await adSorus(t("admin.siyahi.deyisBaslik"), x.ad);
           if (!yeni || yeni === x.ad) return;
           if (siyahi.some((y) => y.id !== id && norm(y.ad) === norm(yeni))) return bildir(t("admin.siyahi.varDir"), "hata");

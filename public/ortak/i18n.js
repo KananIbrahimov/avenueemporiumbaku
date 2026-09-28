@@ -1,13 +1,16 @@
-// Çok dil altyapısı.
-// Yeni dil eklemek için:
-//   1) ortak/dil/ klasörüne az.js'in kopyasını açın (örn. ru.js) ve metinleri çevirin
-//   2) Aşağıdaki DILLER listesine ekleyin
-// Ürün adı/açıklaması ve kategori adları admin panelinde her dil için ayrı girilir.
+// Çox dilli altyapı.
+// YENİ DİL ƏLAVƏ ETMƏK (məs. ingilis dili):
+//   1) ortak/dil/ qovluğunda az.js-in surətini yaradın (en.js) və mətnləri tərcümə edin
+//   2) Aşağıda import sətri və DILLER siyahısına bir sətir əlavə edin
+//   Başqa heç nə dəyişmir: dil seçimi, admin məhsul formunda həmin dildə ad/təsvir xanaları
+//   və kateqoriya adları avtomatik görünür. Tərcümə olunmayan açar Azərbaycan dilində göstərilir.
 import az from "./dil/az.js";
+import ru from "./dil/ru.js";
+// import en from "./dil/en.js";
 
 export const DILLER = [
   { kod: "az", ad: "Azərbaycan", metinler: az },
-  // { kod: "ru", ad: "Русский", metinler: ru },
+  { kod: "ru", ad: "Русский", metinler: ru },
   // { kod: "en", ad: "English", metinler: en },
 ];
 export const VARSAYILAN_DIL = "az";
@@ -50,4 +53,27 @@ export function sayfayiCevir(kok = document) {
   kok.querySelectorAll("[data-t]").forEach((el) => (el.textContent = t(el.dataset.t)));
   kok.querySelectorAll("[data-t-ph]").forEach((el) => (el.placeholder = t(el.dataset.tPh)));
   kok.querySelectorAll("[data-t-title]").forEach((el) => (el.title = t(el.dataset.tTitle)));
+}
+
+/** Yuxarıdakı qısa dil seçimi (AZ · RU …). Yalnız bir dil varsa boşdur. */
+export function dilSeciciHtml() {
+  if (DILLER.length < 2) return "";
+  return `<div class="dil-secici" role="group" aria-label="${t("dil.sec")}">${DILLER.map((d) =>
+    `<button type="button" data-dil="${d.kod}" class="${d.kod === aktifDil ? "secili" : ""}" title="${d.ad}">${d.kod.toUpperCase()}</button>`).join("")}</div>`;
+}
+
+export function dilSeciciBagla(kok = document) {
+  kok.querySelectorAll(".dil-secici [data-dil]").forEach((b) =>
+    b.addEventListener("click", () => { if (b.dataset.dil !== aktifDil) dilDegistir(b.dataset.dil); }));
+}
+
+/**
+ * Bazada Azərbaycan dilində saxlanan rəng/ölçü adlarının göstərilməsi: "Qara" → "Чёрный".
+ * Tərcümə dil faylında "deger.<ad>" açarı ilə yazılır; yoxdursa ad olduğu kimi qalır.
+ */
+export function degerCevir(x) {
+  if (!x || aktifDil === VARSAYILAN_DIL) return x || "";
+  const acar = `deger.${x}`;
+  const m = bul(aktifDil)?.metinler[acar];
+  return m || x;
 }

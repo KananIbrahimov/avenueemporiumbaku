@@ -377,3 +377,9 @@ input.kecid:disabled { opacity: .45; cursor: not-allowed; }
 .renk-nokta.bilinmir { background: transparent; border-style: dashed; }
 .secici-oge .renk-nokta, .secilen-ad .renk-nokta { margin-right: 0; }
 .secenek .renk-nokta { width: 14px; height: 14px; }
+
+/* Dil seçimi (AZ · RU) — başlıqda */
+.dil-secici { display: inline-flex; border: 1px solid var(--cizgi); border-radius: 999px; padding: 2px; gap: 2px; margin-left: 6px; }
+.dil-secici button { border: 0; background: transparent; color: var(--soluk); font: inherit; font-size: .75rem; font-weight: 700;
+  letter-spacing: .04em; padding: 5px 9px; border-radius: 999px; cursor: pointer; }
+.dil-secici button.secili { background: var(--vurgu-parlaq); color: var(--vurgu-yazi); }

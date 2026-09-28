@@ -6,7 +6,7 @@ import { t, yerel, DILLER } from "../../ortak/i18n.js";
 import { hesapla, para } from "../../ortak/fiyat.js";
 import { fotoHazirla, kapakHazirla, FOTO_MAX_ADET } from "../../ortak/foto.js";
 import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
-import { tumDetaylar, detayGuncelle, kategorileriGetir, vitrinEksikleri } from "./veri.js";
+import { tumDetaylar, detayGuncelle, kategorileriGetir, vitrinEksikleri, fotoAktifYaz } from "./veri.js";
 import { OZEL_KATEGORILER, ozelMi } from "../../ortak/kategori.js";
 import { instagramAc } from "./instagram.js";
 import { secici } from "./secici.js";
@@ -43,7 +43,7 @@ async function listeAc(kok) {
             ${u.kapak ? `<img class="kucuk-foto" src="${kacis(u.kapak)}" alt="">` : `<div class="kucuk-foto"></div>`}
             <div class="bilgi">
               <div class="ad">${u.aktif ? "" : `<span class="pasif-rozet">${kacis(t("admin.urun.pasif"))}</span> `}${kacis(yerel(u.ad))}</div>
-              <div class="soluk">${kacis([u.marka, katAd[u.kategoriId], ...OZEL_KATEGORILER.filter((o) => (u.ekKategoriler || []).includes(o.id)).map((o) => `${o.ikon} ${katAd[o.id] || o.ad}`)].filter(Boolean).join(" · "))}</div>
+              <div class="soluk">${kacis([u.marka, katAd[u.kategoriId], ...OZEL_KATEGORILER.filter((o) => (u.ekKategoriler || []).includes(o.id)).map((o) => `${o.ikon} ${katAd[o.id] || yerel(o.ad)}`)].filter(Boolean).join(" · "))}</div>
               <div class="rakamlar">
                 <span>${kacis(t("admin.hesap.maya"))}: <b>${para(h.maliyet)}</b></span>
                 <span>${kacis(t("admin.hesap.satis"))}: <b>${para(u.satisFiyati)}</b></span>
@@ -73,6 +73,7 @@ async function listeAc(kok) {
         b.disabled = true;
         try {
           await updateDoc(doc(db, "urunler", u.id), { aktif: yeni, guncelleme: serverTimestamp() });
+          await fotoAktifYaz(u.id, yeni); // passiv məhsulun şəkilləri də müştəriyə bağlanır
           u.aktif = yeni;
           bildir(t(yeni ? "admin.urun.aktifEdildi" : "admin.urun.pasifEdildi"), "basari");
           ciz();
@@ -146,9 +147,9 @@ async function formAc(kok, id) {
     </div>
     <form id="urun-form" novalidate>
       <div class="kart">
-        ${DILLER.map((d) => `
-          <div class="alan" data-yoxla="ad"><label>📝 ${kacis(t("admin.urun.ad"))}${DILLER.length > 1 ? ` (${d.kod.toUpperCase()})` : ""} <span class="vacib">*</span></label>
-            <input name="ad_${d.kod}" maxlength="200" value="${v(urun.ad?.[d.kod])}" placeholder="${kacis(t("admin.urun.adOrnek"))}"></div>`).join("")}
+        ${DILLER.map((d, i) => `
+          <div class="alan" ${i === 0 ? `data-yoxla="ad"` : ""}><label>📝 ${kacis(t("admin.urun.ad"))}${DILLER.length > 1 ? ` (${d.kod.toUpperCase()})` : ""} ${i === 0 ? `<span class="vacib">*</span>` : ""}</label>
+            <input name="ad_${d.kod}" maxlength="200" value="${v(urun.ad?.[d.kod])}" placeholder="${kacis(i === 0 ? t("admin.urun.adOrnek") : t("admin.urun.dilIxtiyari"))}"></div>`).join("")}
         <div class="secici-yigin">
           <div class="alan" id="s-marka" data-yoxla="marka"></div>
           <div class="alan" id="s-kategori" data-yoxla="kategori"></div>
@@ -161,7 +162,7 @@ async function formAc(kok, id) {
             ${OZEL_KATEGORILER.map((o) => {
               const k = kategoriler.find((x) => x.id === o.id);
               return `<label class="ios-satir">
-                <span class="ios-ad">${o.ikon} ${kacis(k ? yerel(k.ad) : o.ad)}</span>
+                <span class="ios-ad">${o.ikon} ${kacis(k ? yerel(k.ad) : yerel(o.ad))}</span>
                 <input type="checkbox" class="ios-input" name="ek_${o.id}" ${(urun.ekKategoriler || []).includes(o.id) ? "checked" : ""}>
                 <span class="ios-switch" aria-hidden="true"></span>
               </label>`;
@@ -171,7 +172,7 @@ async function formAc(kok, id) {
         </div>
         ${DILLER.map((d) => `
           <div class="alan" style="margin-bottom:0"><label>📄 ${kacis(t("admin.urun.aciklama"))}${DILLER.length > 1 ? ` (${d.kod.toUpperCase()})` : ""}</label>
-            <textarea name="aciklama_${d.kod}" maxlength="3000" style="min-height:70px">${v(urun.aciklama?.[d.kod])}</textarea></div>`).join("")}
+            <textarea name="aciklama_${d.kod}" maxlength="3000" style="min-height:70px" ${d.kod !== DILLER[0].kod ? `placeholder="${kacis(t("admin.urun.dilIxtiyari"))}"` : ""}>${v(urun.aciklama?.[d.kod])}</textarea></div>`).join("")}
       </div>
 
       <div class="bolum-baslik">💰 ${kacis(t("admin.urun.qiymetBaslik"))} <span style="text-transform:none;letter-spacing:0;font-weight:500">· ${kacis(t("admin.urun.gizliQisa"))}</span></div>
@@ -491,7 +492,9 @@ async function formAc(kok, id) {
       const eskiVeri = eskiFotolar.map((x) => x.veri);
       for (let i = 0; i < fotolar.length; i++) {
         if (eskiVeri[i] !== fotolar[i]) {
-          await setDoc(doc(db, "urunFoto", `${uid}_${i}`), { urunId: uid, sira: i, veri: fotolar[i] });
+          await setDoc(doc(db, "urunFoto", `${uid}_${i}`), { urunId: uid, sira: i, veri: fotolar[i], aktif: aktifDurum });
+        } else if (eskiFotolar[i]?.aktif !== aktifDurum) {
+          await updateDoc(doc(db, "urunFoto", eskiFotolar[i].docId), { aktif: aktifDurum });
         }
       }
       for (const eski of eskiFotolar) {
@@ -522,7 +525,9 @@ async function formAc(kok, id) {
     b.disabled = true;
     try {
       await updateDoc(doc(db, "urunler", id), { aktif: yeni, guncelleme: serverTimestamp() });
+      await fotoAktifYaz(id, yeni);
       aktifDurum = yeni;
+      eskiFotolar.forEach((x) => (x.aktif = yeni));
       b.textContent = t(yeni ? "admin.urun.pasifEt" : "admin.urun.aktifEt");
       bildir(t(yeni ? "admin.urun.aktifEdildi" : "admin.urun.pasifEdildi"), "basari");
     } catch (err) { bildir(hataMesaji(err), "hata"); }

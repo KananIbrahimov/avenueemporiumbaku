@@ -31,7 +31,8 @@ public/                 ← iki site de bu klasörden yayınlanır
     ├── firebase.js     bağlantı (localhost'ta otomatik emulator)
     ├── fiyat.js        fiyat formülü
     ├── i18n.js         çok dil altyapısı
-    ├── dil/az.js       Azərbaycan dili metinleri
+    ├── dil/az.js       Azərbaycan dili mətnləri (əsas)
+    ├── dil/ru.js       Rus dili mətnləri
     ├── foto.js         fotoğraf küçültme
     └── stil.css
 firestore.rules         güvenlik kuralları (gizli bilgileri korur)
@@ -135,3 +136,12 @@ Admin panelindeki ürün ve kategori formlarına otomatik olarak o dil için ala
 - Fotoğraflar Firestore'da saklanıyor (Storage Blaze ister). Ürün başına en çok 8 fotoğraf; her biri otomatik ~550 KB altına küçültülür.
 - Bildirim sadece admin paneli açıkken gelir. Kapalıyken bildirim için Blaze + Cloud Functions gerekir.
 - Otomatik günlük yedek Blaze ister; şimdilik admin panelinden elle indirilir.
+
+## Yeni dil əlavə etmək (məs. ingilis dili)
+
+1. `public/ortak/dil/az.js` faylını `en.js` adı ilə kopyalayın və sağ tərəfdəki mətnləri tərcümə edin
+   (rəng/ölçü adları üçün `ru.js`-in sonundakı `deger.*` açarlarına baxın).
+2. `public/ortak/i18n.js`-də `import en from "./dil/en.js";` sətrini və `DILLER` siyahısında `en` sətrini açın.
+3. İstəsəniz `public/admin/js/veri.js`-dəki `HAZIR_KATEGORILER` siyahısına `en: "..."` adlarını əlavə edin — mövcud kateqoriyalara avtomatik yazılır.
+
+Başqa heç nə dəyişmir: başlıqdakı dil seçimi, admin məhsul formunda yeni dildə ad/təsvir xanaları və kateqoriya adı pəncərəsi özü görünür. Tərcümə olunmayan mətn Azərbaycan dilində göstərilir.

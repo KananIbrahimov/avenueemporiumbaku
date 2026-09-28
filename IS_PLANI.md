@@ -57,6 +57,8 @@
 - [x] v2.5–2.6 "Vitrində göstər" götürüldü (saxlanan məhsul vitrinə çıxır); ayrıca ⏸ Passiv et / ▶ Aktiv et düyməsi
 - [x] v2.9 Aşağı menyu: Məhsullar · Finans · (+) · Sifarişlər · Ayarlar (Mağaza götürüldü); v2.10 yuxarıda "Mağazaya keç ↗"
 - [x] v2.11 Yoxlama: ehtiyat nüsxəyə mağaza ayarları əlavə olundu; sifariş silinəndə maliyyə sənədi də silinir; istifadə olunmayan kod götürüldü
+- [x] v2.12 Rus dili (müştəri + admin), yuxarıda AZ · RU seçimi; Azərbaycan dili mətnləri rəsmi dilə uyğunlaşdırıldı; kateqoriya, rəng və ölçü adları tərcümə olunur; passiv məhsulun şəkilləri də müştəriyə bağlıdır; qonağa "Üzvlərə −5%" nişanı
+- [ ] İngilis dili: ortak/dil/en.js + i18n.js-də bir sətir
 - [ ] Yedekten geri yükleme
 - [ ] Gerçek cihazda test (abla ile)
 

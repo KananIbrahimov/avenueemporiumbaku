@@ -5,10 +5,10 @@ import { $, $$, kacis, tarih, hataMesaji, durumEtiketi } from "../../ortak/yardi
 import { siparisler, siparisDinle, durumDegistir } from "./siparisler.js";
 import { butunMaliyye, maliyyePenceresi } from "./maliyye.js";
 
-const AYLAR = ["Yanvar", "Fevral", "Mart", "Aprel", "May", "İyun", "İyul", "Avqust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"];
+const AYLAR = t("fin.aylar").split(",");
 const iki = (x) => Math.round((x + Number.EPSILON) * 100) / 100;
 const ayAcar = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-const QISA = ["Yan", "Fev", "Mar", "Apr", "May", "İyn", "İyl", "Avq", "Sen", "Okt", "Noy", "Dek"];
+const QISA = t("fin.aylarQisa").split(",");
 const ayAdi = (a, qisa = false) => { const [y, m] = a.split("-").map(Number); return qisa ? QISA[m - 1] : `${AYLAR[m - 1]} ${y}`; };
 const ayKecir = (a, n) => { const [y, m] = a.split("-").map(Number); return ayAcar(new Date(y, m - 1 + n, 1)); };
 const tarixOf = (ts) => (ts?.toDate ? ts.toDate() : ts ? new Date(ts) : null);
