@@ -264,6 +264,7 @@ export default {
   "fin.ayinSifarisleri": "Bu ay qəbul edilən sifarişlər",
   "fin.bos": "Bu ay qəbul edilən sifariş yoxdur.",
   "admin.magaza.saytiAc": "Saytı aç",
+  "admin.magazayaKec": "Mağazaya keç",
   "admin.magaza.aciklama": "Müştərilərin gördüyü ana səhifə. Vitrində {aktiv} məhsul var (cəmi {hamisi}). Məhsula toxunaraq redaktə edin.",
   "admin.magaza.pasifleri": "Vitrində olmayanları da göstər",
   "admin.magaza.gizli": "Passiv",

@@ -7,6 +7,7 @@ import { temaUygula } from "../../ortak/tema.js";
 import { versiyaYoxla } from "../../ortak/versiya.js";
 import { kilitBaslat } from "../../ortak/kilit.js";
 import { IKON } from "../../ortak/ikon.js";
+import { MAGAZA_URL } from "../../ortak/ayarlar.js";
 import { siparisleriBaslat, siparislerSekmesi } from "./siparisler.js";
 import { urunlerSekmesi } from "./urunler.js";
 import { musterilerSekmesi } from "./musteriler.js";
@@ -46,6 +47,14 @@ const MARSRUT = {
   yedek: { fn: yedekSekmesi, menyu: "ayarlar" },
 };
 
+// Yuxarı sağda: müştəri mağazasına keçid (yeni vərəqdə açılır)
+function magazaKecidi() {
+  const a = $("#magaza-kecid");
+  if (!a) return;
+  a.href = MAGAZA_URL || "../";
+  a.innerHTML = `<span class="ikon-kap">${IKON.magaza}</span><span>${kacis(t("admin.magazayaKec"))}</span><span aria-hidden="true">↗</span>`;
+}
+
 function menyuCiz() {
   $("#sekmeler").innerHTML = MENYU.map((m) => `
     <a href="${m.href}" data-menyu="${m.id}" class="${m.orta ? "orta" : ""}">
@@ -75,6 +84,7 @@ const kapat = onAuthStateChanged(auth, async (u) => {
   }
   kilitBaslat({ girisli: async () => true, cixis: async () => { await signOut(auth); location.replace("./"); } });
   menyuCiz();
+  magazaKecidi();
   siparisleriBaslat(); // canlı dinləmə + bildirişlər (bütün bölmələrdə işləyir)
   window.addEventListener("hashchange", sekmeAc);
   sekmeAc();

@@ -70,6 +70,9 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .onay { display: flex; align-items: center; gap: 10px; font-weight: 500; color: var(--yazi); font-size: .9rem; margin: 0; }
 .onay input { width: 20px; }
 .pasif { opacity: .5; }
+.magaza-kecid { border: 1px solid var(--cizgi); color: var(--yazi); font-weight: 600; }
+.magaza-kecid .ikon-kap { display: inline-flex; }
+.magaza-kecid .ikon-kap svg { width: 18px; height: 18px; }
 .urun-satir.pasif { opacity: 1; }
 .urun-satir.pasif .kucuk-foto, .urun-satir.pasif .soluk, .urun-satir.pasif .rakamlar { opacity: .5; }
 .pasif-rozet { display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
