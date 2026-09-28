@@ -2,8 +2,8 @@
 import { db, collection, query, where, onSnapshot } from "../ortak/firebase.js";
 import { t, degerCevir } from "../ortak/i18n.js";
 import { para } from "../ortak/fiyat.js";
-import { $, kacis, tarih, durumEtiketi, bildir } from "../ortak/yardim.js";
-import { adimlarHtml, kargoHtml } from "../ortak/izleme-ui.js";
+import { $, kacis, tarih, bildir } from "../ortak/yardim.js";
+import { adimlarHtml, kargoHtml, musteriDurumEtiketi } from "../ortak/izleme-ui.js";
 import { girisHazir } from "./ust.js";
 
 const liste = $("#liste");
@@ -23,7 +23,7 @@ if (!kullanici) {
             <div class="bilgi">
               <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
                 <a href="urun.html?id=${encodeURIComponent(o.urunId)}" style="font-weight:600">${kacis(o.urunAd)}</a>
-                ${durumEtiketi(o.durum)}
+                ${musteriDurumEtiketi(o.durum)}
               </div>
               <div class="soluk">${kacis([o.marka, degerCevir(o.olcu), degerCevir(o.renk)].filter(Boolean).join(" · "))}</div>
               <div class="soluk">${kacis(t("urun.adet"))}: ${o.adet} × ${para(o.birimFiyat)} = <b>${para(o.adet * o.birimFiyat)}</b></div>
@@ -33,7 +33,7 @@ if (!kullanici) {
                 <span>${kacis(t("siparislerim.qaliq"))}: <b>${para(Math.max(0, o.odenecek - o.beh))}</b></span></div>` : ""}
               ${o.beh == null && +o.onOdemeYuzde > 0 && ["yeni", "odemeGozlenilir", "odenildi"].includes(o.durum) ? `<div class="odeme-satir">
                 <span>💳 ${kacis(t("sebet.onOdemeTeleb").replace("{y}", o.onOdemeYuzde))}: <b>${para((o.birimFiyat * o.adet * o.onOdemeYuzde) / 100)}</b></span></div>` : ""}
-              <div style="margin-top:12px">${adimlarHtml(o)}</div>
+              <div style="margin-top:12px">${adimlarHtml(o, { musteri: true })}</div>
               ${kargoHtml(o) ? `<div style="margin-top:10px">${kargoHtml(o)}</div>` : ""}
             </div>
           </div>`).join("")

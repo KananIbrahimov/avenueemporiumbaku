@@ -570,4 +570,8 @@ export default {
   "durum.kuryerde": "У курьера",
   "admin.sip.kec.odemeGozlenilir": "Принять — ожидается оплата ({y}%)",
   "admin.sip.kec.kuryerde": "Передан курьеру",
+  "musteri.adim.verildi": "Заказ оформлен",
+  "musteri.adim.odeme": "Ожидается оплата",
+  "musteri.adim.yolda": "В пути",
+  "musteri.adim.catdirildi": "Доставлено",
 };

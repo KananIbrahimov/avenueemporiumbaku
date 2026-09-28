@@ -548,4 +548,8 @@ export default {
   "durum.kuryerde": "Kuryerdədir",
   "admin.sip.kec.odemeGozlenilir": "Qəbul et — ödəniş ({y}%) gözlənilir",
   "admin.sip.kec.kuryerde": "Kuryerə verildi",
+  "musteri.adim.verildi": "Sifariş verildi",
+  "musteri.adim.odeme": "Ödəniş gözlənilir",
+  "musteri.adim.yolda": "Yoldadır",
+  "musteri.adim.catdirildi": "Çatdırıldı",
 };

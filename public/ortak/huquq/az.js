@@ -32,7 +32,7 @@ export default {
 <p>4.2. Sifarişin icrasına başlanması üçün sifariş məbləğinin <b>{onOdeme}%</b>-i həcmində ön ödəniş tələb olunur. Ön ödəniş məbləği səbətdə və «Sifarişlərim» bölməsində göstərilir. Ön ödəniş daxil olmadan məhsul xarici satıcıdan alınmır.</p>
 <p>4.3. Qalıq məbləğ məhsul Müştəriyə təhvil verilərkən ödənilir.</p>
 <p>4.4. Hazırda Saytda onlayn ödəniş aparılmır. Ödəniş Mağazanın rəsmi əlaqə vasitələri ilə bildirdiyi rekvizitlər üzrə həyata keçirilir. Mağaza heç vaxt kart məlumatlarınızı, SMS kodlarını və ya şifrənizi soruşmur.</p>
-<p>4.5. Sifarişin mərhələləri (ödəniş gözlənilir, sifariş edildi, yoldadır, gömrükdədir, kuryerdədir, çatdırıldı) «Sifarişlərim» bölməsində izlənilə bilər.</p>
+<p>4.5. Sifarişin mərhələləri (sifariş verildi, ödəniş gözlənilir, yoldadır, çatdırıldı) «Sifarişlərim» bölməsində izlənilə bilər.</p>
 
 <h3>5. Çatdırılma</h3>
 <p>5.1. Saytda və ya sifariş zamanı bildirilən çatdırılma müddətləri təxminidir. Müddət xarici satıcının göndərmə sürətindən, kargo şirkətindən və gömrük prosedurlarından asılıdır.</p>
@@ -40,7 +40,7 @@ export default {
 <p>5.3. Məhsulun Bakıda Müştəriyə təhvil verilmə qaydası və vaxtı tərəflər arasında razılaşdırılır.</p>
 
 <h3>6. Sifarişin ləğvi</h3>
-<p>6.1. Məhsul xarici satıcıdan alınmazdan əvvəl (sifariş «Sifariş edildi» mərhələsinə keçənədək) Müştəri sifarişi ləğv edə bilər; bu halda ön ödəniş tam həcmdə qaytarılır.</p>
+<p>6.1. Məhsul xarici satıcıdan alınmazdan əvvəl (sifariş «Yoldadır» mərhələsinə keçənədək) Müştəri sifarişi ləğv edə bilər; bu halda ön ödəniş tam həcmdə qaytarılır.</p>
 <p>6.2. Məhsul Müştərinin sifarişi əsasında xarici satıcıdan alındıqdan sonra sifarişin ləğvi zamanı ön ödəniş, çəkilmiş xərclərin (məhsulun alışı, daşınma, gömrük) ödənilməsi məqsədilə qaytarılmır. Bu halda qalıq məbləğ tələb olunmur.</p>
 <p>6.3. Məhsul satıcıda tükəndikdə və ya sifariş Mağaza tərəfindən icra edilə bilmədikdə, ödənilmiş məbləğ tam həcmdə qaytarılır.</p>
 

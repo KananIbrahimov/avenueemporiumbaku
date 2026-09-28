@@ -6,6 +6,24 @@ import { para } from "./fiyat.js";
 // Yeni sifariş → Ödəniş gözlənilir → Sifariş edildi → Yoldadır → Gömrükdədir → Kuryerdədir → Çatdırıldı
 export const IZLEME_ADIMLARI = ["yeni", "odemeGozlenilir", "sifarisVerildi", "yolda", "gomrukde", "kuryerde", "catdirildi"];
 
+// Müştəri sadə 4 addım görür; daxili mərhələlər bunlara yığılır:
+//   Sifariş verildi (yeni) → Ödəniş gözlənilir → Yoldadır (sifariş edildi, yolda, gömrük, kuryer) → Çatdırıldı
+export const MUSTERI_ADIMLARI = ["verildi", "odeme", "yolda", "catdirildi"];
+const MUSTERI_XERITE = {
+  yeni: "verildi", odemeGozlenilir: "odeme",
+  sifarisVerildi: "yolda", yolda: "yolda", gomrukde: "yolda", kuryerde: "yolda",
+  catdirildi: "catdirildi", legv: "legv",
+};
+/** Daxili status → müştərinin gördüyü addım */
+export const musteriAdimi = (durum) => MUSTERI_XERITE[esasDurum(durum)] || "verildi";
+
+/** Müştəri üçün status nişanı */
+export function musteriDurumEtiketi(durum) {
+  const a = musteriAdimi(durum);
+  const sinif = { verildi: "yeni", odeme: "odemeGozlenilir", yolda: "yolda", catdirildi: "catdirildi", legv: "legv" }[a];
+  return `<span class="durum durum-${sinif}">${kacis(t(a === "legv" ? "durum.legv" : "musteri.adim." + a))}</span>`;
+}
+
 /** Hər addımın tarixi: tarixçədən (sonuncu qeyd), "yeni" üçün sifariş tarixi */
 export function adimTarixleri(o) {
   const x = { yeni: o.olusturma };
@@ -21,10 +39,11 @@ const qisaTarix = (ts) => {
 /**
  * Addım-addım xətt. tiklanan=true olduqda (admin) addımlar düymədir: data-adim="durum"
  */
-export function adimlarHtml(o, { tiklanan = false } = {}) {
+export function adimlarHtml(o, { tiklanan = false, musteri = false } = {}) {
   if (o.durum === "legv") {
     return `<div class="adimlar-legv">${kacis(t("durum.legv"))}</div>`;
   }
+  if (musteri) return musteriAdimlariHtml(o);
   const cari = esasDurum(o.durum);
   const indeks = Math.max(0, IZLEME_ADIMLARI.indexOf(cari));
   const tarixler = adimTarixleri(o);
@@ -37,6 +56,23 @@ export function adimlarHtml(o, { tiklanan = false } = {}) {
     return `<li class="${sinif}">${tiklanan
       ? `<button type="button" data-adim="${a}" ${i === indeks ? "disabled" : ""}>${ic}</button>`
       : ic}</li>`;
+  }).join("")}</ol>`;
+}
+
+/** Müştəri görünüşü: 4 sadə addım; hər addımın tarixi ona düşən ilk daxili mərhələnin tarixidir */
+function musteriAdimlariHtml(o) {
+  const indeks = Math.max(0, MUSTERI_ADIMLARI.indexOf(musteriAdimi(o.durum)));
+  const tarixler = { verildi: o.olusturma };
+  for (const q of o.tarixce || []) {
+    const a = musteriAdimi(q.durum);
+    if (a !== "legv" && !tarixler[a]) tarixler[a] = q.tarix;
+  }
+  return `<ol class="adimlar">${MUSTERI_ADIMLARI.map((a, i) => {
+    const sinif = i < indeks ? "bitdi" : i === indeks ? "indi" : "";
+    return `<li class="${sinif}"><span class="nokta">${i < indeks ? "✓" : ""}</span>
+      <span class="adim-ad">${kacis(t("musteri.adim." + a))}</span>
+      <span class="adim-tarix">${i <= indeks ? kacis(qisaTarix(tarixler[a])) : ""}</span>
+      ${a === "odeme" && +o.beh > 0 && i < indeks ? `<span class="adim-mebleg">${para(o.beh)}</span>` : ""}</li>`;
   }).join("")}</ol>`;
 }
 
