@@ -2,7 +2,6 @@
 import { auth, db, doc, getDoc, setDoc, signOut, profilGetir, serverTimestamp } from "../../ortak/firebase.js";
 import { t } from "../../ortak/i18n.js";
 import { $, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
-import { yedekBolumu } from "./yedek.js";
 import { imzaHtml } from "../../ortak/surum.js";
 import { temaAyarlari } from "../../ortak/tema.js";
 import { kilitAyari } from "../../ortak/kilit.js";
@@ -48,7 +47,6 @@ export async function ayarlarSekmesi(kok) {
         ${satir("#sifarisAyar", "💳", t("admin.sa.baslik"), `<span id="sa-qisa"></span>`)}
         ${satir("#kurslar", "💱", t("admin.kurs.baslik"), `<span id="kurs-qisa"></span>`)}
         ${satir("#instagram", "📸", t("admin.ig.sablonBaslik"))}
-        ${satir("#yedek", "💾", t("admin.sekme.yedek"))}
       </div>
 
       <button type="button" class="btn btn-ince btn-tam cixis-btn" id="cixis">⎋ ${kacis(t("nav.cikis"))}</button>
@@ -148,12 +146,6 @@ export async function instagramSablonSekmesi(kok) {
       location.hash = "ayarlar";
     } catch (err) { bildir(hataMesaji(err), "hata"); }
   });
-}
-
-// ---------- Ehtiyat nüsxə (ayrı səhifə) ----------
-export function yedekSekmesi(kok) {
-  kok.innerHTML = `${geriBasliq("💾", t("admin.sekme.yedek"))}<div class="ayar-kap" id="yedek"></div>`;
-  yedekBolumu($("#yedek", kok));
 }
 
 // ---------- Sifariş və ön ödəniş (ayrı səhifə) ----------

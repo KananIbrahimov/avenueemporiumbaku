@@ -24,7 +24,7 @@ public/                 ← iki site de bu klasörden yayınlanır
 ├── js/                 mağaza kodları
 ├── admin/              admin paneli (admin sitesinin açılış sayfası)
 │   ├── index.html      admin girişi (kayıt yok)
-│   ├── panel.html      siparişler · ürünler · kategoriler · müşteriler · yedek
+│   ├── panel.html      siparişler · ürünler · kategoriler · müşteriler
 │   └── js/
 └── ortak/              iki tarafın ortak kodu
     ├── ayarlar.js      ← Firebase bilgileri buraya
@@ -135,7 +135,7 @@ Admin panelindeki ürün ve kategori formlarına otomatik olarak o dil için ala
 ## Bilinen sınırlar (Spark planı)
 - Fotoğraflar Firestore'da saklanıyor (Storage Blaze ister). Ürün başına en çok 8 fotoğraf; her biri otomatik ~550 KB altına küçültülür.
 - Bildirim sadece admin paneli açıkken gelir. Kapalıyken bildirim için Blaze + Cloud Functions gerekir.
-- Otomatik günlük yedek Blaze ister; şimdilik admin panelinden elle indirilir.
+- Yedek yok: Spark planında Firestore otomatik yedek tutmaz. Otomatik yedek Blaze ister.
 
 ## Yeni dil əlavə etmək (məs. ingilis dili)
 

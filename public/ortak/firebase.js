@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
   sendEmailVerification, sendPasswordResetEmail, updateProfile, reload,
   EmailAuthProvider, reauthenticateWithCredential, updatePassword,
+  applyActionCode, checkActionCode, verifyPasswordResetCode, confirmPasswordReset,
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 import {
   getFirestore, connectFirestoreEmulator,
@@ -31,6 +32,7 @@ export {
   onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
   sendEmailVerification, sendPasswordResetEmail, updateProfile, reload,
   EmailAuthProvider, reauthenticateWithCredential, updatePassword,
+  applyActionCode, checkActionCode, verifyPasswordResetCode, confirmPasswordReset,
   collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
   query, where, orderBy, limit, onSnapshot, serverTimestamp, writeBatch, Timestamp, arrayUnion,
 };

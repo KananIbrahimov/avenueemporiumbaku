@@ -383,3 +383,18 @@ input.kecid:disabled { opacity: .45; cursor: not-allowed; }
 .dil-secici button { border: 0; background: transparent; color: var(--soluk); font: inherit; font-size: .75rem; font-weight: 700;
   letter-spacing: .04em; padding: 5px 9px; border-radius: 999px; cursor: pointer; }
 .dil-secici button.secili { background: var(--vurgu-parlaq); color: var(--vurgu-yazi); }
+
+/* Qeydiyyat: razılıq sətri və hüquqi mətnlər */
+.razilasma { display: flex; gap: 10px; align-items: flex-start; }
+.razilasma input { flex: 0 0 auto; margin-top: 2px; }
+.razilasma label { font-size: .85rem; line-height: 1.45; color: var(--soluk); margin: 0; font-weight: 400; }
+.razilasma a { color: var(--yazi); text-decoration: underline; }
+.alan-xeta label { color: var(--tehlike); }
+.alan-xeta input[type=checkbox] { outline: 2px solid var(--tehlike); outline-offset: 2px; }
+.huquq-metin { font-size: .9rem; line-height: 1.6; }
+.huquq-metin h3 { font-size: 1rem; margin: 20px 0 8px; }
+.huquq-metin p { margin: 0 0 10px; }
+.huquq-metin ul { margin: 0 0 10px; padding-left: 20px; }
+.huquq-metin li { margin-bottom: 6px; }
+.huquq-tarix { margin-top: 18px; }
+.huquq-modal { max-height: 88vh; }

@@ -42,12 +42,15 @@ service cloud.firestore {
       // Admin rolü sadece Firebase Console'dan elle verilir.
       allow create: if girisli()
         && request.auth.uid == uid
-        && request.resource.data.keys().hasOnly(['ad', 'soyad', 'email', 'rol', 'dil', 'olusturma'])
+        && request.resource.data.keys().hasOnly(['ad', 'soyad', 'email', 'rol', 'dil', 'olusturma', 'razilasmaTarix', 'razilasmaVersiya'])
         && metin(request.resource.data.ad, 1, 50)
         && metin(request.resource.data.soyad, 1, 50)
         && request.resource.data.email == request.auth.token.email
         && request.resource.data.rol == 'musteri'
-        && request.resource.data.olusturma == request.time;
+        && request.resource.data.olusturma == request.time
+        // İstifadə şərtləri və Məxfilik siyasəti qəbul edilmədən hesab yaradılmır
+        && request.resource.data.razilasmaTarix == request.time
+        && metin(request.resource.data.razilasmaVersiya, 1, 20);
 
       // Müşteri adını, soyadını, telefonunu, WhatsApp nömrəsini, dilini və bəyəndiklərini dəyişə bilər; rolunu və e-poçtunu dəyişə bilməz.
       allow update: if (girisli()

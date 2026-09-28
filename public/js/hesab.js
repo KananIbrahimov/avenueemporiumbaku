@@ -8,8 +8,10 @@ import { MAGAZA_URL } from "../ortak/ayarlar.js";
 import { t, dil } from "../ortak/i18n.js";
 import { $, kacis, hataMesaji, sifreKontrol } from "../ortak/yardim.js";
 import "./ust.js";
+import { HUQUQ_VERSIYA, huquqPencereBagla } from "./huquq.js";
 
-auth.languageCode = dil();
+// Firebase-in mail dili burada təyin edilmir: Console-dakı öz şablonumuz (AZ + RU) göndərilir.
+// Müştərinin dili keçiddəki "dil" parametri ilə eylem.html-ə çatır.
 const tabanUrl = MAGAZA_URL || location.origin;
 const geri = new URLSearchParams(location.search).get("geri");
 const guvenliGeri = geri && geri.startsWith("/") && !geri.startsWith("//") ? geri : "./";
@@ -24,7 +26,7 @@ function bekle(buton, aktif) {
   buton.textContent = aktif ? t("genel.bekleyin") : buton.dataset.metin;
 }
 
-const dogrulamaAyari = () => ({ url: `${tabanUrl}/giris.html` });
+const dogrulamaAyari = () => ({ url: `${tabanUrl}/giris.html?dil=${dil()}` });
 
 function dogrulamaTekrarButonu() {
   return ` <button type="button" class="btn btn-ince btn-kucuk" id="tekrar" style="margin-top:8px">${kacis(t("dogrula.tekrarGonder"))}</button>`;
@@ -43,6 +45,8 @@ const buton = form.querySelector("button[type=submit]");
 
 // ---------- KAYIT ----------
 if ($("#sifre2")) {
+  huquqPencereBagla(document);
+  $("#razilasma").addEventListener("change", () => $("#razilasma-alan").classList.remove("alan-xeta"));
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const ad = $("#ad").value.trim();
@@ -53,12 +57,17 @@ if ($("#sifre2")) {
     const eksik = sifreKontrol(sifre);
     if (eksik.length) return mesaj(`${t("sifre.eksik")} ${eksik.join(", ")}`, "hata");
     if (sifre !== $("#sifre2").value) return mesaj(t("hata.sifreUyusmuyor"), "hata");
+    if (!$("#razilasma").checked) {
+      $("#razilasma-alan").classList.add("alan-xeta");
+      return mesaj(t("huquq.qebulLazim"), "hata");
+    }
 
     bekle(buton, true);
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, sifre);
       await setDoc(doc(db, "kullanicilar", user.uid), {
         ad, soyad, email: user.email, rol: "musteri", dil: dil(), olusturma: serverTimestamp(),
+        razilasmaTarix: serverTimestamp(), razilasmaVersiya: HUQUQ_VERSIYA,
       });
       await updateProfile(user, { displayName: `${ad} ${soyad}` });
       await sendEmailVerification(user, dogrulamaAyari());
@@ -75,7 +84,14 @@ if ($("#sifre2")) {
 
 // ---------- GİRİŞ ----------
 else if ($("#sifre")) {
-  if (new URLSearchParams(location.search).get("sebep") === "siparis") mesaj(t("giris.siparisIcin"));
+  const sebep = new URLSearchParams(location.search).get("sebep");
+  if (sebep === "siparis") mesaj(t("giris.siparisIcin"));
+  if (sebep === "tesdiq") mesaj(t("eylem.girisMesaj"), "basari");
+  try {
+    const hazirEmail = sessionStorage.getItem("girisEmail");
+    if (hazirEmail && !$("#email").value) { $("#email").value = hazirEmail; $("#sifre").focus(); }
+    sessionStorage.removeItem("girisEmail");
+  } catch {}
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -107,7 +123,7 @@ else {
     if (!email) return mesaj(t("hata.bosAlan"), "hata");
     bekle(buton, true);
     try {
-      await sendPasswordResetEmail(auth, email, { url: `${tabanUrl}/giris.html` });
+      await sendPasswordResetEmail(auth, email, { url: `${tabanUrl}/giris.html?dil=${dil()}` });
     } catch (err) {
       // Güvenlik için "böyle bir hesap yok" demiyoruz
       if (err?.code !== "auth/user-not-found") { mesaj(hataMesaji(err), "hata"); bekle(buton, false); return; }

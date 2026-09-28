@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>AvenueBaku</title>
+<meta name="theme-color" content="#0b0c0e">
+<meta name="robots" content="noindex">
+<script src="ortak/tema-erken.js"></script>
+<script>
+  // E-poçtdakı keçid başqa cihazda açılsa da, müştəri qeydiyyat zamanı hansı dili seçibsə səhifə o dildə açılsın.
+  // Dil "continueUrl" içində gəlir: .../giris.html?dil=ru
+  try {
+    var q = new URLSearchParams(location.search);
+    var d = new URL(q.get("continueUrl") || "", location.origin).searchParams.get("dil") || q.get("lang");
+    if (d === "az" || d === "ru") localStorage.setItem("dil", d);
+  } catch (e) {}
+</script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="ikon/ikon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="ikon/ikon-180.png">
+<link rel="stylesheet" href="ortak/stil.css">
+</head>
+<body>
+<header class="ust"><div class="kap">
+  <a class="logo" href="./">AVENUE<small>BAKU</small></a>
+  <nav id="ust-nav"></nav>
+</div></header>
+<main class="dar">
+  <div class="kart" id="eylem">
+    <h1 data-t="eylem.yoxlanir"></h1>
+    <p class="soluk" data-t="genel.bekleyin"></p>
+  </div>
+</main>
+<script type="module" src="js/eylem.js"></script>
+</body>
+</html>

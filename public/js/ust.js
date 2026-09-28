@@ -32,7 +32,7 @@ const aktifSehife = {
   katalog: "katalog",
   begendiklerim: "begen",
   sebet: "sebet",
-  ayarlar: "ayar", siparislerim: "ayar", giris: "ayar", kayit: "ayar", sifre: "ayar",
+  ayarlar: "ayar", siparislerim: "ayar", giris: "ayar", kayit: "ayar", sifre: "ayar", eylem: "ayar", huquq: "ayar",
 }[son] || "ana";
 
 const MENYU = [

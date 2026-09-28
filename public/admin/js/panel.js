@@ -11,7 +11,7 @@ import { MAGAZA_URL } from "../../ortak/ayarlar.js";
 import { siparisleriBaslat, siparislerSekmesi } from "./siparisler.js";
 import { urunlerSekmesi } from "./urunler.js";
 import { musterilerSekmesi } from "./musteriler.js";
-import { ayarlarSekmesi, kurslarSekmesi, instagramSablonSekmesi, yedekSekmesi, sifarisAyarSekmesi } from "./ayarlar.js";
+import { ayarlarSekmesi, kurslarSekmesi, instagramSablonSekmesi, sifarisAyarSekmesi } from "./ayarlar.js";
 import { finansSekmesi } from "./finans.js";
 import { siyahiSekmesi } from "./siyahi-sehife.js";
 import { fotoAktifKocur } from "./veri.js";
@@ -45,7 +45,6 @@ const MARSRUT = {
   kurslar: { fn: kurslarSekmesi, menyu: "ayarlar" },
   sifarisAyar: { fn: sifarisAyarSekmesi, menyu: "ayarlar" },
   instagram: { fn: instagramSablonSekmesi, menyu: "ayarlar" },
-  yedek: { fn: yedekSekmesi, menyu: "ayarlar" },
 };
 
 // Yuxarı sağda: müştəri mağazasına keçid (yeni vərəqdə açılır)

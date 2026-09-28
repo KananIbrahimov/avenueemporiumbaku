@@ -15,7 +15,7 @@
 - [x] Firebase: `avenueemporiumbaku-admin` hosting sitesi oluşturuldu
 - [x] İlk yayın yapıldı (27.09.2026) — avenueemporiumbaku.web.app + avenueemporiumbaku-admin.web.app
 - [x] Admin hesabı: kananibrahimov999@gmail.com → rol `admin`
-- [ ] Test müşteri hesabı: kananibrahimov999+musteri@gmail.com
+- [x] Test müşteri hesabı: kananibrahimov999+musteri@gmail.com — tam tur test edildi, sorun yok
 - [x] Otomatik yayın: GitHub `FIREBASE_SERVICE_ACCOUNT` anahtarı eklendi — main-ə hər yükləmədə sayt özü yayınlanır
 
 ## Faz 1 — Admin paneli
@@ -32,7 +32,7 @@
 - [x] Siparişler: canlı liste, durum filtresi, durum değiştirme, kaynak linki, kazanç, telefon/WhatsApp/mail
 - [x] Panel açıkken yeni siparişte web bildirimi + ses + sayaç
 - [x] Müşteri listesi (ad, soyad, e-posta, kayıt tarihi, sipariş sayısı/tutarı)
-- [x] Yedek: tüm veriyi JSON olarak indir
+- [x] ~~Yedek: tüm veriyi JSON olarak indir~~ — v2.15-də götürüldü (Spark-da avtomatik ehtiyat yoxdur; Blaze-ə keçəndə avtomatik ehtiyat)
 - [x] "Ana ekrana ekle" (PWA)
 - [x] Ayarlar tabı: məhsullar/kateqoriyalar keçidi, Instagram mətni şablonu, ehtiyat nüsxə, çıxış
 - [x] Admin aşağı menyu (v1.2): Mağaza (müştərinin gördüyü ana səhifə) · Müştərilər · (+) Məhsul əlavə et · Sifarişlər (mərhələlər + kargo izləmə) · Ayarlar
@@ -59,7 +59,7 @@
 - [x] v2.11 Yoxlama: ehtiyat nüsxəyə mağaza ayarları əlavə olundu; sifariş silinəndə maliyyə sənədi də silinir; istifadə olunmayan kod götürüldü
 - [x] v2.12 Rus dili (müştəri + admin), yuxarıda AZ · RU seçimi; Azərbaycan dili mətnləri rəsmi dilə uyğunlaşdırıldı; kateqoriya, rəng və ölçü adları tərcümə olunur; passiv məhsulun şəkilləri də müştəriyə bağlıdır; qonağa "Üzvlərə −5%" nişanı
 - [ ] İngilis dili: ortak/dil/en.js + i18n.js-də bir sətir
-- [ ] Yedekten geri yükleme
+- [x] ~~Yedekten geri yükleme~~ — lazım deyil (ehtiyat nüsxə götürüldü)
 - [ ] Gerçek cihazda test (abla ile)
 
 ## Faz 2 — Müşteri sitesi
@@ -88,6 +88,8 @@
 - [x] v2.2 Kataloqda yuxarıda kateqoriya adları (sürüşən sıra); boş kateqoriyalar müştəriyə göstərilmir
 - [x] v2.7 Qeydiyyatsız sifariş: ad + telefon → WhatsApp hazır mesajla (normal qiymət, bazaya yazılmır)
 - [x] v2.11 Sale məhsullarının kartında SALE nişanı; link paylaşanda önizləmə (başlıq, təsvir, şəkil)
+- [x] v2.15 Qeydiyyatda İstifadə şərtləri + Məxfilik siyasəti (AZ/RU tam mətn, müştərinin dilində pəncərədə açılır); qəbul etmədən hesab yaradılmır (qayda ilə də qorunur, qəbul tarixi profildə); Ayarlar → Hüquqi məlumat
+- [x] v2.15 E-poçt keçidləri öz səhifəmizdə (eylem): təsdiqdən sonra avtomatik giriş ekranı (e-poçt hazır yazılı), şifrənin yenilənməsi saytda, müştərinin dilində
 - [x] Məhsul səhifəsində "Paylaş" düyməsi
 - [x] Mobil görünüm son kontrolleri (v1.8 tam tarama: 144 səhifə/vəziyyət, 0 problem)
 - [x] v1.8 Face ID / Touch ID kilidi — hər iki saytda Ayarlar → 🔐 (cihaza/sayta görə; 1 dəq arxa fondan sonra yenidən kilid)
@@ -102,7 +104,8 @@
 
 ## Faz 3 — Yayın ve sonrası
 - [ ] avenuebaku.az alan adını al ve bağla (+ admin.avenuebaku.az)
-- [ ] Doğrulama / şifre sıfırlama mail şablonlarını Azerbaycanca yap
-- [ ] 2. ve 3. dil (örn. rusça, ingilizce)
+- [ ] Doğrulama / şifre sıfırlama mail şablonları (AZ + RU) — metinler hazır: `docs/MAIL_SABLONLARI.md`, Firebase Console-a yapıştırılacak + "Customize action URL"
+- [x] 2. dil: rusça (v2.12)
+- [ ] 3. dil: ingilizce (isteğe bağlı)
 - [ ] Blaze'e geçiş kararı: fotoğraflar Storage'a, kapalıyken push bildirim, otomatik yedek, Instagram'a tam avtomatik paylaşım
 - [ ] Online ödeme
