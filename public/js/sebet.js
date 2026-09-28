@@ -103,16 +103,21 @@ function sifarisBolumu(varMi) {
   const alan = $("#sifaris-alani");
   if (!varMi) return;
   if (!durum.kullanici) {
-    alan.innerHTML = `<div class="kutu-mesaj kutu-bilgi">${kacis(t("urun.girisGerekli"))}</div>
-      <a class="btn btn-tam" href="giris.html?sebep=siparis&geri=${encodeURIComponent("/sebet.html")}">${kacis(t("nav.giris"))}</a>
-      <p class="soluk" style="text-align:center">${kacis(t("giris.hesapYok"))} <a href="kayit.html">${kacis(t("nav.kayit"))}</a></p>`;
+    alan.innerHTML = `${qonaqFormu()}
+      <div class="kart" style="margin-top:12px">
+        <div class="kutu-mesaj kutu-bilgi" style="margin-top:0">${kacis(t(ayar?.whatsapp ? "sebet.uzvUcun" : "urun.girisGerekli"))}</div>
+        <a class="btn ${ayar?.whatsapp ? "btn-ince " : ""}btn-tam" href="giris.html?sebep=siparis&geri=${encodeURIComponent("/sebet.html")}">${kacis(t("nav.giris"))}</a>
+        <p class="soluk" style="text-align:center;margin-bottom:0">${kacis(t("giris.hesapYok"))} <a href="kayit.html">${kacis(t("nav.kayit"))}</a></p>
+      </div>`;
+    qonaqBagla();
     return;
   }
   if (!durum.uye) {
-    alan.innerHTML = `<div class="kutu-mesaj kutu-bilgi">${kacis(t("dogrula.gerekli"))}
+    alan.innerHTML = `${qonaqFormu()}<div class="kutu-mesaj kutu-bilgi">${kacis(t("dogrula.gerekli"))}
       <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-ince btn-kucuk" id="tekrar">${kacis(t("dogrula.tekrarGonder"))}</button>
         <button class="btn btn-kucuk" id="yenile">${kacis(t("dogrula.yaptim"))}</button></div></div>`;
+    qonaqBagla();
     $("#tekrar").onclick = async () => {
       try {
         await sendEmailVerification(auth.currentUser, { url: `${MAGAZA_URL || location.origin}/giris.html` });
@@ -138,6 +143,85 @@ function sifarisBolumu(varMi) {
       <p class="ipucu" style="text-align:center;margin-bottom:0">${kacis(t(ayar?.whatsapp ? "sebet.waAciklama" : "urun.siparisAciklama"))}</p>
     </form>`;
   $("#sifaris-form").addEventListener("submit", sifarisGonder);
+}
+
+// ---------- Qeydiyyatsız (qonaq) sifariş: yalnız WhatsApp ilə ----------
+// Bazaya yazılmır (təhlükəsizlik qaydası yalnız təsdiqlənmiş üzvə icazə verir) — sifariş WhatsApp mesajı kimi gəlir.
+// Qonaq normal (endirimsiz) qiymətlə sifariş verir.
+function qonaqFormu() {
+  if (!ayar?.whatsapp) return "";
+  let tel = "", ad = "";
+  try { tel = localStorage.getItem("telefon") || ""; ad = localStorage.getItem("qonaqAd") || ""; } catch {}
+  return `<form id="qonaq-form" class="kart" novalidate style="margin-bottom:12px">
+      <div class="bolum-baslik" style="margin-top:0">💬 ${kacis(t("sebet.qonaqBaslik"))}</div>
+      <p class="ipucu" style="margin-top:-4px">${kacis(t("sebet.qonaqIzah"))}</p>
+      <div class="alan"><label for="q-ad">${kacis(t("sebet.qonaqAd"))}</label>
+        <input id="q-ad" autocomplete="name" maxlength="80" value="${kacis(ad)}"></div>
+      <div class="alan"><label for="q-telefon">${kacis(t("urun.telefon"))}</label>
+        <input id="q-telefon" type="tel" autocomplete="tel" placeholder="+994 50 000 00 00" value="${kacis(tel)}"></div>
+      <div class="alan"><label for="q-not">${kacis(t("urun.not"))}</label>
+        <textarea id="q-not" maxlength="500" style="min-height:60px"></textarea></div>
+      <button class="btn btn-tam btn-wa" type="submit">💬 ${kacis(t("sebet.qonaqGonder"))}</button>
+    </form>`;
+}
+
+function qonaqBagla() {
+  $("#qonaq-form")?.addEventListener("submit", qonaqGonder);
+}
+
+async function qonaqGonder(e) {
+  e.preventDefault();
+  const musteriAd = $("#q-ad").value.trim();
+  const telefon = $("#q-telefon").value.trim();
+  if (!musteriAd) return bildir(t("sebet.qonaqAdHata"), "hata");
+  if (telefon.replace(/\D/g, "").length < 7) return bildir(t("urun.telefonHata"), "hata");
+  const buton = e.target.querySelector("button[type=submit]");
+  buton.disabled = true;
+  gonderilir = true;
+  try {
+    urunOnbellek.clear(); // qiymətləri təzədən oxu
+    const sebet = sebetOxu();
+    const urunler = await Promise.all(sebet.map((x) => urunAl(x.urunId)));
+    const setirler = [];
+    let cem = 0;
+    sebet.forEach((x, i) => {
+      const u = urunler[i];
+      if (!u) return;
+      cem += u.satisFiyati * x.adet;
+      setirler.push({ ad: yerel(u.ad), marka: u.marka || "", olcu: x.olcu || "", renk: x.renk || "", adet: x.adet, fiyat: u.satisFiyati });
+    });
+    if (!setirler.length) throw new Error("bos");
+    cem = yuvarla(cem);
+    const yuzde = Math.min(100, Math.max(0, Math.round(+ayar?.onOdemeYuzde || 0)));
+    const sebetId = `Q${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`.toUpperCase();
+    const qeyd = $("#q-not").value.trim().slice(0, 500);
+    const wa = waLink(ayar.whatsapp, sifarisMesaji({
+      sebetId, musteriAd: `${musteriAd} (${t("sebet.qonaq")})`, telefon, setirler, cem, yuzde, odemeQeydi: ayar.odemeQeydi, qeyd,
+    }));
+    try { localStorage.setItem("telefon", telefon); localStorage.setItem("qonaqAd", musteriAd); } catch {}
+    sebetiBosalt();
+    const h = onOdemeHesab(cem, yuzde);
+    kok.innerHTML = `<div class="kart" style="text-align:center;padding:28px 18px">
+      <p style="font-size:2.4rem;margin:0">💬</p>
+      <h2>${kacis(t("sebet.qonaqHazir"))}</h2>
+      <p class="soluk">${kacis(t("sebet.nomre"))}: <b class="kod">${kacis(sebetId)}</b></p>
+      ${h.yuzde ? `<div class="kutu-mesaj kutu-bilgi on-odeme-kutu">
+        <div>💳 ${kacis(t("sebet.onOdemeTeleb").replace("{y}", h.yuzde))}</div>
+        <div class="on-odeme-mebleg">${para(h.onOdeme)}</div>
+        <div class="soluk">${kacis(t("sebet.qaliq"))}: ${para(h.qaliq)} · ${kacis(t("urun.toplam"))}: ${para(cem)}</div>
+      </div>` : ""}
+      <p class="soluk">${kacis(t("sebet.waSon"))}</p>
+      <div style="display:grid;gap:8px;margin-top:14px">
+        <a class="btn btn-tam btn-wa" href="${kacis(wa)}" target="_blank" rel="noopener">💬 ${kacis(t("sebet.waGonder"))}</a>
+        <a class="btn btn-ince btn-tam" href="kayit.html">${kacis(t("sebet.qonaqKayit"))}</a>
+        <a class="btn btn-ince btn-tam" href="./">${kacis(t("genel.vitrineDon"))}</a>
+      </div></div>`;
+    setTimeout(() => { location.href = wa; }, 900);
+  } catch (err) {
+    gonderilir = false;
+    bildir(hataMesaji(err), "hata");
+    ciz();
+  }
 }
 
 async function sifarisGonder(e) {

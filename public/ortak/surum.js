@@ -1,6 +1,6 @@
 // Tətbiqin sürüm nömrəsi — hər yenilikdə artırılır (1.1 → 1.2 → ...).
 // Ayarlar səhifəsinin aşağısında göstərilir; yeni versiya bildirişində də istifadə olunur.
-export const SURUM = "2.6";
+export const SURUM = "2.7";
 export const MUELLIF = "Kanan Ibrahimov";
 
 export function imzaHtml() {
