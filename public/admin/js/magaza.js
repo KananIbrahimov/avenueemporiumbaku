@@ -8,7 +8,7 @@ import { ozelIkon, kategoriyeAit } from "../../ortak/kategori.js";
 import { instagramAc } from "./instagram.js";
 import { IKON } from "../../ortak/ikon.js";
 
-let secim = { kategori: "", ara: "", pasif: false };
+let secim = { kategori: "", ara: "" };
 
 export async function magazaSekmesi(kok) {
   kok.innerHTML = `<p class="bos">${kacis(t("genel.yukleniyor"))}</p>`;
@@ -32,7 +32,6 @@ export async function magazaSekmesi(kok) {
       <input id="m-ara" type="search" placeholder="${kacis(t("filtre.araUzun"))}" value="${kacis(secim.ara)}">
     </div>
     <div class="cipler" id="m-kat"></div>
-    <label class="onay" style="margin:0 0 12px"><input type="checkbox" id="m-pasif" ${secim.pasif ? "checked" : ""}> ${kacis(t("admin.magaza.pasifleri"))}</label>
     <div class="izgara" id="m-urunler"></div>`;
 
   const katCiz = () => {
@@ -48,7 +47,6 @@ export async function magazaSekmesi(kok) {
   const ciz = () => {
     const q = secim.ara.toLocaleLowerCase("az");
     const liste = urunler.filter((u) =>
-      (secim.pasif || u.aktif) &&
       (!secim.kategori || kategoriyeAit(u, secim.kategori)) &&
       (!q || `${yerel(u.ad)} ${u.marka || ""}`.toLocaleLowerCase("az").includes(q)));
     $("#m-urunler", kok).innerHTML = liste.length ? liste.map((u) => `
@@ -80,5 +78,4 @@ export async function magazaSekmesi(kok) {
     secim.kategori = b.dataset.k; katCiz(); ciz();
   });
   $("#m-ara", kok).addEventListener("input", (e) => { secim.ara = e.target.value; ciz(); });
-  $("#m-pasif", kok).addEventListener("change", (e) => { secim.pasif = e.target.checked; ciz(); });
 }

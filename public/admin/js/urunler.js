@@ -54,31 +54,12 @@ async function listeAc(kok) {
                 <a class="btn btn-ince btn-kucuk" href="#urunler/${encodeURIComponent(u.id)}">${kacis(t("admin.duzenle"))}</a>
                 <button class="btn btn-ince btn-kucuk" data-ig="${kacis(u.id)}">${IKON.instagram} Instagram</button>
                 ${d.kaynakLink ? `<a class="btn btn-link btn-kucuk" href="${kacis(d.kaynakLink)}" target="_blank" rel="noopener noreferrer">🔗 ${kacis(t("admin.sip.kaynakAc"))}</a>` : ""}
-                <label class="ios-tik" style="margin-left:auto"><span>${kacis(t("admin.urun.aktif"))}</span><input type="checkbox" class="ios-input" data-aktif="${kacis(u.id)}" ${u.aktif ? "checked" : ""}><span class="ios-switch" aria-hidden="true"></span></label>
               </div>
             </div></div>`;
         }).join("")}</div>`
         : `<p class="bos">${kacis(t(urunler.length ? "vitrin.bos" : "admin.urun.bos"))}</p>`;
 
       $$("[data-ig]", kok).forEach((b) => b.addEventListener("click", () => instagramAc(b.dataset.ig)));
-      $$("[data-aktif]", kok).forEach((c) => c.addEventListener("change", async () => {
-        if (c.checked) {
-          const u0 = urunler.find((x) => x.id === c.dataset.aktif);
-          const eksik = vitrinEksikleri(u0, detaylar.get(u0.id) || {});
-          if (eksik.length) {
-            c.checked = false;
-            bildir(t("admin.yoxla.icazeYox", { liste: eksik.map((s) => t("admin.yoxla." + s)).join(", ") }), "hata");
-            return;
-          }
-        }
-        try {
-          await updateDoc(doc(db, "urunler", c.dataset.aktif), { aktif: c.checked, guncelleme: serverTimestamp() });
-          const u = urunler.find((x) => x.id === c.dataset.aktif);
-          u.aktif = c.checked;
-          c.closest(".urun-satir").classList.toggle("pasif", !c.checked);
-          bildir(t(c.checked ? "admin.urun.aktifEdildi" : "admin.urun.pasifEdildi"), "basari");
-        } catch (e) { c.checked = !c.checked; bildir(hataMesaji(e), "hata"); }
-      }));
     };
 
     kok.innerHTML = `
@@ -228,8 +209,7 @@ async function formAc(kok, id) {
       </div>
 
       <div class="form-alt yapiskan">
-        <label class="ios-tik"><span>👁️ ${kacis(t("admin.urun.vitrindeGoster"))}</span><input type="checkbox" class="ios-input" name="aktif" ${urun.aktif !== false ? "checked" : ""}><span class="ios-switch" aria-hidden="true"></span></label>
-        <div class="aksiyonlar">
+        <div class="aksiyonlar" style="margin-left:auto">
           ${id ? `<button type="button" class="btn btn-link btn-kucuk sil-link" id="sil">${kacis(t("admin.sil"))}</button>` : ""}
           <button type="submit" class="btn btn-kucuk">${kacis(t("admin.kaydet"))}</button>
         </div>
@@ -435,15 +415,14 @@ async function formAc(kok, id) {
     const aciklama = Object.fromEntries(DILLER.map((d) => [d.kod, f(`aciklama_${d.kod}`).value.trim()]).filter(([, y]) => y));
     const kaynakLink = f("kaynakLink").value.trim();
 
-    // Vitrinə çıxarmaq üçün bütün vacib sahələr doldurulmalıdır; yarımçıq məhsul yalnız gizli saxlanıla bilər
+    // Hər saxlanan məhsul vitrinə çıxır — bütün vacib sahələr doldurulmalıdır
     yoxlamaGoster = true;
     const eksik = yoxlamaCiz();
-    if (f("aktif").checked && eksik.length) {
+    if (eksik.length) {
       bildir(t("admin.yoxla.icazeYox", { liste: eksik.map((s) => t("admin.yoxla." + s)).join(", ") }), "hata");
       $(".sahe-eksik", kok)?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
-    if (!ad[ilkDil]) return bildir(t("admin.urun.adGerekli"), "hata"); // qaralama üçün də ad lazımdır
     if (valyuta() !== "AZN" && sayi(f("alisMebleg").value) > 0 && !(kursDeger() > 0)) return bildir(t("admin.hesap.kursGerekli"), "hata");
     if (kaynakLink && !/^https?:\/\//i.test(kaynakLink)) return bildir(t("admin.urun.linkHata"), "hata");
     if (x.satis > 0 && x.q1 < 0 && !confirm(t("admin.urun.zararOnay"))) return;
@@ -466,7 +445,7 @@ async function formAc(kok, id) {
         satisFiyati: iki(x.satis),
         indirimYuzde: iki(x.endirim),
         uyeFiyati: iki(x.uye),
-        aktif: f("aktif").checked,
+        aktif: true, // məhsul həmişə vitrindədir (gizlətmə yoxdur)
         kapak,
         fotoSayisi: fotolar.length,
         olusturma: urun.olusturma || serverTimestamp(),
@@ -504,7 +483,7 @@ async function formAc(kok, id) {
       bildir(t("admin.kaydedildi"), "basari");
       location.hash = "urunler";
       // Yeni məhsul əlavə olunubsa, dərhal Instagram üçün hazırlamağı təklif et
-      if (!id && f("aktif").checked && confirm(t("admin.ig.yeniMehsulSual"))) instagramAc(uid);
+      if (!id && confirm(t("admin.ig.yeniMehsulSual"))) instagramAc(uid);
     } catch (err) {
       bildir(hataMesaji(err), "hata");
       buton.disabled = false;
