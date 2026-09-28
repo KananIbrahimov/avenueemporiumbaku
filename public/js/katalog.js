@@ -18,18 +18,19 @@ try {
   const kq = kategoriler
     .map((k) => ({ id: k.id, ad: yerel(k.ad), ozel: ozelMi(k.id), urunler: urunler.filter((u) => kategoriyeAit(u, k.id)) }))
     .filter((q) => q.ozel || q.urunler.length);
-  const ozel = kq.filter((q) => q.ozel), diger = kq.filter((q) => !q.ozel);
+  const diger = kq.filter((q) => !q.ozel);
 
   // Yuxarıda kateqoriya adları (sürüşən sıra)
   $("#kat-adlari").innerHTML = kq.map((q) =>
     `<a class="cip ${q.ozel ? "cip-ozel" : ""}" style="text-decoration:none" href="./?k=${encodeURIComponent(q.id)}">${q.ozel ? `${ozelIkon(q.id)} ` : ""}${kacis(q.ad)}</a>`).join("");
 
-  const qruplar = [...ozel, { id: "", ad: t("katalog.hamisi"), urunler }, ...diger];
+  // Aşağıdakı şəkilli kartlarda Sale və 24 saat yoxdur — onlar yalnız yuxarıdakı sırada göstərilir
+  const qruplar = [{ id: "", ad: t("katalog.hamisi"), urunler }, ...diger];
   $("#kategoriler").innerHTML = qruplar.map((q) => {
     const kapak = q.urunler.find((u) => u.kapak)?.kapak;
-    return `<a class="katalog-kart ${q.ozel ? "katalog-ozel" : ""}" href="./${q.id ? `?k=${encodeURIComponent(q.id)}` : ""}">
-      ${kapak ? `<img src="${kacis(kapak)}" alt="" loading="lazy">` : q.ozel ? `<span class="katalog-ozel-ikon">${ozelIkon(q.id)}</span>` : ""}
-      <div class="ust-yazi"><b>${q.ozel ? `${ozelIkon(q.id)} ` : ""}${kacis(q.ad)}</b><span>${q.urunler.length} ${kacis(t("vitrin.mehsul"))}</span></div>
+    return `<a class="katalog-kart" href="./${q.id ? `?k=${encodeURIComponent(q.id)}` : ""}">
+      ${kapak ? `<img src="${kacis(kapak)}" alt="" loading="lazy">` : ""}
+      <div class="ust-yazi"><b>${kacis(q.ad)}</b><span>${q.urunler.length} ${kacis(t("vitrin.mehsul"))}</span></div>
     </a>`;
   }).join("");
 
