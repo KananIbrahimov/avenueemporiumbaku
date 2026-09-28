@@ -152,16 +152,44 @@ export function secici(kok, o) {
 }
 
 /**
- * Kateqoriya adını bütün dillərdə soruşur (hamısı məcburidir). Qaytarır: { az: "...", ru: "..." } və ya null (ləğv).
+ * Kateqoriya adı: bir pəncərədə hər dil üçün ayrıca xana, alt-alta (AZ, RU, …). Hamısı məcburidir.
+ * Yeni dil əlavə olunanda (i18n.js → DILLER) xana özü görünür.
+ * Qaytarır: { az: "...", ru: "..." } və ya null (ləğv).
  * @param ilk mövcud adlar ({ az, ru }) və ya birinci dildəki ad (mətn)
  */
-export async function kategoriAdlariSor(ilk = {}, dugme = "") {
+export function kategoriAdlariSor(ilk = {}, dugme = "") {
   const ad = typeof ilk === "string" ? { [DILLER[0].kod]: ilk } : { ...ilk };
-  for (const d of DILLER) {
-    const bas = DILLER.length > 1 ? t("admin.kat.dilAd", { dil: d.kod.toUpperCase() }) : t("admin.kat.ad");
-    const v = await adSorus(bas, ad[d.kod] || "", { dugme: dugme || t("secici.elaveEt") });
-    if (!v) return null;
-    ad[d.kod] = v;
-  }
-  return ad;
+  const yeni = typeof ilk === "string" || !Object.keys(ad).length;
+  return new Promise((ok) => {
+    const arxa = document.createElement("div");
+    arxa.className = "modal-arxa ust-qat";
+    arxa.innerHTML = `<form class="modal kicik-modal" novalidate>
+      <div class="modal-ust"><h2>🗂️ ${kacis(t(yeni ? "secici.yeniKategori" : "admin.kat.ad"))}</h2></div>
+      ${DILLER.map((d) => `
+        <div class="alan"><label for="kat-${d.kod}"><b>${d.kod.toUpperCase()}</b> · ${kacis(d.ad)} <span class="vacib">*</span></label>
+          <input id="kat-${d.kod}" name="${d.kod}" maxlength="60" autocomplete="off" value="${kacis(ad[d.kod] || "")}"></div>`).join("")}
+      <div class="aksiyonlar" style="justify-content:flex-end">
+        <button type="button" class="btn btn-ince" data-legv>${kacis(t("secici.legv"))}</button>
+        <button type="submit" class="btn">${kacis(dugme || t("secici.elaveEt"))}</button>
+      </div></form>`;
+    document.body.appendChild(arxa);
+    const f = arxa.querySelector("form");
+    const inputlar = [...f.querySelectorAll("input")];
+    // Kursor ilk boş xanaya
+    setTimeout(() => { const b = inputlar.find((x) => !x.value.trim()) || inputlar[0]; b.focus(); b.select(); }, 50);
+    // Enter: növbəti xanaya keç, sonuncuda yadda saxla
+    inputlar.forEach((x, i) => x.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && i < inputlar.length - 1) { e.preventDefault(); inputlar[i + 1].focus(); }
+    }));
+    const bitir = (v) => { arxa.remove(); ok(v); };
+    arxa.querySelector("[data-legv]").addEventListener("click", () => bitir(null));
+    arxa.addEventListener("click", (e) => { if (e.target === arxa) bitir(null); });
+    f.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const bos = inputlar.find((x) => !x.value.trim());
+      inputlar.forEach((x) => x.closest(".alan").classList.toggle("sahe-eksik", !x.value.trim()));
+      if (bos) { bildir(t("admin.kat.hamisiLazim"), "hata"); return bos.focus(); }
+      bitir(Object.fromEntries(inputlar.map((x) => [x.name, x.value.trim()])));
+    });
+  });
 }

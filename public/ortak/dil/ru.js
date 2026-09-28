@@ -526,6 +526,7 @@ export default {
   "fin.aylarQisa": "Янв,Фев,Мар,Апр,Май,Июн,Июл,Авг,Сен,Окт,Ноя,Дек",
   "admin.urun.dilIxtiyari": "необязательно — если пусто, показывается текст на азербайджанском",
   "admin.kat.tercumeYox": "Название на этом языке не указано — отредактируйте и добавьте",
+  "admin.kat.hamisiLazim": "Укажите название категории на всех языках.",
   "admin.kat.dilAd": "Название категории ({dil})",
   // Rəng və ölçü adları (bazada Azərbaycan dilindədir)
   "deger.Qara": "Чёрный",

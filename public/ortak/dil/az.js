@@ -526,5 +526,6 @@ export default {
   "fin.aylarQisa": "Yan,Fev,Mar,Apr,May,İyn,İyl,Avq,Sen,Okt,Noy,Dek",
   "admin.urun.dilIxtiyari": "məcburi deyil — boş qalarsa, Azərbaycan dilindəki mətn göstərilir",
   "admin.kat.tercumeYox": "Bu dildə ad yazılmayıb — redaktə edib əlavə edin",
+  "admin.kat.hamisiLazim": "Kateqoriyanın adını bütün dillərdə daxil edin.",
   "admin.kat.dilAd": "Kateqoriyanın adı ({dil})",
 };
