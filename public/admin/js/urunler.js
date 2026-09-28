@@ -54,7 +54,7 @@ async function listeAc(kok) {
                 <a class="btn btn-ince btn-kucuk" href="#urunler/${encodeURIComponent(u.id)}">${kacis(t("admin.duzenle"))}</a>
                 <button class="btn btn-ince btn-kucuk" data-ig="${kacis(u.id)}">${IKON.instagram} Instagram</button>
                 ${d.kaynakLink ? `<a class="btn btn-link btn-kucuk" href="${kacis(d.kaynakLink)}" target="_blank" rel="noopener noreferrer">🔗 ${kacis(t("admin.sip.kaynakAc"))}</a>` : ""}
-                <label class="onay" style="margin-left:auto"><input type="checkbox" data-aktif="${kacis(u.id)}" ${u.aktif ? "checked" : ""}> ${kacis(t("admin.urun.aktif"))}</label>
+                <label class="ios-tik" style="margin-left:auto"><span>${kacis(t("admin.urun.aktif"))}</span><input type="checkbox" class="ios-input" data-aktif="${kacis(u.id)}" ${u.aktif ? "checked" : ""}><span class="ios-switch" aria-hidden="true"></span></label>
               </div>
             </div></div>`;
         }).join("")}</div>`
@@ -228,7 +228,7 @@ async function formAc(kok, id) {
       </div>
 
       <div class="form-alt yapiskan">
-        <label class="onay"><input type="checkbox" name="aktif" ${urun.aktif !== false ? "checked" : ""}> 👁️ ${kacis(t("admin.urun.vitrindeGoster"))}</label>
+        <label class="ios-tik"><span>👁️ ${kacis(t("admin.urun.vitrindeGoster"))}</span><input type="checkbox" class="ios-input" name="aktif" ${urun.aktif !== false ? "checked" : ""}><span class="ios-switch" aria-hidden="true"></span></label>
         <div class="aksiyonlar">
           ${id ? `<button type="button" class="btn btn-link btn-kucuk sil-link" id="sil">${kacis(t("admin.sil"))}</button>` : ""}
           <button type="submit" class="btn btn-kucuk">${kacis(t("admin.kaydet"))}</button>

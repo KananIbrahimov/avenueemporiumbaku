@@ -237,7 +237,11 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .ios-input:checked + .ios-switch { background: #34c759; }
 .ios-input:checked + .ios-switch::after { transform: translateX(20px); }
 .ios-input:focus-visible + .ios-switch { outline: 2px solid var(--vurgu); outline-offset: 2px; }
-.ios-satir:active .ios-switch::after { width: 31px; }
-.ios-satir:active .ios-input:checked + .ios-switch::after { transform: translateX(16px); }
+.ios-satir:active .ios-switch::after, .ios-tik:active .ios-switch::after { width: 31px; }
+.ios-satir:active .ios-input:checked + .ios-switch::after, .ios-tik:active .ios-input:checked + .ios-switch::after { transform: translateX(16px); }
+/* Sətir içində tək açar (Vitrində göstər, Aktiv) */
+.ios-tik { position: relative; display: inline-flex; align-items: center; gap: 10px; margin: 0; cursor: pointer;
+  font-weight: 500; color: var(--yazi); font-size: .9rem;
+  -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
 /* Açıq tema: iPhone-dakı kimi açıq boz */
 :root[data-tema="aciq"] .ios-switch { background: #e9e9ea; }
