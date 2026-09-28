@@ -186,9 +186,11 @@ export default {
 
   // Sifariş statusları
   "durum.yeni": "Yeni sifariş",
-  "durum.tesdiq": "Qəbul edildi",
+  "durum.tesdiq": "Sifariş verildi",
+  "durum.odenildi": "Ödəniş edildi",
   "durum.sifarisVerildi": "Sifariş verildi",
   "durum.yolda": "Yoldadır",
+  "durum.gomrukde": "Gömrükdədir",
   "durum.catdirildi": "Çatdırıldı",
   "durum.legv": "Ləğv edildi",
 
@@ -345,7 +347,7 @@ export default {
   "admin.ig.sifirla": "Standart şablona qaytar",
 
   // Sifarişlər
-  "admin.sip.aciklama": "Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı. Qəbul ediləndən sonra kargo məlumatını elə buradan əlavə edin — müştəri \"Sifarişlərim\"də görür. İstənilən mərhələdə ləğv etmək olar.",
+  "admin.sip.aciklama": "Yeni sifariş → Ödəniş edildi → Sifariş verildi → Yoldadır → Gömrükdədir → Çatdırıldı. Ödənişdə bəh, sifariş verəndə alış qiyməti, gömrükdə kargo və vergi yazılır. Çatdırılandan sonra sifariş bağlanır.",
   "admin.sip.bildirimAc": "Bildirişləri aç",
   "admin.sip.bildirimKapali": "Brauzerdə bildirişlər bağlıdır",
   "admin.sip.bildirimBaslik": "Yeni sifariş — AvenueBaku",
@@ -354,7 +356,14 @@ export default {
   "admin.sip.kaynakAc": "Məhsulun linki",
   "admin.sip.urunSilinmis": "Məhsul silinib",
   "admin.sip.silOnay": "Bu sifariş tamamilə silinsin? (Ləğv etmək daha yaxşıdır — tarixçə qalır)",
-  "admin.sip.kec.tesdiq": "Qəbul et",
+  "admin.sip.kec.odenildi": "Ödəniş ({y}%) edildi",
+  "admin.sip.kec.sifarisVerildi": "Sifariş verildi",
+  "admin.sip.kec.gomrukde": "Gömrükdədir",
+  "admin.mal.odenildiBaslik": "Ön ödəniş edildi",
+  "admin.mal.sifarisVerildiBaslik": "Sifariş verildi — alış qiyməti",
+  "admin.mal.gomrukdeBaslik": "Gömrükdədir — kargo və vergi",
+  "admin.mal.tesdiqle": "Təsdiqlə",
+  "admin.sip.catdirildiOnay": "Sifariş çatdırıldı? Bundan sonra sifariş bağlanır.",
   "admin.sip.kec.yolda": "Yola sal",
   "admin.sip.kec.catdirildi": "Çatdırıldı",
   "admin.sip.berpa": "Bərpa et",

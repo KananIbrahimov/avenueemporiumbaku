@@ -1,13 +1,15 @@
 // Sifariş izləmə addımları (admin və müştəri eyni görünüşdən istifadə edir)
 import { t } from "./i18n.js";
-import { kacis, tarih } from "./yardim.js";
+import { kacis, tarih, esasDurum } from "./yardim.js";
+import { para } from "./fiyat.js";
 
-export const IZLEME_ADIMLARI = ["yeni", "tesdiq", "yolda", "catdirildi"];
+// Yeni sifariş → Ödəniş edildi (ön ödəniş) → Sifariş verildi → Yoldadır → Gömrükdədir → Çatdırıldı
+export const IZLEME_ADIMLARI = ["yeni", "odenildi", "sifarisVerildi", "yolda", "gomrukde", "catdirildi"];
 
 /** Hər addımın tarixi: tarixçədən (sonuncu qeyd), "yeni" üçün sifariş tarixi */
 export function adimTarixleri(o) {
   const x = { yeni: o.olusturma };
-  for (const q of o.tarixce || []) x[q.durum === "sifarisVerildi" ? "tesdiq" : q.durum] = q.tarix;
+  for (const q of o.tarixce || []) x[esasDurum(q.durum)] = q.tarix;
   return x;
 }
 
@@ -23,14 +25,15 @@ export function adimlarHtml(o, { tiklanan = false } = {}) {
   if (o.durum === "legv") {
     return `<div class="adimlar-legv">${kacis(t("durum.legv"))}</div>`;
   }
-  const cari = o.durum === "sifarisVerildi" ? "tesdiq" : o.durum; // köhnə status
+  const cari = esasDurum(o.durum);
   const indeks = Math.max(0, IZLEME_ADIMLARI.indexOf(cari));
   const tarixler = adimTarixleri(o);
   return `<ol class="adimlar">${IZLEME_ADIMLARI.map((a, i) => {
     const sinif = i < indeks ? "bitdi" : i === indeks ? "indi" : "";
     const ic = `<span class="nokta">${i < indeks ? "✓" : ""}</span>
       <span class="adim-ad">${kacis(t("durum." + a))}</span>
-      <span class="adim-tarix">${i <= indeks ? kacis(qisaTarix(tarixler[a])) : ""}</span>`;
+      <span class="adim-tarix">${i <= indeks ? kacis(qisaTarix(tarixler[a])) : ""}</span>
+      ${a === "odenildi" && +o.beh > 0 && i <= indeks ? `<span class="adim-mebleg">${para(o.beh)}</span>` : ""}`;
     return `<li class="${sinif}">${tiklanan
       ? `<button type="button" data-adim="${a}" ${i === indeks ? "disabled" : ""}>${ic}</button>`
       : ic}</li>`;

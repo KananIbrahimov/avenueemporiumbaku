@@ -45,7 +45,8 @@
 - [x] v1.5 Ayarlar: Kateqoriyalar, Brendlər, Ölçülər, Rənglər ayrı səhifələrdə (əlavə et, adını dəyiş — məhsullarda da yenilənir, sil); Çıxış ən aşağıda
 - [x] v1.6 Məhsul formunda hər sahəyə ikon və vacib (*) işarəsi; "Vitrinə hazırlıq" yoxlaması — ad, brend, kateqoriya, ölçü, rəng, məhsul linki, alış qiyməti, satış qiyməti, şəkil tamamlanmadan məhsul müştəri ekranına çıxa bilməz (yarımçıq məhsul gizli saxlanılır); siyahılarda ↑↓ sıralama çıxarıldı
 - [x] v1.4 Valyuta kursları Ayarlar-dan təyin olunur (standart: 1 USD = 1.70 ₼, 1 EUR = 1.95 ₼); məhsul formu bu kurslarla hesablayır, boş qalan valyuta üçün bazar kursu
-- [x] Sifariş axını: Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı; istənilən mərhələdə Ləğv et, ləğvdən Bərpa et; status tarixçəsi
+- [x] (köhnə) Sifariş axını: Yeni sifariş → Qəbul edildi → Yoldadır → Çatdırıldı; istənilən mərhələdə Ləğv et, ləğvdən Bərpa et; status tarixçəsi
+- [x] v2.0 Sifariş axını: Yeni sifariş → Ödəniş (30%) edildi (məbləğ addımda görünür) → Sifariş verildi (alış qiyməti düzəlir) → Yoldadır → Gömrükdədir (kargo + vergi düzəlir) → Çatdırıldı (sifariş bağlanır). Hər keçiddə eyni maliyyə pəncərəsi açılır, həmin mərhələnin sahəsi vurğulanır; köhnə "Qəbul edildi" statusu "Sifariş verildi" sayılır
 - [x] Sifariş izləmə: kargo şirkəti, izləmə kodu/link, təxmini tarix, müştəriyə qeyd
 - [x] Instagram üçün hazırla: post (1080×1080) və story (1080×1920) şəkli + hazır mətn, telefonda paylaş menyusu
 - [x] Yeni məhsul əlavə edəndə "Instagram üçün hazırlansın?" təklifi

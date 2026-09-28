@@ -67,8 +67,12 @@ export function sifreKontrol(s) {
   return eksik;
 }
 
-export const SIPARIS_DURUMLARI = ["yeni", "tesdiq", "yolda", "catdirildi", "legv"];
+export const SIPARIS_DURUMLARI = ["yeni", "odenildi", "sifarisVerildi", "yolda", "gomrukde", "catdirildi", "legv"];
+
+/** Köhnə "tesdiq" (Qəbul edildi) statusu indiki "Sifariş verildi" sayılır */
+export const esasDurum = (d) => (d === "tesdiq" ? "sifarisVerildi" : d);
 
 export function durumEtiketi(d) {
+  d = esasDurum(d);
   return `<span class="durum durum-${kacis(d)}">${kacis(t("durum." + d))}</span>`;
 }

@@ -221,3 +221,7 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .odeme-satir .odeme-dugmeler { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
 .odeme-satir.odenib { color: var(--basari); border-color: color-mix(in srgb, var(--basari) 40%, var(--cizgi)); background: color-mix(in srgb, var(--basari) 10%, var(--kart-2)); }
 .btn-odenildi { background: var(--basari); border-color: var(--basari); color: #07130b; }
+
+/* Maliyyə pəncərəsi: bu mərhələdə doldurulacaq sahə */
+.mal-modal .alan.vurgulu label { color: var(--vurgu); }
+.mal-modal .alan.vurgulu input { border-color: var(--vurgu); box-shadow: 0 0 0 3px var(--vurgu-acik); }

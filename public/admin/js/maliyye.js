@@ -24,7 +24,8 @@ export async function butunMaliyye() {
  * Pəncərə: qəbul zamanı (rejim "qebul") və ya sonradan düzəliş üçün (rejim "duzelt").
  * @param o sifariş; @param durumDegistir (id, durum, elave) => Promise
  */
-export async function maliyyePenceresi(o, { rejim = "qebul", durumDegistir }) {
+export async function maliyyePenceresi(o, { rejim = "duzelt", hedef = null, fokus = null, behTeklif = null, durumDegistir }) {
+  // rejim "kec": pəncərə təsdiqlənəndə sifariş "hedef" statusuna keçir (odenildi / sifarisVerildi / gomrukde)
   const [evvel, d] = await Promise.all([maliyyeGetir(o.id), detayGetir(o.urunId).catch(() => null)]);
   const adet = o.adet || 1;
   // Başlanğıc dəyərlər: əvvəl yazılıbsa onlar, yoxdursa məhsulun gizli detallarından × say
@@ -35,6 +36,8 @@ export async function maliyyePenceresi(o, { rejim = "qebul", durumDegistir }) {
     satis: iki(o.birimFiyat * adet),
     beh: o.beh ?? 0,
   };
+  if (behTeklif != null && !(+ilk.beh > 0)) ilk.beh = behTeklif;
+  const basliq = rejim === "kec" && hedef ? t(`admin.mal.${hedef}Baslik`) : t("admin.mal.duzeltBaslik");
   const valyutaQeyd = d?.alisValyuta && d.alisValyuta !== "AZN" && d.alisMebleg
     ? `${t("admin.mal.menbe")}: ${d.alisMebleg} ${d.alisValyuta} × ${d.kurs} × ${adet}` : "";
 
@@ -42,7 +45,7 @@ export async function maliyyePenceresi(o, { rejim = "qebul", durumDegistir }) {
     const arxa = document.createElement("div");
     arxa.className = "modal-arxa";
     arxa.innerHTML = `<form class="modal mal-modal" novalidate>
-      <div class="modal-ust"><h2>${kacis(t(rejim === "qebul" ? "admin.mal.qebulBaslik" : "admin.mal.duzeltBaslik"))}</h2></div>
+      <div class="modal-ust"><h2>${kacis(basliq)}</h2></div>
       <div class="soluk" style="margin:-6px 0 12px">${kacis(o.musteriAd)} · ${kacis(o.urunAd)} · ×${adet}</div>
       <div class="alan"><label>💵 ${kacis(t("admin.mal.alis"))} (₼)</label><input name="alis" inputmode="decimal" value="${ilk.alis || ""}" placeholder="0.00">
         ${valyutaQeyd ? `<div class="ipucu">${kacis(valyutaQeyd)}</div>` : ""}</div>
@@ -57,7 +60,7 @@ export async function maliyyePenceresi(o, { rejim = "qebul", durumDegistir }) {
       <div class="xulase mal-xulase" id="mal-x"></div>
       <div class="aksiyonlar" style="justify-content:flex-end;margin-top:14px">
         <button type="button" class="btn btn-ince" data-legv>${kacis(t("secici.legv"))}</button>
-        <button type="submit" class="btn">${kacis(t(rejim === "qebul" ? "admin.mal.qebulEt" : "admin.kaydet"))}</button>
+        <button type="submit" class="btn">${kacis(t(rejim === "kec" ? "admin.mal.tesdiqle" : "admin.kaydet"))}</button>
       </div>
     </form>`;
     document.body.appendChild(arxa);
@@ -80,6 +83,10 @@ export async function maliyyePenceresi(o, { rejim = "qebul", durumDegistir }) {
     };
     f.addEventListener("input", ciz);
     ciz();
+    // Bu mərhələdə dəyişdiriləcək sahə vurğulanır və kursor ora qoyulur
+    for (const ad of [].concat(fokus || [])) f.elements[ad]?.closest(".alan")?.classList.add("vurgulu");
+    const ilkSahe = f.elements[[].concat(fokus || [])[0]];
+    if (ilkSahe) setTimeout(() => { ilkSahe.focus(); ilkSahe.select?.(); }, 60);
     const bagla = (n) => { arxa.remove(); bitdi(n); };
     arxa.querySelector("[data-legv]").addEventListener("click", () => bagla(false));
     f.addEventListener("submit", async (e) => {
@@ -97,7 +104,7 @@ export async function maliyyePenceresi(o, { rejim = "qebul", durumDegistir }) {
           guncelleme: Timestamp.now(),
         });
         const musteriUcun = { beh: iki(v.beh), odenecek: iki(v.satis) };
-        if (rejim === "qebul") await durumDegistir(o.id, "tesdiq", musteriUcun);
+        if (rejim === "kec" && hedef) await durumDegistir(o.id, hedef, musteriUcun);
         else await updateDoc(doc(db, "siparisler", o.id), musteriUcun);
         bildir(t("admin.kaydedildi"), "basari");
         bagla(true);

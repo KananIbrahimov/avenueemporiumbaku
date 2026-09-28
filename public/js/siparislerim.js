@@ -31,7 +31,7 @@ if (!kullanici) {
               ${o.beh != null && o.odenecek != null && o.durum !== "legv" ? `<div class="odeme-satir">
                 <span>${kacis(t("siparislerim.odenib"))}: <b>${para(o.beh)}</b></span>
                 <span>${kacis(t("siparislerim.qaliq"))}: <b>${para(Math.max(0, o.odenecek - o.beh))}</b></span></div>` : ""}
-              ${o.beh == null && +o.onOdemeYuzde > 0 && ["yeni", "sifarisVerildi"].includes(o.durum) ? `<div class="odeme-satir">
+              ${o.beh == null && +o.onOdemeYuzde > 0 && o.durum === "yeni" ? `<div class="odeme-satir">
                 <span>💳 ${kacis(t("sebet.onOdemeTeleb").replace("{y}", o.onOdemeYuzde))}: <b>${para((o.birimFiyat * o.adet * o.onOdemeYuzde) / 100)}</b></span></div>` : ""}
               <div style="margin-top:12px">${adimlarHtml(o)}</div>
               ${kargoHtml(o) ? `<div style="margin-top:10px">${kargoHtml(o)}</div>` : ""}
