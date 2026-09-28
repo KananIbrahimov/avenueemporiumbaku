@@ -350,3 +350,11 @@ input.kecid:disabled { opacity: .45; cursor: not-allowed; }
 .on-odeme-mebleg { font-size: 1.6rem; font-weight: 700; margin: 4px 0; }
 .btn-wa { background: #25d366; color: #0b1a10; border-color: #25d366; }
 .btn-wa:hover { filter: brightness(1.05); }
+
+/* Ayarlar: yığcam "Hesab" sətri */
+.hesab-satir { justify-content: flex-start; color: inherit; }
+.hesab-avatar { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; letter-spacing: .03em;
+  background: var(--kart-2); border: 1px solid var(--cizgi); }
+.hesab-ad { display: grid; min-width: 0; flex: 1; }
+.hesab-ad > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hesab-ad .soluk { font-size: .82rem; }

@@ -21,13 +21,44 @@ if (DILLER.length > 1) {
 }
 
 const telefonDuzmu = (s) => s.replace(/\D/g, "").length >= 7;
+let girisVar = false;
+
+// Yığcam görünüş: əsas siyahıda yalnız "Hesab" sətri; #hesab açılanda ad/soyad/telefon və şifrə səhifəsi
+function gorunusSec() {
+  const hesab = location.hash === "#hesab" && girisVar;
+  $("#ana-gorunus").hidden = hesab;
+  $("#hesab-gorunus").hidden = !hesab;
+  $("#cixis").hidden = hesab || !girisVar;
+  $("#imza").hidden = hesab;
+  window.scrollTo(0, 0);
+}
+addEventListener("hashchange", gorunusSec);
+$("#hesab-geri").addEventListener("click", (e) => {
+  e.preventDefault();
+  if (history.length > 1 && location.hash === "#hesab") history.back();
+  else location.hash = "";
+});
+
+function ozetCiz(kullanici, p, uye) {
+  const ad = [p.ad, p.soyad].filter(Boolean).join(" ") || kullanici.email;
+  const bas = ((p.ad || "")[0] || "") + ((p.soyad || "")[0] || "") || (kullanici.email[0] || "?");
+  $("#hesab-ozet").innerHTML = `
+    <div class="kart menyu-kart">
+      <a class="ayar-satir hesab-satir" href="#hesab">
+        <span class="hesab-avatar">${kacis(bas.toUpperCase())}</span>
+        <span class="hesab-ad"><b>${kacis(ad)}</b><span class="soluk">${kacis(kullanici.email)}</span></span>
+        <span class="durum ${uye ? "durum-catdirildi" : "durum-yeni"}">${kacis(t(uye ? "ayarlar.uye" : "ayarlar.tesdiqsiz"))}</span>
+        <span class="soluk">›</span>
+      </a>
+    </div>`;
+}
 
 girisDinle(({ kullanici, profil, uye }) => {
   const kok = $("#hesab-bolum");
   const girisli = !!kullanici;
-  $("#sifre-alan").hidden = !girisli;
+  girisVar = girisli;
   $("#diger-alan").hidden = !girisli;
-  $("#cixis").hidden = !girisli;
+  gorunusSec();
   $("#kilit-alan").hidden = !girisli;
   if (girisli && !$("#kilit-bolum").dataset.hazir) {
     $("#kilit-bolum").dataset.hazir = "1";
@@ -35,16 +66,17 @@ girisDinle(({ kullanici, profil, uye }) => {
   }
 
   if (!girisli) {
-    kok.innerHTML = `
+    $("#hesab-ozet").innerHTML = `<div class="kart">
       <p style="margin-top:0">${kacis(t("ayarlar.girisYok"))}</p>
       <div style="display:grid;gap:10px">
         <a class="btn btn-tam" href="giris.html">${kacis(t("nav.giris"))}</a>
         <a class="btn btn-ince btn-tam" href="kayit.html">${kacis(t("nav.kayit"))}</a>
-      </div>`;
+      </div></div>`;
     return;
   }
 
   const p = profil || {};
+  ozetCiz(kullanici, p, uye);
   let yedekTel = "";
   try { yedekTel = localStorage.getItem("telefon") || ""; } catch {}
   const tel = p.telefon || yedekTel;
@@ -97,6 +129,7 @@ girisDinle(({ kullanici, profil, uye }) => {
       await updateDoc(doc(db, "kullanicilar", kullanici.uid), { ad, soyad, telefon, whatsapp, whatsappEyni: eyni });
       try { if (telefon) localStorage.setItem("telefon", telefon); } catch {}
       Object.assign(p, { ad, soyad, telefon, whatsapp, whatsappEyni: eyni });
+      ozetCiz(kullanici, p, uye);
       bildir(t("admin.kaydedildi"), "basari");
     } catch (err) { bildir(hataMesaji(err), "hata"); }
     btn.disabled = false;

@@ -64,6 +64,7 @@
 - [x] "Ana ekrana ekle" (PWA)
 - [x] Ayarlar səhifəsi: hesab (ad/soyad dəyişmə, çıxış), dil
 - [x] v1.7 Ayarlar sırası: Hesab (ad, soyad, telefon, "WhatsApp nömrəm eynidir" ✓ — deyilsə ayrıca WhatsApp sahəsi, e-poçt dəyişdirilə bilməz) → Şifrəni dəyiş (hazırkı + yeni 2 dəfə) → Görünüş (Qaranlıq / Açıq) → Digər → Çıxış
+- [x] v1.9 Ayarlar yığcam: yuxarıda tək "Hesab" sətri (baş hərflər, ad soyad, e-poçt, Üzv nişanı) → basanda ayrıca səhifədə ad, soyad, telefon, WhatsApp və şifrəni yenilə
 - [x] v1.7 Açıq rejim (gümüşü) hər iki saytda; standart qaranlıq; admin müştərilər siyahısında telefon + WhatsApp
 - [x] Sifarişlərim: addım-addım izləmə + kargo məlumatı
 - [x] Aşağı menyu (5 ikon): Bəyəndiklərim · Kataloq · (ortada) Ana səhifə · Səbətim · Ayarlar

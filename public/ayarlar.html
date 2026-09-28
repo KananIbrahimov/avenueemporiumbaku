@@ -19,24 +19,12 @@
   <nav id="ust-nav"></nav>
 </div></header>
 <main class="dar" style="max-width:560px">
+  <!-- Əsas görünüş: yığcam siyahı -->
+  <div id="ana-gorunus">
   <h1 data-t="ayarlar.baslik"></h1>
 
   <div class="bolum-baslik">👤 <span data-t="ayarlar.hesab"></span></div>
-  <div class="kart" id="hesab-bolum"><p class="soluk" data-t="genel.yukleniyor"></p></div>
-
-  <div id="sifre-alan" hidden>
-    <div class="bolum-baslik">🔒 <span data-t="ayarlar.sifre"></span></div>
-    <form class="kart" id="sifre-form" novalidate>
-      <div class="alan"><label for="s-hazirki" data-t="ayarlar.sifreHazirki"></label>
-        <input id="s-hazirki" type="password" autocomplete="current-password"></div>
-      <div class="alan"><label for="s-yeni" data-t="ayarlar.sifreYeni"></label>
-        <input id="s-yeni" type="password" autocomplete="new-password">
-        <div class="ipucu" data-t="sifre.kurallar"></div></div>
-      <div class="alan"><label for="s-yeni2" data-t="ayarlar.sifreYeni2"></label>
-        <input id="s-yeni2" type="password" autocomplete="new-password"></div>
-      <button class="btn" type="submit" data-t="ayarlar.sifreDeyis"></button>
-    </form>
-  </div>
+  <div id="hesab-ozet"><div class="kart"><p class="soluk" data-t="genel.yukleniyor"></p></div></div>
 
   <div class="bolum-baslik">🎨 <span data-t="ayarlar.gorunus"></span></div>
   <div class="kart" id="tema-bolum"></div>
@@ -57,6 +45,28 @@
   <div id="dil-alan" hidden>
     <div class="bolum-baslik" data-t="ayarlar.dil"></div>
     <div class="kart"><select id="dil-sec"></select></div>
+  </div>
+
+  </div>
+
+  <!-- Hesab səhifəsi: ad, soyad, telefon, şifrə -->
+  <div id="hesab-gorunus" hidden>
+    <div class="bolum-ust" style="margin-top:6px">
+      <h1 style="margin:0">👤 <span data-t="ayarlar.hesab"></span></h1>
+      <a class="btn btn-ince btn-kucuk" href="#" id="hesab-geri">← <span data-t="ayarlar.baslik"></span></a>
+    </div>
+    <div class="kart" id="hesab-bolum"></div>
+    <div class="bolum-baslik">🔒 <span data-t="ayarlar.sifre"></span></div>
+      <form class="kart" id="sifre-form" novalidate>
+        <div class="alan"><label for="s-hazirki" data-t="ayarlar.sifreHazirki"></label>
+          <input id="s-hazirki" type="password" autocomplete="current-password"></div>
+        <div class="alan"><label for="s-yeni" data-t="ayarlar.sifreYeni"></label>
+          <input id="s-yeni" type="password" autocomplete="new-password">
+          <div class="ipucu" data-t="sifre.kurallar"></div></div>
+        <div class="alan"><label for="s-yeni2" data-t="ayarlar.sifreYeni2"></label>
+          <input id="s-yeni2" type="password" autocomplete="new-password"></div>
+        <button class="btn" type="submit" data-t="ayarlar.sifreDeyis"></button>
+      </form>
   </div>
 
   <button type="button" class="btn btn-ince btn-tam cixis-btn" id="cixis" hidden>⎋ <span data-t="nav.cikis"></span></button>
