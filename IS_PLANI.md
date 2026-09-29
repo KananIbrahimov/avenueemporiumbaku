@@ -58,6 +58,7 @@
 - [x] v2.9 Aşağı menyu: Məhsullar · Finans · (+) · Sifarişlər · Ayarlar (Mağaza götürüldü); v2.10 yuxarıda "Mağazaya keç ↗"
 - [x] v2.11 Yoxlama: ehtiyat nüsxəyə mağaza ayarları əlavə olundu; sifariş silinəndə maliyyə sənədi də silinir; istifadə olunmayan kod götürüldü
 - [x] v2.12 Rus dili (müştəri + admin), yuxarıda AZ · RU seçimi; Azərbaycan dili mətnləri rəsmi dilə uyğunlaşdırıldı; kateqoriya, rəng və ölçü adları tərcümə olunur; passiv məhsulun şəkilləri də müştəriyə bağlıdır; qonağa "Üzvlərə −5%" nişanı
+- [x] v2.18 Tam yoxlama: 63 istifadə olunmayan tərcümə açarı, 11 CSS qaydası, ölü funksiyalar və importlar götürüldü; sifariş kartında qazanc sifarişin öz xərcləri ilə (Finans ilə eyni); rus dilində say formaları (1 товар / 2 товара / 5 товаров); admin başlığı telefonda sığır; 58 səhifə hər iki dildə brauzerdə yoxlanıldı
 - [ ] İngilis dili: ortak/dil/en.js + i18n.js-də bir sətir
 - [x] ~~Yedekten geri yükleme~~ — lazım deyil (ehtiyat nüsxə götürüldü)
 - [x] v2.16 Sifariş axını: Yeni sifariş → Ödəniş gözlənilir → Sifariş edildi (ön ödəniş + alış qiyməti bir pəncərədə) → Yoldadır → Gömrükdədir (kargo + vergi) → Kuryerdədir → Çatdırıldı; köhnə "Ödəniş edildi" statusu "Ödəniş gözlənilir" mərhələsində göstərilir

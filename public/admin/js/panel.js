@@ -52,7 +52,7 @@ function magazaKecidi() {
   const a = $("#magaza-kecid");
   if (!a) return;
   a.href = MAGAZA_URL || "../";
-  a.innerHTML = `<span class="ikon-kap">${IKON.magaza}</span><span>${kacis(t("admin.magazayaKec"))}</span><span aria-hidden="true">↗</span>`;
+  a.innerHTML = `<span class="ikon-kap">${IKON.magaza}</span><span class="magaza-kecid-yazi">${kacis(t("admin.magazayaKec"))}</span><span aria-hidden="true">↗</span>`;
   a.insertAdjacentHTML("beforebegin", dilSeciciHtml());
   dilSeciciBagla(a.parentElement);
 }

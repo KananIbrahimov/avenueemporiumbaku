@@ -134,7 +134,6 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .btn-ince:hover { border-color: var(--vurgu); }
 
 .btn-link { background: none; border: 0; color: var(--yazi); padding: 8px 10px; font-weight: 500; min-height: 0; }
-.btn-tehlike { background: var(--tehlike); border-color: var(--tehlike); color: #fff; }
 .btn-kucuk { padding: 7px 13px; font-size: .8rem; min-height: 34px; }
 .btn-tam { width: 100%; }
 
@@ -162,8 +161,6 @@ textarea { min-height: 90px; resize: vertical; }
 .segment button { flex: 1; border: 0; background: none; color: var(--soluk); font: inherit; font-size: .88rem; font-weight: 600; padding: 9px 8px; border-radius: 999px; cursor: pointer; }
 .segment button.secili { background: var(--vurgu-parlaq); color: var(--vurgu-yazi); }
 .renkler { display: flex; flex-wrap: wrap; gap: 12px; }
-.renk-sec { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--kart); background: var(--r); cursor: pointer; box-shadow: 0 0 0 1px var(--cizgi); }
-.renk-sec.secili { box-shadow: 0 0 0 2px var(--r); }
 
 /* Ayarlar siyahısı */
 .bolum-baslik { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--soluk); font-weight: 700; margin: 24px 4px 8px; }
@@ -185,8 +182,6 @@ textarea { min-height: 90px; resize: vertical; }
 .modal-ust h2 { margin: 0; }
 
 /* ---------- Vitrin ---------- */
-.vitrin-ust { padding: 22px 0 4px; }
-.vitrin-ust p { color: var(--soluk); margin: 0; }
 .cipler { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; scrollbar-width: none; }
 .cipler::-webkit-scrollbar { display: none; }
 .cip { border: 1px solid var(--cizgi); background: var(--kart); color: var(--yazi); border-radius: 999px; padding: 8px 15px; font: inherit; font-size: .85rem; cursor: pointer; white-space: nowrap; }
@@ -231,10 +226,9 @@ textarea { min-height: 90px; resize: vertical; }
 .durum { --d: var(--soluk); display: inline-block; font-size: .74rem; font-weight: 700; padding: 3px 10px; border-radius: 999px;
   background: color-mix(in srgb, var(--d) 20%, var(--kart)); color: color-mix(in srgb, var(--d) 55%, var(--yazi)); }
 .durum-yeni { --d: #d18a0f; }
-.durum-tesdiq { --d: #2f6fbf; }
 .durum-sifarisVerildi { --d: #7a52c7; }
 .durum-yolda { --d: #1f8f84; }
-.durum-odenildi, .durum-odemeGozlenilir { --d: #c9a227; }
+.durum-odemeGozlenilir { --d: #c9a227; }
 .durum-kuryerde { --d: #2f7fbf; }
 .durum-gomrukde { --d: #b0643a; }
 .durum-catdirildi { --d: #2f9d5a; }

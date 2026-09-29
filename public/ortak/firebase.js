@@ -38,11 +38,6 @@ export {
 };
 
 /** Giriş durumu ilk kez belli olunca çözülür. */
-export function mevcutKullanici() {
-  return new Promise((resolve) => {
-    const kapat = onAuthStateChanged(auth, (k) => { kapat(); resolve(k); });
-  });
-}
 
 /** kullanicilar/{uid} profilini getirir (yoksa null). */
 export async function profilGetir(uid) {

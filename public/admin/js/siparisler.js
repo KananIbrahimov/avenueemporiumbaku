@@ -6,7 +6,7 @@ import { $, $$, kacis, tarih, bildir, hataMesaji, durumEtiketi, SIPARIS_DURUMLAR
 import { detayGetir } from "./veri.js";
 import { adimlarHtml, IZLEME_ADIMLARI } from "../../ortak/izleme-ui.js";
 import { kargoHtml, kargoBagla, kargoDatalist } from "./kargo.js";
-import { maliyyePenceresi } from "./maliyye.js";
+import { maliyyePenceresi, maliyyeGetir } from "./maliyye.js";
 
 export let siparisler = [];
 const dinleyiciler = new Set();
@@ -173,16 +173,20 @@ async function ciz() {
     } catch (e) { bildir(hataMesaji(e), "hata"); }
   }));
 
-  // Kaynak linkleri ve kâr (gizli detaylardan)
+  // Mənbə linki və qazanc. Sifarişin öz maliyyəsi yazılıbsa (alış, karqo, vergi) — həmin rəqəmlər,
+  // yoxdursa məhsulun indiki maya dəyəri × say (təxmini). Finans hesabatı ilə eyni nəticə.
   for (const o of liste) {
-    const d = await detayGetir(o.urunId).catch(() => null);
+    const [d, m] = await Promise.all([detayGetir(o.urunId).catch(() => null), maliyyeGetir(o.id)]);
     const kutu = $(`[data-kaynak="${o.id}"]`, kok);
     if (!kutu) continue;
-    if (!d) { kutu.innerHTML = `<span class="soluk">${kacis(t("admin.sip.urunSilinmis"))}</span>`; continue; }
-    const maliyet = yuvarla((+d.alisFiyati || 0) + (+d.kargo || 0) + (+d.vergi || 0));
+    if (!d && !m) { kutu.innerHTML = `<span class="soluk">${kacis(t("admin.sip.urunSilinmis"))}</span>`; continue; }
+    const qazanc = m
+      ? yuvarla((+m.satis || 0) - (+m.alis || 0) - (+m.kargo || 0) - (+m.vergi || 0))
+      : yuvarla((o.birimFiyat - ((+d.alisFiyati || 0) + (+d.kargo || 0) + (+d.vergi || 0))) * o.adet);
     kutu.innerHTML = `
-      ${d.kaynakLink ? `<a class="btn btn-kucuk" href="${kacis(d.kaynakLink)}" target="_blank" rel="noopener noreferrer">🔗 ${kacis(t("admin.sip.kaynakAc"))}</a>` : ""}
-      <span class="soluk">${kacis(t("admin.hesap.qazanc"))}: <b>${para((o.birimFiyat - maliyet) * o.adet)}</b></span>`;
+      ${d?.kaynakLink ? `<a class="btn btn-kucuk" href="${kacis(d.kaynakLink)}" target="_blank" rel="noopener noreferrer">🔗 ${kacis(t("admin.sip.kaynakAc"))}</a>` : ""}
+      <span class="soluk">${kacis(t("admin.hesap.qazanc"))}${m ? "" : ` (${kacis(t("admin.sip.texmini"))})`}:
+        <b style="color:${qazanc < 0 ? "var(--tehlike)" : "var(--basari)"}">${para(qazanc)}</b></span>`;
   }
 }
 

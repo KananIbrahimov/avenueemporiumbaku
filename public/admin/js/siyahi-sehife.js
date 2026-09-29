@@ -4,7 +4,7 @@ import {
   db, collection, doc, getDocs, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp,
 } from "../../ortak/firebase.js";
 import { t, yerel, DILLER } from "../../ortak/i18n.js";
-import { $, $$, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
+import { $, kacis, bildir, hataMesaji } from "../../ortak/yardim.js";
 import { kategorileriGetir } from "./veri.js";
 import { ozelMi, ozelIkon, kategoriyeAit } from "../../ortak/kategori.js";
 import { siyahilariGetir, siyahiYaz, markalariTohumla } from "./siyahilar.js";

@@ -48,18 +48,12 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .rakamlar b { color: var(--yazi); }
 .urun-satir .aksiyonlar { margin-top: 4px; }
 
-.hesap-kutusu { background: var(--kart-2); border: 1px solid var(--cizgi); border-radius: var(--r); padding: 16px; display: grid; gap: 6px; font-size: .9rem; }
-.hesap-kutusu .satir-h { display: flex; justify-content: space-between; gap: 12px; }
-.hesap-kutusu .buyuk { font-size: 1.12rem; font-weight: 700; }
 .foto-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
 .foto-oge { position: relative; aspect-ratio: 3/4; border-radius: 10px; overflow: hidden; background: var(--vurgu-acik); }
 .foto-oge img { width: 100%; height: 100%; object-fit: cover; }
 .foto-oge .araclar { position: absolute; inset: auto 0 0 0; display: flex; justify-content: space-between; padding: 4px; background: linear-gradient(transparent, rgba(0,0,0,.55)); }
 .foto-oge .araclar button { background: rgba(255,255,255,.92); color: #1c1a17; border: 0; border-radius: 8px; width: 30px; height: 30px; cursor: pointer; font-size: .9rem; }
 .foto-oge .kapak-etiket { position: absolute; top: 6px; left: 6px; background: var(--vurgu-parlaq); color: var(--vurgu-yazi); font-size: .66rem; padding: 2px 7px; border-radius: 999px; }
-.hazir-butonlar { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.form-bolum { border-top: 1px solid var(--cizgi); padding-top: 16px; margin-top: 8px; }
-.form-bolum h2 { font-size: 1rem; }
 .form-alt { background: var(--kart); padding: 12px 0; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 
 .siparis-kart { display: grid; gap: 10px; }
@@ -81,7 +75,6 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 /* Instagram önizləmə */
 .ig-onizleme { background: var(--zemin); border-radius: 12px; padding: 10px; display: flex; justify-content: center; }
 .ig-onizleme canvas { max-width: 100%; max-height: 52vh; height: auto; border-radius: 8px; box-shadow: var(--golge); }
-.hesap-kutusu .satir-h > :last-child { white-space: nowrap; text-align: right; }
 
 /* Şəkil yükləmə */
 .foto-butonlar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
@@ -172,13 +165,6 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .ikon-btn:disabled { opacity: .3; cursor: default; }
 .ikon-btn.tehlike { color: var(--tehlike); }
 
-/* Mağaza kartında kiçik Instagram düyməsi (sağ altda) */
-.urun-kart-kap { position: relative; }
-.ig-mini { position: absolute; right: 2px; bottom: 2px; width: 36px; height: 36px; border-radius: 10px;
-  border: 1px solid var(--cizgi); background: var(--kart-2); color: var(--yazi); cursor: pointer;
-  display: flex; align-items: center; justify-content: center; }
-.ig-mini .ikon { width: 19px; height: 19px; }
-.ig-mini:hover { border-color: var(--vurgu); }
 .ayar-kap { max-width: 640px; }
 
 /* ---------- Finans ---------- */
@@ -222,7 +208,6 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .odeme-satir { align-items: center; }
 .odeme-satir .odeme-dugmeler { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
 .odeme-satir.odenib { color: var(--basari); border-color: color-mix(in srgb, var(--basari) 40%, var(--cizgi)); background: color-mix(in srgb, var(--basari) 10%, var(--kart-2)); }
-.btn-odenildi { background: var(--basari); border-color: var(--basari); color: #07130b; }
 
 /* Maliyyə pəncərəsi: bu mərhələdə doldurulacaq sahə */
 .mal-modal .alan.vurgulu label { color: var(--vurgu); }
@@ -244,13 +229,12 @@ body.menyulu { padding-bottom: calc(var(--alt-menyu) + 12px + env(safe-area-inse
 .ios-input:checked + .ios-switch { background: #34c759; }
 .ios-input:checked + .ios-switch::after { transform: translateX(20px); }
 .ios-input:focus-visible + .ios-switch { outline: 2px solid var(--vurgu); outline-offset: 2px; }
-.ios-satir:active .ios-switch::after, .ios-tik:active .ios-switch::after { width: 31px; }
-.ios-satir:active .ios-input:checked + .ios-switch::after, .ios-tik:active .ios-input:checked + .ios-switch::after { transform: translateX(16px); }
-/* Sətir içində tək açar (Vitrində göstər, Aktiv) */
-.ios-tik { position: relative; display: inline-flex; align-items: center; gap: 10px; margin: 0; cursor: pointer;
-  font-weight: 500; color: var(--yazi); font-size: .9rem;
-  -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+.ios-satir:active .ios-switch::after { width: 31px; }
+.ios-satir:active .ios-input:checked + .ios-switch::after { transform: translateX(16px); }
 /* Açıq tema: iPhone-dakı kimi açıq boz */
 :root[data-tema="aciq"] .ios-switch { background: #e9e9ea; }
 
 .dil-eksik { color: var(--uyari); font-size: .75rem; font-weight: 700; margin-left: 6px; }
+
+/* Telefonda başlıq sıxılmasın: "Mağazaya keç" yalnız ikon */
+@media (max-width: 560px) { .magaza-kecid-yazi { display: none; } .magaza-kecid { white-space: nowrap; } }

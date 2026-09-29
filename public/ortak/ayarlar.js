@@ -18,7 +18,6 @@ export const firebaseConfig = {
 // Sitelerin adresleri (e-posta doğrulama ve şifre sıfırlama linkleri buraya döner).
 // Boş bırakılırsa o anki adres kullanılır.
 export const MAGAZA_URL = "https://avenueemporiumbaku.web.app";
-export const ADMIN_URL = "https://avenueemporiumbaku-admin.web.app";
 
 // Para birimi
 export const PARA = { kod: "AZN", simge: "₼" };

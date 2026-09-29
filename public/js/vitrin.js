@@ -1,6 +1,6 @@
 // Vitrin: ürün listesi + filtreler
 import { db, collection, getDocs, query, where } from "../ortak/firebase.js";
-import { t, yerel, degerCevir } from "../ortak/i18n.js";
+import { t, yerel, degerCevir, say } from "../ortak/i18n.js";
 import { kartHtml, urekleriBagla } from "./kart.js";
 import { $, kacis } from "../ortak/yardim.js";
 import { girisDinle } from "./ust.js";
@@ -57,7 +57,7 @@ function ciz() {
   $("#urunler").innerHTML = liste.length
     ? liste.map((u) => kartHtml(u, uye)).join("")
     : `<p class="bos">${kacis(t("vitrin.bos"))}</p>`;
-  $("#say").textContent = `${liste.length} ${t("vitrin.mehsul")}`;
+  $("#say").textContent = say(liste.length, "vitrin.mehsul");
   const filtrli = secim.ara || secim.kategori || secim.marka || secim.olcu || secim.renk;
   $("#basliq").textContent = filtrli ? t("vitrin.netice") : t("vitrin.baslik");
 }

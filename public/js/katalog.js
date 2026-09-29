@@ -1,6 +1,6 @@
 // Kataloq: məhsul qrupları (kateqoriyalar) və brendlər
 import { db, collection, getDocs, query, where } from "../ortak/firebase.js";
-import { t, yerel } from "../ortak/i18n.js";
+import { t, yerel, say } from "../ortak/i18n.js";
 import { $, kacis } from "../ortak/yardim.js";
 import "./ust.js";
 import { kategoriSirala, kategoriyeAit, ozelMi, ozelIkon } from "../ortak/kategori.js";
@@ -30,7 +30,7 @@ try {
     const kapak = q.urunler.find((u) => u.kapak)?.kapak;
     return `<a class="katalog-kart" href="./${q.id ? `?k=${encodeURIComponent(q.id)}` : ""}">
       ${kapak ? `<img src="${kacis(kapak)}" alt="" loading="lazy">` : ""}
-      <div class="ust-yazi"><b>${kacis(q.ad)}</b><span>${q.urunler.length} ${kacis(t("vitrin.mehsul"))}</span></div>
+      <div class="ust-yazi"><b>${kacis(q.ad)}</b><span>${kacis(say(q.urunler.length, "vitrin.mehsul"))}</span></div>
     </a>`;
   }).join("");
 

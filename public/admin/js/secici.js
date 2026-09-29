@@ -9,7 +9,7 @@ import { renkNoktasi } from "../../ortak/renk.js";
 const norm = (s) => String(s || "").toLocaleLowerCase("az").trim();
 
 /** Kiçik pəncərə: yeni ad soruşur. Qaytarır: yazılan ad və ya null */
-export function adSorus(basliq, ilkDeger = "", { bosOlar = false, dugme = "" } = {}) {
+export function adSorus(basliq, ilkDeger = "") {
   return new Promise((ok) => {
     const arxa = document.createElement("div");
     arxa.className = "modal-arxa ust-qat";
@@ -19,7 +19,7 @@ export function adSorus(basliq, ilkDeger = "", { bosOlar = false, dugme = "" } =
         <input name="ad" maxlength="60" autocomplete="off" value="${kacis(ilkDeger)}"></div>
       <div class="aksiyonlar" style="justify-content:flex-end">
         <button type="button" class="btn btn-ince" data-legv>${kacis(t("secici.legv"))}</button>
-        <button type="submit" class="btn">${kacis(dugme || t("secici.elaveEt"))}</button>
+        <button type="submit" class="btn">${kacis(t("secici.elaveEt"))}</button>
       </div></form>`;
     document.body.appendChild(arxa);
     const input = arxa.querySelector("input");
@@ -30,7 +30,7 @@ export function adSorus(basliq, ilkDeger = "", { bosOlar = false, dugme = "" } =
     arxa.querySelector("form").addEventListener("submit", (e) => {
       e.preventDefault();
       const v = input.value.trim();
-      if (!v && !bosOlar) return input.focus();
+      if (!v) return input.focus();
       bitir(v);
     });
   });

@@ -1,6 +1,6 @@
 // Admin panelinde ortak veri önbelleği
 import { db, collection, getDocs, doc, getDoc, writeBatch, serverTimestamp, query, where, setDoc } from "../../ortak/firebase.js";
-import { DILLER, yerel } from "../../ortak/i18n.js";
+import { DILLER } from "../../ortak/i18n.js";
 import { OZEL_KATEGORILER, kategoriSirala, ozelMi } from "../../ortak/kategori.js";
 
 const detaylar = new Map(); // urunId → urunDetay

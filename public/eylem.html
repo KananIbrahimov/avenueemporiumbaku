@@ -13,7 +13,7 @@
   try {
     var q = new URLSearchParams(location.search);
     var d = new URL(q.get("continueUrl") || "", location.origin).searchParams.get("dil") || q.get("lang");
-    if (d === "az" || d === "ru") localStorage.setItem("dil", d);
+    if (/^[a-z]{2}$/.test(d || "")) localStorage.setItem("dil", d); // tanınmayan kod i18n.js-də nəzərə alınmır
   } catch (e) {}
 </script>
 <link rel="manifest" href="manifest.webmanifest">

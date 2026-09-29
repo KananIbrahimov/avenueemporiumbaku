@@ -1,5 +1,5 @@
 // Finans: aylıq hesabat — alınan mal, xərc, satış, qazanc (reallaşan + yolda olan), bəh, qalıq alacaq; qrafik və cədvəl
-import { t } from "../../ortak/i18n.js";
+import { t, say } from "../../ortak/i18n.js";
 import { para } from "../../ortak/fiyat.js";
 import { $, $$, kacis, tarih, hataMesaji, durumEtiketi } from "../../ortak/yardim.js";
 import { siparisler, siparisDinle, durumDegistir } from "./siparisler.js";
@@ -66,7 +66,7 @@ export async function finansSekmesi(ana) {
       </div>
 
       <div class="kpi-grid">
-        ${kpi("📦", t("fin.alinanMal"), `${r.mal}`, "", `${r.sifaris} ${kacis(t("fin.sifaris"))}`)}
+        ${kpi("📦", t("fin.alinanMal"), `${r.mal}`, "", kacis(say(r.sifaris, "fin.sifaris")))}
         ${kpi("💸", t("fin.xerc"), para(r.xerc), "xerc", kacis(t("fin.xercAlt")))}
         ${kpi("🧾", t("fin.satis"), para(r.satis), "satis")}
         ${kpi("📈", t("fin.qazanc"), para(r.qazanc), r.qazanc < 0 ? "menfi" : "musbet", r.xerc > 0 ? `${iki((r.qazanc / r.xerc) * 100)}%` : "")}

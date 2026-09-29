@@ -77,3 +77,15 @@ export function degerCevir(x) {
   const m = bul(aktifDil)?.metinler[acar];
   return m || x;
 }
+
+/**
+ * Sayla birlikdə söz: say(5, "vitrin.mehsul") → "5 məhsul" / "5 товаров".
+ * Dil faylında formalar "|" ilə yazıla bilər (rus dili: "товар|товара|товаров" — 1 / 2-4 / 5+).
+ */
+export function say(n, acar) {
+  const formalar = t(acar).split("|");
+  if (formalar.length < 3) return `${n} ${formalar[0]}`;
+  const m10 = n % 10, m100 = n % 100;
+  const i = m10 === 1 && m100 !== 11 ? 0 : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? 1 : 2;
+  return `${n} ${formalar[i]}`;
+}
